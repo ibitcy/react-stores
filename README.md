@@ -1,4 +1,4 @@
-![react-stores](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png)
+![react-stores](https://ibitcy.github.io/react-stores/react-stores.svg)
 
 # react-stores
 Shared states for React.js (a flux-way shared stores without actions and dispatchers).
