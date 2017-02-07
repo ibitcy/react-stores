@@ -9,7 +9,6 @@
   "author": "IBIT LTD.",
   "license": "MIT",
   "dependencies": {
-    "@types/react": "^15.0.6",
     "react": "^15.4.2"
   }
 }
