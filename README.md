@@ -105,7 +105,7 @@ ReactDOM.render(
 );
 ```
 
-You can mutates states from any point of your app like this
+You can mutate states from any point of your app like this
 ```typescript
 import {CommonStore} from "./store";
 
