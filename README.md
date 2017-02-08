@@ -35,7 +35,7 @@ Then you need to create a `StoreComponent` that will use store singleton
 // component.tsx
 import * as React from "react";
 import {StoreComponent, Store} from "react-stores";
-import {CommonStore} from "store.ts";
+import {CommonStore} from "./store.ts";
 
 interface Props {
     name: string
@@ -93,6 +93,47 @@ export class App extends StoreComponent<Props, State, StoresState> {
         );
     }
 }
+```
+
+Now you can use it as usial
+```typescript
+import {App} from "./component";
+
+ReactDOM.render(
+	React.createElement(App),
+	document.getElementById('app')
+);
+```
+
+You can mutates states from any point of your app like this
+```typescript
+import {CommonStore} from "./store";
+
+CommonStore.store.setState({
+	counter: 100500
+});
+```
+
+...or even like a flux actions
+```typescript
+import {CommonStore} from "./store";
+
+export class CommonActions {
+	static increaseCounter():void {
+		CommonStore.store.setState({
+			counter: CommonStore.store.state.counter + 1
+		});
+	}
+}
+
+CommonActions.increaseCounter();
+```
+
+Also you can get store state values from everywhere in your app
+```typescript
+import {CommonStore} from "./store";
+
+console.log(CommonStore.store.state.counter);
 ```
 
 ## ES5/6
