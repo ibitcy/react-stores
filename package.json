@@ -10,5 +10,9 @@
   "license": "MIT",
   "dependencies": {
     "react": "^15.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ibitcy/react-stores.git"
   }
 }
