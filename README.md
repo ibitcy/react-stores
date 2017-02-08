@@ -56,12 +56,14 @@ export class App extends StoreComponent<Props, State, StoresState> {
         });
     }
     
-    // This method is required by abstract method in StoreComponent it works as default React.Component.componentDidMount()
+    // This method is required by abstract method in StoreComponent
+    //it works as default React.Component.componentDidMount()
     storeComponentDidMount() {
 
     }
     
-    // This method is required by abstract method in StoreComponent it works as default React.Component.componentWillUnmount()
+    // This method is required by abstract method in StoreComponent
+    // it works as default React.Component.componentWillUnmount()
     storeComponentWillUnmount() {
 
     }
@@ -124,7 +126,8 @@ export class CommonActions {
 	}
 }
 
-// Note that you always have your store interface, you haven't lost typization consistency of your app like it always occurs in Flux/Redux apps
+// Note that you always have your store interface, you haven't lost typization consistency 
+// of your app like it always occurs in Flux/Redux apps
 let newState:CommonStore.State = {
 	counter: 100500
 }
