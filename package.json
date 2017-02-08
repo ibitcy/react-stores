@@ -1,6 +1,6 @@
 {
   "name": "react-stores",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React direct state stores",
   "main": "index.js",
   "scripts": {

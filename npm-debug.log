@@ -1,0 +1,102 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@3.10.8
+3 info using node@v6.9.1
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   escapedName: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/Ruslan/Documents/github/react-store',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/Ruslan/.npm/react-stores/1.0.1/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/Ruslan/.npm correctMkdir not in flight; initializing
+10 info lifecycle react-stores@1.0.1~prepublish: react-stores@1.0.1
+11 silly lifecycle react-stores@1.0.1~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/Users/Ruslan/.npm/react-stores/1.0.1/package.tgz',
+12 verbose tar pack   '/Users/Ruslan/Documents/github/react-store' ]
+13 verbose tarball /Users/Ruslan/.npm/react-stores/1.0.1/package.tgz
+14 verbose folder /Users/Ruslan/Documents/github/react-store
+15 verbose addLocalTarball adding from inside cache /Users/Ruslan/.npm/react-stores/1.0.1/package.tgz
+16 verbose correctMkdir /Users/Ruslan/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd react-stores@1.0.1
+18 verbose afterAdd /Users/Ruslan/.npm/react-stores/1.0.1/package/package.json not in flight; writing
+19 verbose correctMkdir /Users/Ruslan/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /Users/Ruslan/.npm/react-stores/1.0.1/package/package.json written
+21 silly publish { name: 'react-stores',
+21 silly publish   version: '1.0.1',
+21 silly publish   description: 'React direct state stores',
+21 silly publish   main: 'index.js',
+21 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+21 silly publish   author: { name: 'IBIT LTD.' },
+21 silly publish   license: 'MIT',
+21 silly publish   dependencies: { react: '^15.4.2' },
+21 silly publish   readme: '![react-stores](https://ibitcy.github.io/react-stores/react-stores.svg)\n\n# react-stores\nShared states for React.js (a flux-way shared stores without actions and dispatchers).\n\n## How to install\n```\nnpm i react-stores --save\n```\n\n## How to use\n\nFirst you need to create a `Store` singleton\n```typescript\n// store.ts\nimport {Store} from "react-stores";\n\nexport namespace CommonStore {\n    // State interface\n    export interface State {\n        counter: number\n    }\n\n    // Store\'s state initial values\n    let initialState: State = {\n        counter: 0\n    };\n\n    export let store: Store<State> = new Store<State>(initialState);\n}\n```\n\nThen you need to create a `StoreComponent` that will use store singleton\n```typescript\n// component.tsx\nimport * as React from "react";\nimport {StoreComponent, Store} from "react-stores";\nimport {CommonStore} from "store.ts";\n\ninterface Props {\n    name: string\n}\n\ninterface State {\n    counter: number\n}\n\ninterface StoresState {\n    common: Store<CommonStore.State>\n}\n\nexport class App extends StoreComponent<Props, State, StoresState> {\n    constructor() {\n        super({\n            common: CommonStore.store\n        });\n    }\n    \n    // This method is required by abstract method in StoreComponent it works as default React.Component.componentDidMount()\n    storeComponentDidMount() {\n\n    }\n    \n    // This method is required by abstract method in StoreComponent it works as default React.Component.componentWillUnmount()\n    storeComponentWillUnmount() {\n\n    }\n\n    private increaseCommon():void {\n        // You can mutate stores as local component state values\n        this.stores.common.setState({\n            counter: this.stores.common.state.counter + 1\n        };\n    }\n\n    private increaseLocal():void {\n        // You can use local state as natural React.Component\n        this.setState({\n            counter: this.state.counter + 1\n        });\n    }\n\n    render() {\n        return (\n            <div>\n                <p>Component name: {this.props.name}</p>\n\t            <p>Shared counter value: {this.stores.common.state.counter.toString()}</p>\n                <p>Local counter value: {this.state.counter.toString()}</p>\n\n                <button onClick={this.increaseCommon.bind(this)})}>Increase common counter value</button>\n                <button onClick={this.increaseLocal.bind(this)})}>Increase local counter value</button>\n            </div>\n        );\n    }\n}\n\n```',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: '27d7fd525b499f74920aa776c460fda9f713a63e',
+21 silly publish   _id: 'react-stores@1.0.1',
+21 silly publish   _shasum: '34b3fa0732aacd4810b8f6634e1e8ebaafdcfb29',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name react-stores
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry data Result {
+26 silly mapToRegistry   raw: 'react-stores',
+26 silly mapToRegistry   scope: null,
+26 silly mapToRegistry   escapedName: 'react-stores',
+26 silly mapToRegistry   name: 'react-stores',
+26 silly mapToRegistry   rawSpec: '',
+26 silly mapToRegistry   spec: 'latest',
+26 silly mapToRegistry   type: 'tag' }
+27 silly mapToRegistry uri https://registry.npmjs.org/react-stores
+28 verbose publish registryBase https://registry.npmjs.org/
+29 silly publish uploading /Users/Ruslan/.npm/react-stores/1.0.1/package.tgz
+30 verbose request uri https://registry.npmjs.org/react-stores
+31 verbose request sending authorization for write operation
+32 info attempt registry request try #1 at 12:49:34 PM
+33 verbose request using bearer token for auth
+34 verbose request id a4ab612567134bd2
+35 http request PUT https://registry.npmjs.org/react-stores
+36 http 403 https://registry.npmjs.org/react-stores
+37 verbose headers { 'content-type': 'application/json',
+37 verbose headers   'cache-control': 'max-age=300',
+37 verbose headers   'content-length': '95',
+37 verbose headers   'accept-ranges': 'bytes',
+37 verbose headers   date: 'Wed, 08 Feb 2017 10:49:36 GMT',
+37 verbose headers   via: '1.1 varnish',
+37 verbose headers   connection: 'keep-alive',
+37 verbose headers   'x-served-by': 'cache-cdg8732-CDG',
+37 verbose headers   'x-cache': 'MISS',
+37 verbose headers   'x-cache-hits': '0',
+37 verbose headers   'x-timer': 'S1486550975.097156,VS0,VE1173',
+37 verbose headers   vary: 'Accept-Encoding' }
+38 verbose request invalidating /Users/Ruslan/.npm/registry.npmjs.org/react-stores on PUT
+39 error publish Failed PUT 403
+40 verbose stack Error: "You cannot publish over the previously published version 1.0.1." : react-stores
+40 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:302:12)
+40 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:290:14)
+40 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:210:14)
+40 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:187:22)
+40 verbose stack     at emitTwo (events.js:106:13)
+40 verbose stack     at Request.emit (events.js:191:7)
+40 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1044:10)
+40 verbose stack     at emitOne (events.js:96:13)
+40 verbose stack     at Request.emit (events.js:188:7)
+40 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:965:12)
+41 verbose statusCode 403
+42 verbose pkgid react-stores
+43 verbose cwd /Users/Ruslan/Documents/github/react-store
+44 error Darwin 16.1.0
+45 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
+46 error node v6.9.1
+47 error npm  v3.10.8
+48 error code E403
+49 error "You cannot publish over the previously published version 1.0.1." : react-stores
+50 error If you need help, you may report this error at:
+50 error     <https://github.com/npm/npm/issues>
+51 verbose exit [ 1, true ]
