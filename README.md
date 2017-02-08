@@ -119,14 +119,17 @@ CommonStore.store.setState({
 import {CommonStore} from "./store";
 
 export class CommonActions {
-	static increaseCounter(value:number):void {
-		CommonStore.store.setState({
-			counter: value
-		});
+	static increaseCounter(state:CommonStore.State):void {
+		CommonStore.store.setState(state);
 	}
 }
 
-CommonActions.increaseCounter(100500);
+// Note that you always have your store interface, you haven't lost typization consistency of your app like it always occurs in Flux/Redux apps
+let newState:CommonStore.State = {
+	counter: 100500
+}
+
+CommonActions.increaseCounter(newState);
 ```
 
 Also you can get store state values from everywhere in your app
