@@ -40,7 +40,7 @@ import {CommonStore} from "store.ts";
 interface Props {
     name: string
 }
-
+Ок
 interface State {
     counter: number
 }

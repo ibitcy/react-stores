@@ -1,6 +1,14 @@
 {
   "name": "react-stores",
   "version": "1.0.2",
+  "keywords": [
+    "react", 
+    "stores",
+    "reactive",
+    "flux",
+    "states",
+    "components"
+  ],
   "description": "React direct state stores",
   "main": "index.js",
   "scripts": {
