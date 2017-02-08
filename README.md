@@ -119,14 +119,14 @@ CommonStore.store.setState({
 import {CommonStore} from "./store";
 
 export class CommonActions {
-	static increaseCounter():void {
+	static increaseCounter(value:number):void {
 		CommonStore.store.setState({
-			counter: CommonStore.store.state.counter + 1
+			counter: value
 		});
 	}
 }
 
-CommonActions.increaseCounter();
+CommonActions.increaseCounter(100500);
 ```
 
 Also you can get store state values from everywhere in your app
