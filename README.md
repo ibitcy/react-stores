@@ -127,7 +127,7 @@ export class CommonActions {
 }
 
 // Note that you always have your store interface, you haven't lost typization consistency 
-// of your app like it always occurs in Flux/Redux apps in action/store communication
+// of your app like it always occurs in Flux/Redux apps in action -> store communication
 let newState:CommonStore.State = {
 	counter: 100500
 }
