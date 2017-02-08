@@ -87,8 +87,8 @@ export class App extends StoreComponent<Props, State, StoresState> {
 	            <p>Shared counter value: {this.stores.common.state.counter.toString()}</p>
                 <p>Local counter value: {this.state.counter.toString()}</p>
 
-                <button onClick={this.increaseCommon.bind(this)})}>Increase common counter value</button>
-                <button onClick={this.increaseLocal.bind(this)})}>Increase local counter value</button>
+                <button onClick={this.increaseCommon.bind(this)}>Increase common counter value</button>
+                <button onClick={this.increaseLocal.bind(this)}>Increase local counter value</button>
             </div>
         );
     }
