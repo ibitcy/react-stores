@@ -95,5 +95,5 @@ export class App extends StoreComponent<Props, State, StoresState> {
 }
 ```
 
-## ES5/5
+## ES5/6
 Usage example on [RunKit](https://runkit.com/589af3775af6a4001487d9de/589af3775af6a4001487d9df)
