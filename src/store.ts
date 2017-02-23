@@ -4,15 +4,29 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
     public stores: StoreState = {} as StoreState;
     private isStoreMounted: boolean = false;
 
-    abstract storeComponentDidMount(): void;
+    public storeComponentDidMount(): void {
+    
+    };
 
-    abstract storeComponentWillUnmount(): void;
+    public storeComponentWillUnmount(): void {
 
-    abstract storeComponentWillReceiveProps(nextProps:Props): void;
+    };
 
-    abstract storeComponentWillUpdate(nextProps:Props, nextState:State): void;
+    public storeComponentWillReceiveProps(nextProps:Props): void {
 
-    abstract storeComponentDidUpdate(prevProps:Props, prevState:State): void;
+    };
+
+    public storeComponentWillUpdate(nextProps:Props, nextState:State): void {
+
+    };
+
+    public storeComponentDidUpdate(prevProps:Props, prevState:State): void {
+
+    };
+
+    public shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean {
+        return true;
+    };
 
     constructor(stores: StoreState) {
         super();
@@ -47,6 +61,10 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 
     componentDidUpdate(prevProps:Props, prevState:State) {
         this.storeComponentDidUpdate(prevProps, prevState);
+    }
+
+    shouldComponentUpdate(nextProps:Props, nextState:State) {
+        return this.storeComponentDidUpdate(nextProps, nextState);
     }
 }
 
