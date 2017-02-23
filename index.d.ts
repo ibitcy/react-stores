@@ -14,7 +14,7 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
     componentWillReceiveProps(nextProps: Props): void;
     componentWillUpdate(nextProps: Props, nextState: State): void;
     componentDidUpdate(prevProps: Props, prevState: State): void;
-    shouldComponentUpdate(nextProps: Props, nextState: State): void;
+    shouldComponentUpdate(nextProps: Props, nextState: State): boolean;
 }
 export declare class Store<StoreState> {
     components: any[];

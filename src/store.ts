@@ -64,7 +64,7 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
     }
 
     shouldComponentUpdate(nextProps:Props, nextState:State) {
-        return this.storeComponentDidUpdate(nextProps, nextState);
+        return this.shouldStoreComponentUpdate(nextProps, nextState);
     }
 }
 
