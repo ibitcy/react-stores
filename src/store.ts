@@ -8,6 +8,12 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 
     abstract storeComponentWillUnmount(): void;
 
+    abstract storeComponentWillReceiveProps(nextProps:Props): void;
+
+    abstract storeComponentWillUpdate(nextProps:Props, nextState:State): void;
+
+    abstract storeComponentDidUpdate(prevProps:Props, prevState:State): void;
+
     constructor(stores: StoreState) {
         super();
 
@@ -29,6 +35,18 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
     componentWillUnmount() {
         this.isStoreMounted = false;
         this.storeComponentWillUnmount();
+    }
+
+    componentWillReceiveProps(nextProps:Props) {
+        this.storeComponentWillReceiveProps(nextProps);
+    }
+
+    componentWillUpdate(nextProps:Props, nextState:State) {
+        this.storeComponentWillUpdate(nextProps, nextState);
+    }
+
+    componentDidUpdate(prevProps:Props, prevState:State) {
+        this.storeComponentDidUpdate(prevProps, prevState);
     }
 }
 
