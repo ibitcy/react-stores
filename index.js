@@ -1,5 +1,4 @@
-var StoreComponent  = require('./lib');
-var Store  = require('./lib');
+const ReactStores = require('./lib/index');
 
-module.exports = StoreComponent;
-module.exports = Store;
+module.exports.StoreComponent = ReactStores.StoreComponent;
+module.exports.Store = ReactStores.Store;

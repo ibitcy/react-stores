@@ -2,7 +2,7 @@
   "name": "react-stores",
   "version": "1.1.6",
   "keywords": [
-    "react", 
+    "react",
     "stores",
     "reactive",
     "flux",
@@ -12,12 +12,19 @@
   "description": "React direct state stores",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc src/store.ts --jsx 'react' -d --outDir './' && mkdir -p ./lib && mv ./store.d.ts ./index.d.ts && mv ./store.js ./lib/index.js",
+    "test": "node_modules/.bin/mocha -w"
   },
   "author": "IBIT LTD.",
   "license": "MIT",
   "dependencies": {
     "react": "^15.4.2"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "react-dom": "^15.4.2",
+    "should": "^11.2.0",
+    "typescript": "^2.2.1"
   },
   "repository": {
     "type": "git",
