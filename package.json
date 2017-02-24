@@ -13,7 +13,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc src/store.ts --jsx 'react' -d --outDir './' && mkdir -p ./lib && mv ./store.d.ts ./index.d.ts && mv ./store.js ./lib/index.js",
-    "test": "node_modules/.bin/mocha -w"
+    "test": "node_modules/.bin/mocha"
   },
   "author": "IBIT LTD.",
   "license": "MIT",
