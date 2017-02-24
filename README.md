@@ -146,32 +146,32 @@ console.log(CommonStore.store.state.counter);
 
 ### StoreComponent lyfecycle
 ```typescript
-storeComponentDidMount()
+storeComponentDidMount(): void
 ```
 
 ```typescript
-storeComponentWillUnmount()
+storeComponentWillUnmount(): void
 ```
 
 ```typescript
-public storeComponentWillReceiveProps(nextProps:Props): void
+storeComponentWillReceiveProps(nextProps:Props): void
 ```
 
 ```typescript
-public storeComponentWillUpdate(nextProps:Props, nextState:State): void
+storeComponentWillUpdate(nextProps:Props, nextState:State): void
 ```
 
 ```typescript
-public storeComponentDidUpdate(prevProps:Props, prevState:State): void
+storeComponentDidUpdate(prevProps:Props, prevState:State): void
 ```
 
 ```typescript
-public shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean
+shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean
 ```
 
 ### Store
 ```typescript
-public setState(newState: StoreState): void
+setState(newState: StoreState): void
 ```
 
 ## ES5/6
