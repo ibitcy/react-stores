@@ -1,8 +1,8 @@
 ![react-stores](https://ibitcy.github.io/react-stores/react-stores.svg)
 
 # react-stores
-Shared states for React.js (a flux-way shared stores without actions and dispatchers).
 [![Build Status](https://travis-ci.org/ibitcy/react-stores.svg?branch=master)](https://travis-ci.org/ibitcy/react-stores)
+Shared states for React.js (a flux-way shared stores without actions and dispatchers).
 
 
 ## How to install
