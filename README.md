@@ -2,6 +2,7 @@
 
 # react-stores
 [![Build Status](https://travis-ci.org/ibitcy/react-stores.svg?branch=master)](https://travis-ci.org/ibitcy/react-stores)
+[![npm version](https://badge.fury.io/js/react-stores.svg)](https://badge.fury.io/js/react-stores)
 
 Shared states for React.js (a flux-way shared stores without actions and dispatchers).
 
