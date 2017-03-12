@@ -173,6 +173,15 @@ storeComponentDidUpdate(prevProps:Props, prevState:State): void
 shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean
 ```
 
+```typescript
+storeComponentStoreWillUpdate(): void
+```
+
+```typescript
+storeComponentStoreDidUpdate(): void
+```
+
+
 ### Store
 ```typescript
 setState(newState: StoreState): void

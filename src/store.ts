@@ -3,30 +3,38 @@ import * as React from 'react';
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     public stores: StoreState = {} as StoreState;
     private isStoreMounted: boolean = false;
-    
+
     public storeComponentDidMount(): void {
-    
-    };
+
+    }
 
     public storeComponentWillUnmount(): void {
 
-    };
+    }
 
-    public storeComponentWillReceiveProps(nextProps:Props): void {
+    public storeComponentWillReceiveProps(nextProps: Props): void {
 
-    };
+    }
 
-    public storeComponentWillUpdate(nextProps:Props, nextState:State): void {
+    public storeComponentWillUpdate(nextProps: Props, nextState: State): void {
 
-    };
+    }
 
-    public storeComponentDidUpdate(prevProps:Props, prevState:State): void {
+    public storeComponentDidUpdate(prevProps: Props, prevState: State): void {
 
-    };
+    }
 
-    public shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean {
+    public shouldStoreComponentUpdate(nextProps: Props, nextState: State): boolean {
         return true;
-    };
+    }
+
+    public storeComponentStoreWillUpdate(): void {
+        
+    }
+
+    public storeComponentStoreDidUpdate(): void {
+        
+    }
 
     constructor(stores: StoreState) {
         super();
@@ -41,29 +49,29 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
         }
     }
 
-    componentDidMount() {
+    public componentDidMount(): void {
         this.isStoreMounted = true;
         this.storeComponentDidMount();
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount(): void {
         this.isStoreMounted = false;
         this.storeComponentWillUnmount();
     }
 
-    componentWillReceiveProps(nextProps:Props) {
+    public componentWillReceiveProps(nextProps: Props): void {
         this.storeComponentWillReceiveProps(nextProps);
     }
 
-    componentWillUpdate(nextProps:Props, nextState:State) {
+    public componentWillUpdate(nextProps: Props, nextState: State): void {
         this.storeComponentWillUpdate(nextProps, nextState);
     }
 
-    componentDidUpdate(prevProps:Props, prevState:State) {
+    public componentDidUpdate(prevProps: Props, prevState: State): void {
         this.storeComponentDidUpdate(prevProps, prevState);
     }
 
-    shouldComponentUpdate(nextProps:Props, nextState:State) {
+    public shouldComponentUpdate(nextProps: Props, nextState: State) {
         return this.shouldStoreComponentUpdate(nextProps, nextState);
     }
 }
@@ -99,11 +107,9 @@ export class Store<StoreState> {
     private update(prevStateCopy: StoreState, nextStateCopy: StoreState): void {
         this.components.forEach((component) => {
             if (component.isStoreMounted) {
-                let props = (<any>Object).assign({}, component.props);
-
-                component.storeComponentWillUpdate(nextStateCopy, props);
+                component.storeComponentStoreWillUpdate();
                 component.forceUpdate();
-                component.storeComponentDidUpdate(prevStateCopy, props);
+                component.storeComponentStoreDidUpdate();
             }
         });
     }
