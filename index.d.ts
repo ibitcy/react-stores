@@ -21,5 +21,5 @@ export declare class Store<StoreState> {
     state: StoreState;
     constructor(state: StoreState);
     setState(newState: StoreState): void;
-    private update();
+    private update(prevStateCopy, nextStateCopy);
 }

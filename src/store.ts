@@ -3,7 +3,7 @@ import * as React from 'react';
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     public stores: StoreState = {} as StoreState;
     private isStoreMounted: boolean = false;
-
+    
     public storeComponentDidMount(): void {
     
     };
@@ -78,6 +78,8 @@ export class Store<StoreState> {
 
     public setState(newState: StoreState): void {
         let updated: boolean = false;
+        let prevStateCopy: StoreState = (<any>Object).assign({}, this.state);
+        let nextStateCopy: StoreState = null;
 
         for (let property in newState) {
             if (newState.hasOwnProperty(property) && this.state.hasOwnProperty(property)) {
@@ -89,14 +91,19 @@ export class Store<StoreState> {
         }
 
         if (updated) {
-            this.update();
+            nextStateCopy = (<any>Object).assign({}, this.state);
+            this.update(prevStateCopy, nextStateCopy);
         }
     }
 
-    private update(): void {
+    private update(prevStateCopy: StoreState, nextStateCopy: StoreState): void {
         this.components.forEach((component) => {
             if (component.isStoreMounted) {
+                let props = (<any>Object).assign({}, component.props);
+
+                component.storeComponentWillUpdate(nextStateCopy, props);
                 component.forceUpdate();
+                component.storeComponentDidUpdate(prevStateCopy, props);
             }
         });
     }
