@@ -59,18 +59,6 @@ export class App extends StoreComponent<Props, State, StoresState> {
             common: CommonStore.store
         });
     }
-    
-    // This method is required by abstract method in StoreComponent
-    //it works as default React.Component.componentDidMount()
-    storeComponentDidMount() {
-
-    }
-    
-    // This method is required by abstract method in StoreComponent
-    // it works as default React.Component.componentWillUnmount()
-    storeComponentWillUnmount() {
-
-    }
 
     private increaseCommon():void {
         // You can mutate stores as local component state values
