@@ -64,7 +64,7 @@ export class App extends StoreComponent<Props, State, StoresState> {
         // You can mutate stores as local component state values
         this.stores.common.setState({
             counter: this.stores.common.state.counter + 1
-        };
+        });
     }
 
     private increaseLocal():void {
