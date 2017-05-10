@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import * as React from 'react';
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     stores: StoreState;
