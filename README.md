@@ -68,7 +68,7 @@ export class App extends StoreComponent<Props, State, StoresState> {
     }
 
     private increaseLocal():void {
-        // You can use local state as natural React.Component
+        // Also you can use local state as natural React.Component
         this.setState({
             counter: this.state.counter + 1
         });
