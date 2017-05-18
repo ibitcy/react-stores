@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: './demo/src/app.tsx',
@@ -48,5 +49,17 @@ module.exports = {
 				}]
 			}
 		]
-	}
+	},
+
+	plugins: [
+		new CopyWebpackPlugin([
+			{
+				from: path.join(__dirname, 'src/index.html'),
+				to: 'index.html'
+			}
+		], {
+			debug: false,
+			copyUnmodified: false
+		}),
+	]
 };

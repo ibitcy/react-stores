@@ -6,11 +6,20 @@
 
 Shared states for React.js (a flux-way shared stores without actions and dispatchers).
 
-
 ## How to install
-```
-npm i react-stores --save
-```
+`yarn add react-stores` or `npm i react-stores --save`
+
+## Demo
+1. Clone this repo
+2. `cd` into it
+3. `yarn install` or `npm i`
+4. `npm run demo`
+5. `localhost:9000` in your favorite browser
+6. ...
+7. Profit!
+
+## Tests
+`npm run test`
 
 ## How to use
 
@@ -26,7 +35,7 @@ export namespace CommonStore {
     }
 
     // Store's state initial values
-    let initialState: State = {
+    const initialState: State = {
         counter: 0
     };
 
@@ -39,7 +48,7 @@ Then you need to create a `StoreComponent` that will use store singleton
 // component.tsx
 import * as React from "react";
 import {StoreComponent, Store} from "react-stores";
-import {CommonStore} from "./store.ts";
+import {CommonStore} from "./store";
 
 interface Props {
     name: string

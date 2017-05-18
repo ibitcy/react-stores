@@ -1,11 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import "./index.html";
-
-import {Test} from './test';
+import { Test } from './test';
+import { Counter } from './counter';
 
 ReactDOM.render(
-	<Test/>,
+	<main>
+		<h1>React stores test</h1>
+		<Test/>
+		<Counter/>
+	</main>,
 	document.getElementById('app')
 );

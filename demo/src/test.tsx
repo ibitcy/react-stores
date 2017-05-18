@@ -1,5 +1,9 @@
 import * as React from 'react';
 
+import { CommonStore } from './store';
+import { CommonActions } from './actions';
+import { Store, StoreComponent } from '../../src/store';
+
 interface Props {
 
 }
@@ -8,7 +12,17 @@ interface State {
 	counter: number
 }
 
-export class Test extends React.Component <Props, State> {
+interface StoresState {
+	common: Store<CommonStore.State>
+}
+
+export class Test extends StoreComponent<Props, State, StoresState> {
+	constructor() {
+		super({
+			common: CommonStore.store
+		});
+	}
+
 	state: State = {
 		counter: 0
 	};
@@ -22,10 +36,23 @@ export class Test extends React.Component <Props, State> {
 	public render() {
 		return (
 			<div>
-				<p>Your likes is: {this.state.counter.toString()}</p>
+				<h2>
+					Test component
+				</h2>
+				
+				<p>Local state counter: {this.state.counter.toString()}</p>
+				<p>Shared state counter: {this.stores.common.state.counter.toString()}</p>
 
 				<button onClick={this.plusOne.bind(this)}>
-					Like +1
+					Local +1
+				</button>
+
+				<button onClick={() => { CommonActions.toggleFooBar(); }}>
+					Shred +1
+				</button>
+
+				<button onClick={() => { CommonActions.toggleFooBar(); }}>
+					{this.stores.common.state.foo} toggle
 				</button>
 			</div>
 		);
