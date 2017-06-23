@@ -187,7 +187,7 @@ setState(newState: StoreState): void
 ## ES5/6
 Usage example on [RunKit](https://runkit.com/589af3775af6a4001487d9de/589af3775af6a4001487d9df)
 
-##License
+## License
 
 The MIT License (MIT)
 
