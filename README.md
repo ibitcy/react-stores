@@ -18,6 +18,8 @@ Shared states for React.js (a flux-way shared stores without actions and dispatc
 6. ...
 7. Profit!
 
+[Online demo](https://ibitcy.github.io/react-stores/)
+
 ## Tests
 `npm run test`
 
