@@ -47,7 +47,7 @@ export class Test extends StoreComponent<Props, State, StoresState> {
 					Local +1
 				</button>
 
-				<button onClick={() => { CommonActions.toggleFooBar(); }}>
+				<button onClick={() => { CommonActions.increaseCounter(); }}>
 					Shred +1
 				</button>
 
