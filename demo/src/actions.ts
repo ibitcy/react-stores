@@ -1,7 +1,7 @@
 import { CommonStore } from './store';
 
 export class CommonActions {
-    static increaseCounter(): void {
+    public static increaseCounter(): void {
         let newState: CommonStore.State = {
             counter: CommonStore.store.state.counter + 1
         } as CommonStore.State;
@@ -9,11 +9,15 @@ export class CommonActions {
         CommonStore.store.setState(newState);
     }
 
-    static toggleFooBar(): void {
+    public static toggleFooBar(): void {
         let newState: CommonStore.State = {
             foo: (CommonStore.store.state.foo === 'foo') ? 'bar' : 'foo'
         } as CommonStore.State;
 
         CommonStore.store.setState(newState);
+    }
+
+    public static reset(): void {
+        CommonStore.store.resetState();
     }
 }

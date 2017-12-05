@@ -1,6 +1,8 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
+		"traceResolution": true,
+		"declaration": true,
 		"jsx": "react",
 		"target": "es5",
 		"lib": [

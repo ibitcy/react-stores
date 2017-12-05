@@ -22,7 +22,10 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
 export declare class Store<StoreState> {
     components: any[];
     state: StoreState;
+    private initialState;
     constructor(state: StoreState);
+    private copyState(state);
     setState(newState: StoreState): void;
+    resetState(): void;
     private update(prevStateCopy, nextStateCopy);
 }

@@ -24,7 +24,6 @@ Shared states for React.js (a flux-way shared stores without actions and dispatc
 `npm run test`
 
 ## How to use
-
 First you need to create a `Store` singleton
 ```typescript
 // store.ts
@@ -184,6 +183,10 @@ storeComponentStoreDidUpdate(): void
 ### Store
 ```typescript
 setState(newState: StoreState): void
+```
+
+```typescript
+resetState(): void
 ```
 
 ## ES5/6

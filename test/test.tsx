@@ -28,25 +28,22 @@ describe('testStoreState', () => {
         done();
     });
 
-    it('component rendering', () => {
-        let renderer = ReactTestUtils.createRenderer();
+    it('foo should be reseted to foo', (done) => {
+        CommonActions.toggleFooBar();
+        CommonActions.reset();
 
-		let testComponent = (
-            <Test />
-        );
+        expect(CommonStore.store.state.foo).toEqual('foo');
+        done();
+    });
 
-        renderer.render(testComponent);
+    it('counter should be reseted to 0', (done) => {
+        for (let i = 0; i < 4; i++) {
+            CommonActions.increaseCounter();
+        }
 
-        expect(renderer.getRenderOutput())
-			.toIncludeJSX(
-                <div>
-                    <h2>Test component</h2>
-                    <p>Local state counter: 0</p>
-                    <p>Shared state counter: 4</p>
-                    <button onClick={function noRefCheck() {}}>Local +1</button>
-                    <button onClick={function noRefCheck() {}}>Shred +1</button>
-                    <button onClick={function noRefCheck() {}}>bar toggle</button>
-                </div>
-            )
-	});
+        CommonActions.reset();
+
+        expect(CommonStore.store.state.counter).toEqual(0);
+        done();
+    });
 });

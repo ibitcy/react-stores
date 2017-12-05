@@ -79,9 +79,15 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 export class Store<StoreState> {
     public components = [];
     public state: StoreState = null;
+    private initialState: StoreState = null;
 
     constructor(state: StoreState) {
-        this.state = state;
+        this.state = this.copyState(state);
+        this.initialState = this.copyState(state);
+    }
+
+    private copyState(state: StoreState): StoreState {
+        return (<any>Object).assign({}, state);
     }
 
     public setState(newState: StoreState): void {
@@ -99,9 +105,13 @@ export class Store<StoreState> {
         }
 
         if (updated) {
-            nextStateCopy = (<any>Object).assign({}, this.state);
+            nextStateCopy = this.copyState(this.state);
             this.update(prevStateCopy, nextStateCopy);
         }
+    }
+
+    public resetState(): void {
+        this.setState(this.initialState);
     }
 
     private update(prevStateCopy: StoreState, nextStateCopy: StoreState): void {
