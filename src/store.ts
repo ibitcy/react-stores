@@ -90,10 +90,6 @@ export class Store<StoreState> {
         return (<any>Object).assign({}, state);
     }
 
-    private compareObject(obj1: Object, obj2: Object): boolean {
-        return JSON.stringify(obj1) === JSON.stringify(obj2);  
-    }
-
     private check(property1: any, property2: any): boolean {
         if(property1 === null && (property1 !== property2)) {
             return false;
