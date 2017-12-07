@@ -87,7 +87,7 @@ export class Store<StoreState> {
     }
 
     private copyState(state: StoreState): StoreState {
-        return JSON.parse(JSON.stringify(state));
+        return (<any>Object).assign({}, this.state);
     }
 
     private compareObject(obj1: Object, obj2: Object): boolean {
