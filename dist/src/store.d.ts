@@ -25,6 +25,8 @@ export declare class Store<StoreState> {
     private initialState;
     constructor(state: StoreState);
     private copyState(state);
+    private compareObject(obj1, obj2);
+    private check(property1, property2);
     setState(newState: StoreState): void;
     resetState(): void;
     private update(prevStateCopy, nextStateCopy);

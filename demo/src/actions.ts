@@ -20,4 +20,15 @@ export class CommonActions {
     public static reset(): void {
         CommonStore.store.resetState();
     }
+
+    public static setSettings(bar: number, baz: number): void {
+        CommonStore.store.setState({
+            settings: {
+                foo: {
+                    bar: bar
+                },
+                baz: baz
+            }
+        } as CommonStore.State);
+    }
 }

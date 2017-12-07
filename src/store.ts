@@ -87,17 +87,37 @@ export class Store<StoreState> {
     }
 
     private copyState(state: StoreState): StoreState {
-        return (<any>Object).assign({}, state);
+        return JSON.parse(JSON.stringify(state));
+    }
+
+    private compareObject(obj1: Object, obj2: Object): boolean {
+        return JSON.stringify(obj1) === JSON.stringify(obj2);  
+    }
+
+    private check(property1: any, property2: any): boolean {
+        switch (property1.constructor) {
+            case Array :
+            case Object :
+            case Function : {
+                return JSON.stringify(property1) === JSON.stringify(property2);
+            }
+            case Number :
+            case String : 
+            case Boolean : 
+            default : {
+                return property1 === property2;
+            }
+        }
     }
 
     public setState(newState: StoreState): void {
-        let updated: boolean = false;
-        let prevStateCopy: StoreState = (<any>Object).assign({}, this.state);
+        let prevStateCopy: StoreState = this.copyState(this.state);
         let nextStateCopy: StoreState = null;
+        let updated: boolean = false;
 
         for (let property in newState) {
             if (newState.hasOwnProperty(property) && this.state.hasOwnProperty(property)) {
-                if (this.state[property] !== newState[property]) {
+                if (!this.check(this.state[property], newState[property])) {
                     this.state[property] = newState[property];
                     updated = true;
                 }

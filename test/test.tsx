@@ -46,4 +46,26 @@ describe('testStoreState', () => {
         expect(CommonStore.store.state.counter).toEqual(0);
         done();
     });
+
+    it('bar should be setted to 100', (done) => {
+        CommonActions.setSettings(100, 200);
+
+        expect(CommonStore.store.state.settings.foo.bar).toEqual(100);
+        done();
+    });
+
+    it('baz should be setted to 200', (done) => {
+        CommonActions.setSettings(100, 200);
+
+        expect(CommonStore.store.state.settings.baz).toEqual(200);
+        done();
+    });
+
+    it('bar should be reseted to 1', (done) => {
+        CommonActions.setSettings(100, 200);
+        CommonStore.store.resetState();
+
+        expect(CommonStore.store.state.settings.foo.bar).toEqual(1);
+        done();
+    });
 });

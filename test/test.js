@@ -1645,7 +1645,13 @@ var CommonStore;
     // Store's state initial values
     var initialState = {
         counter: 0,
-        foo: 'foo'
+        foo: 'foo',
+        settings: {
+            foo: {
+                bar: 1
+            },
+            baz: 2
+        }
     };
     CommonStore.store = new store_1.Store(initialState);
 })(CommonStore = exports.CommonStore || (exports.CommonStore = {}));
@@ -3362,6 +3368,22 @@ describe('testStoreState', function () {
         expect(store_1.CommonStore.store.state.counter).toEqual(0);
         done();
     });
+    it('bar should be setted to 100', function (done) {
+        actions_1.CommonActions.setSettings(100, 200);
+        expect(store_1.CommonStore.store.state.settings.foo.bar).toEqual(100);
+        done();
+    });
+    it('baz should be setted to 200', function (done) {
+        actions_1.CommonActions.setSettings(100, 200);
+        expect(store_1.CommonStore.store.state.settings.baz).toEqual(200);
+        done();
+    });
+    it('bar should be reseted to 1', function (done) {
+        actions_1.CommonActions.setSettings(100, 200);
+        store_1.CommonStore.store.resetState();
+        expect(store_1.CommonStore.store.state.settings.foo.bar).toEqual(1);
+        done();
+    });
 });
 
 
@@ -3390,6 +3412,16 @@ var CommonActions = /** @class */ (function () {
     };
     CommonActions.reset = function () {
         store_1.CommonStore.store.resetState();
+    };
+    CommonActions.setSettings = function (bar, baz) {
+        store_1.CommonStore.store.setState({
+            settings: {
+                foo: {
+                    bar: bar
+                },
+                baz: baz
+            }
+        });
     };
     return CommonActions;
 }());
@@ -3478,15 +3510,37 @@ var Store = /** @class */ (function () {
         this.initialState = this.copyState(state);
     }
     Store.prototype.copyState = function (state) {
-        return Object.assign({}, state);
+        return JSON.parse(JSON.stringify(state));
+    };
+    Store.prototype.compareObject = function (obj1, obj2) {
+        return JSON.stringify(obj1) === JSON.stringify(obj2);
+    };
+    Store.prototype.check = function (property1, property2) {
+        switch (property1.constructor) {
+            case Array:
+            case Object:
+            case Function: {
+                return JSON.stringify(property1) === JSON.stringify(property2);
+            }
+            case Number:
+            case String:
+            case Boolean:
+            default: {
+                return property1 === property2;
+            }
+        }
     };
     Store.prototype.setState = function (newState) {
-        var updated = false;
-        var prevStateCopy = Object.assign({}, this.state);
+        var prevStateCopy = this.copyState(this.state);
         var nextStateCopy = null;
+        var updated = false;
         for (var property in newState) {
             if (newState.hasOwnProperty(property) && this.state.hasOwnProperty(property)) {
-                if (this.state[property] !== newState[property]) {
+                console.time('a');
+                this.check(this.state[property], newState[property]);
+                console.timeEnd('a');
+                console.log(property);
+                if (!this.check(this.state[property], newState[property])) {
                     this.state[property] = newState[property];
                     updated = true;
                 }
