@@ -98,7 +98,7 @@ export class Store<StoreState> {
         } else {
             switch (property1.constructor) {
                 case Array :
-                case Object :
+                case (<any>Object) :
                 case Function : {
                     return JSON.stringify(property1) === JSON.stringify(property2);
                 }
@@ -113,8 +113,6 @@ export class Store<StoreState> {
     }
 
     public setState(newState: StoreState): void {
-        let prevStateCopy: StoreState = (<any>Object).assign({}, this.state);
-        let nextStateCopy: StoreState = null;
         let updated: boolean = false;
 
         for (let property in newState) {
@@ -127,8 +125,7 @@ export class Store<StoreState> {
         }
 
         if (updated) {
-            nextStateCopy = nextStateCopy = (<any>Object).assign({}, this.state);;
-            this.update(prevStateCopy, nextStateCopy);
+            this.update();
         }
     }
 
@@ -136,7 +133,7 @@ export class Store<StoreState> {
         this.setState(this.initialState);
     }
 
-    private update(prevStateCopy: StoreState, nextStateCopy: StoreState): void {
+    private update(): void {
         this.components.forEach((component) => {
             if (component.isStoreMounted) {
                 component.storeComponentStoreWillUpdate();

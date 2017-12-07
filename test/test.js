@@ -3548,10 +3548,7 @@ var Store = /** @class */ (function () {
         this.initialState = this.copyState(state);
     }
     Store.prototype.copyState = function (state) {
-        return JSON.parse(JSON.stringify(state));
-    };
-    Store.prototype.compareObject = function (obj1, obj2) {
-        return JSON.stringify(obj1) === JSON.stringify(obj2);
+        return Object.assign({}, state);
     };
     Store.prototype.check = function (property1, property2) {
         if (property1 === null && (property1 !== property2)) {
@@ -3577,8 +3574,6 @@ var Store = /** @class */ (function () {
         }
     };
     Store.prototype.setState = function (newState) {
-        var prevStateCopy = this.copyState(this.state);
-        var nextStateCopy = null;
         var updated = false;
         for (var property in newState) {
             if (newState.hasOwnProperty(property) && this.state.hasOwnProperty(property)) {
@@ -3589,14 +3584,13 @@ var Store = /** @class */ (function () {
             }
         }
         if (updated) {
-            nextStateCopy = this.copyState(this.state);
-            this.update(prevStateCopy, nextStateCopy);
+            this.update();
         }
     };
     Store.prototype.resetState = function () {
         this.setState(this.initialState);
     };
-    Store.prototype.update = function (prevStateCopy, nextStateCopy) {
+    Store.prototype.update = function () {
         this.components.forEach(function (component) {
             if (component.isStoreMounted) {
                 component.storeComponentStoreWillUpdate();
