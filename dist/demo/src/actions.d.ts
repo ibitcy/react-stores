@@ -3,4 +3,5 @@ export declare class CommonActions {
     static toggleFooBar(): void;
     static reset(): void;
     static setSettings(bar: number, baz: number): void;
+    static setNull(obj: null): void;
 }

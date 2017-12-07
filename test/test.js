@@ -1644,6 +1644,7 @@ var CommonStore;
 (function (CommonStore) {
     // Store's state initial values
     var initialState = {
+        nullObj: null,
         counter: 0,
         foo: 'foo',
         settings: {
@@ -3384,6 +3385,11 @@ describe('testStoreState', function () {
         expect(store_1.CommonStore.store.state.settings.foo.bar).toEqual(1);
         done();
     });
+    it('nullObj should be null', function (done) {
+        actions_1.CommonActions.setNull(null);
+        expect(store_1.CommonStore.store.state.nullObj).toEqual(null);
+        done();
+    });
 });
 
 
@@ -3421,6 +3427,11 @@ var CommonActions = /** @class */ (function () {
                 },
                 baz: baz
             }
+        });
+    };
+    CommonActions.setNull = function (obj) {
+        store_1.CommonStore.store.setState({
+            nullObj: obj
         });
     };
     return CommonActions;
@@ -3516,17 +3527,25 @@ var Store = /** @class */ (function () {
         return JSON.stringify(obj1) === JSON.stringify(obj2);
     };
     Store.prototype.check = function (property1, property2) {
-        switch (property1.constructor) {
-            case Array:
-            case Object:
-            case Function: {
-                return JSON.stringify(property1) === JSON.stringify(property2);
-            }
-            case Number:
-            case String:
-            case Boolean:
-            default: {
-                return property1 === property2;
+        if (property1 === null && (property1 !== property2)) {
+            return true;
+        }
+        else if (property1 === null && (property1 === property2)) {
+            return false;
+        }
+        else {
+            switch (property1.constructor) {
+                case Array:
+                case Object:
+                case Function: {
+                    return JSON.stringify(property1) === JSON.stringify(property2);
+                }
+                case Number:
+                case String:
+                case Boolean:
+                default: {
+                    return property1 === property2;
+                }
             }
         }
     };
@@ -3536,10 +3555,6 @@ var Store = /** @class */ (function () {
         var updated = false;
         for (var property in newState) {
             if (newState.hasOwnProperty(property) && this.state.hasOwnProperty(property)) {
-                console.time('a');
-                this.check(this.state[property], newState[property]);
-                console.timeEnd('a');
-                console.log(property);
                 if (!this.check(this.state[property], newState[property])) {
                     this.state[property] = newState[property];
                     updated = true;

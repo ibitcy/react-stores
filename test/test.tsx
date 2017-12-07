@@ -68,4 +68,11 @@ describe('testStoreState', () => {
         expect(CommonStore.store.state.settings.foo.bar).toEqual(1);
         done();
     });
+
+    it('nullObj should be null', (done) => {
+        CommonActions.setNull(null);
+
+        expect(CommonStore.store.state.nullObj).toEqual(null);
+        done();
+    });
 });

@@ -31,4 +31,10 @@ export class CommonActions {
             }
         } as CommonStore.State);
     }
+
+    public static setNull(obj: null) {
+        CommonStore.store.setState({
+            nullObj: obj
+        } as CommonStore.State);
+    }
 }

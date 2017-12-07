@@ -1,6 +1,7 @@
 import { Store } from '../../src/store';
 export declare namespace CommonStore {
     interface State {
+        nullObj: null;
         counter: number;
         foo: string;
         settings: {

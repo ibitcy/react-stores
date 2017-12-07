@@ -3,8 +3,9 @@ import {Store} from '../../src/store';
 export namespace CommonStore {
     // State interface
     export interface State {
-        counter: number,
-        foo: string,
+        nullObj: null
+        counter: number
+        foo: string
         settings: {
             foo: {
                 bar: number
@@ -15,6 +16,7 @@ export namespace CommonStore {
  
     // Store's state initial values
     const initialState: State = {
+        nullObj: null,
         counter: 0,
         foo: 'foo',
         settings: {

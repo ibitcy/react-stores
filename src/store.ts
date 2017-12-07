@@ -95,17 +95,23 @@ export class Store<StoreState> {
     }
 
     private check(property1: any, property2: any): boolean {
-        switch (property1.constructor) {
-            case Array :
-            case Object :
-            case Function : {
-                return JSON.stringify(property1) === JSON.stringify(property2);
-            }
-            case Number :
-            case String : 
-            case Boolean : 
-            default : {
-                return property1 === property2;
+        if(property1 === null && (property1 !== property2)) {
+            return true;
+        } else if(property1 === null && (property1 === property2)) {
+            return false;
+        } else {
+            switch (property1.constructor) {
+                case Array :
+                case Object :
+                case Function : {
+                    return JSON.stringify(property1) === JSON.stringify(property2);
+                }
+                case Number :
+                case String : 
+                case Boolean : 
+                default : {
+                    return property1 === property2;
+                }
             }
         }
     }
