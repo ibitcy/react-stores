@@ -87,7 +87,7 @@ export class Store<StoreState> {
     }
 
     private copyState(state: StoreState): StoreState {
-        return (<any>Object).assign({}, this.state);
+        return (<any>Object).assign({}, state);
     }
 
     private compareObject(obj1: Object, obj2: Object): boolean {
@@ -117,7 +117,7 @@ export class Store<StoreState> {
     }
 
     public setState(newState: StoreState): void {
-        let prevStateCopy: StoreState = this.copyState(this.state);
+        let prevStateCopy: StoreState = (<any>Object).assign({}, this.state);
         let nextStateCopy: StoreState = null;
         let updated: boolean = false;
 
@@ -131,7 +131,7 @@ export class Store<StoreState> {
         }
 
         if (updated) {
-            nextStateCopy = this.copyState(this.state);
+            nextStateCopy = nextStateCopy = (<any>Object).assign({}, this.state);;
             this.update(prevStateCopy, nextStateCopy);
         }
     }
