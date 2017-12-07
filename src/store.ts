@@ -96,9 +96,9 @@ export class Store<StoreState> {
 
     private check(property1: any, property2: any): boolean {
         if(property1 === null && (property1 !== property2)) {
-            return true;
-        } else if(property1 === null && (property1 === property2)) {
             return false;
+        } else if(property1 === null && (property1 === property2)) {
+            return true;
         } else {
             switch (property1.constructor) {
                 case Array :
