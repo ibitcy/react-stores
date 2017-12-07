@@ -15,7 +15,7 @@ export namespace CommonStore {
     }
  
     // Store's state initial values
-    const initialState: State = {
+    export const initialState: State = {
         nullObj: null,
         counter: 0,
         foo: 'foo',

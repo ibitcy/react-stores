@@ -75,4 +75,37 @@ describe('testStoreState', () => {
         expect(CommonStore.store.state.nullObj).toEqual(null);
         done();
     });
+
+    it('Store init test', (done) => {
+        let result = JSON.stringify(CommonStore.store.state);
+        let etalon = JSON.stringify(CommonStore.initialState);
+
+        expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('Store data', (done) => {
+        for (let i = 0; i < 4; i++) {
+            CommonActions.increaseCounter();
+        }
+
+        CommonActions.setSettings(100, 200);
+        CommonActions.toggleFooBar();
+
+        let result = JSON.stringify(CommonStore.store.state);
+        let etalon = JSON.stringify({
+            nullObj: null,
+            counter: 4,
+            foo: 'bar',
+            settings: {
+                foo: {
+                    bar: 100
+                },
+                baz: 200
+            }
+        });
+
+        expect(result).toEqual(etalon);
+        done();
+    });
 });

@@ -1643,7 +1643,7 @@ var store_1 = __webpack_require__(37);
 var CommonStore;
 (function (CommonStore) {
     // Store's state initial values
-    var initialState = {
+    CommonStore.initialState = {
         nullObj: null,
         counter: 0,
         foo: 'foo',
@@ -1654,7 +1654,7 @@ var CommonStore;
             baz: 2
         }
     };
-    CommonStore.store = new store_1.Store(initialState);
+    CommonStore.store = new store_1.Store(CommonStore.initialState);
 })(CommonStore = exports.CommonStore || (exports.CommonStore = {}));
 
 
@@ -3388,6 +3388,33 @@ describe('testStoreState', function () {
     it('nullObj should be null', function (done) {
         actions_1.CommonActions.setNull(null);
         expect(store_1.CommonStore.store.state.nullObj).toEqual(null);
+        done();
+    });
+    it('Store init test', function (done) {
+        var result = JSON.stringify(store_1.CommonStore.store.state);
+        var etalon = JSON.stringify(store_1.CommonStore.initialState);
+        expect(result).toEqual(etalon);
+        done();
+    });
+    it('Store data', function (done) {
+        for (var i = 0; i < 4; i++) {
+            actions_1.CommonActions.increaseCounter();
+        }
+        actions_1.CommonActions.setSettings(100, 200);
+        actions_1.CommonActions.toggleFooBar();
+        var result = JSON.stringify(store_1.CommonStore.store.state);
+        var etalon = JSON.stringify({
+            nullObj: null,
+            counter: 4,
+            foo: 'bar',
+            settings: {
+                foo: {
+                    bar: 100
+                },
+                baz: 200
+            }
+        });
+        expect(result).toEqual(etalon);
         done();
     });
 });

@@ -11,5 +11,6 @@ export declare namespace CommonStore {
             baz: number;
         };
     }
+    const initialState: State;
     let store: Store<State>;
 }
