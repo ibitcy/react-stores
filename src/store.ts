@@ -133,7 +133,7 @@ export class Store<StoreState> {
         this.setState(this.initialState);
     }
 
-    private update(): void {
+    public update(): void {
         this.components.forEach((component) => {
             if (component.isStoreMounted) {
                 component.storeComponentStoreWillUpdate();

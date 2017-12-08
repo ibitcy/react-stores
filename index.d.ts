@@ -28,5 +28,5 @@ export declare class Store<StoreState> {
     private check(property1, property2);
     setState(newState: StoreState): void;
     resetState(): void;
-    private update();
+    update(): void;
 }
