@@ -25,6 +25,7 @@ export declare class Store<StoreState> {
     private initialState;
     constructor(state: StoreState);
     private copyState(state);
+    private isCircular(obj);
     private check(property1, property2);
     setState(newState: StoreState): void;
     resetState(): void;
