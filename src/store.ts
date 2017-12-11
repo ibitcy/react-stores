@@ -90,6 +90,12 @@ export class Store<StoreState> {
         return (<any>Object).assign({}, state);
     }
 
+    private isCircular(obj: any): boolean {
+        try {JSON.stringify(obj)}
+        catch (e) {return true}
+        return false;
+    }
+
     private check(property1: any, property2: any): boolean {
         if(property1 === null && (property1 !== property2)) {
             return false;
@@ -100,7 +106,11 @@ export class Store<StoreState> {
                 case Array :
                 case (<any>Object) :
                 case Function : {
-                    return JSON.stringify(property1) === JSON.stringify(property2);
+                    if(this.isCircular(property1)) {
+                        return false;
+                    } else {
+                        return JSON.stringify(property1) === JSON.stringify(property2);
+                    }
                 }
                 case Number :
                 case String : 

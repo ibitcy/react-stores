@@ -3550,6 +3550,15 @@ var Store = /** @class */ (function () {
     Store.prototype.copyState = function (state) {
         return Object.assign({}, state);
     };
+    Store.prototype.isCircular = function (obj) {
+        try {
+            JSON.stringify(obj);
+        }
+        catch (e) {
+            return true;
+        }
+        return false;
+    };
     Store.prototype.check = function (property1, property2) {
         if (property1 === null && (property1 !== property2)) {
             return false;
@@ -3562,7 +3571,12 @@ var Store = /** @class */ (function () {
                 case Array:
                 case Object:
                 case Function: {
-                    return JSON.stringify(property1) === JSON.stringify(property2);
+                    if (this.isCircular(property1)) {
+                        return false;
+                    }
+                    else {
+                        return JSON.stringify(property1) === JSON.stringify(property2);
+                    }
                 }
                 case Number:
                 case String:
