@@ -3571,7 +3571,7 @@ var Store = /** @class */ (function () {
                 case Array:
                 case Object:
                 case Function: {
-                    if (this.isCircular(property1)) {
+                    if (this.isCircular(property1) || this.isCircular(property2)) {
                         return false;
                     }
                     else {

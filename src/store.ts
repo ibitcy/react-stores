@@ -106,7 +106,7 @@ export class Store<StoreState> {
                 case Array :
                 case (<any>Object) :
                 case Function : {
-                    if(this.isCircular(property1)) {
+                    if(this.isCircular(property1) || this.isCircular(property2)) {
                         return false;
                     } else {
                         return JSON.stringify(property1) === JSON.stringify(property2);
