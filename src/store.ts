@@ -29,11 +29,11 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
     }
 
     public storeComponentStoreWillUpdate(): void {
-        
+
     }
 
     public storeComponentStoreDidUpdate(): void {
-        
+
     }
 
     constructor(stores: StoreState) {
@@ -91,33 +91,37 @@ export class Store<StoreState> {
     }
 
     private isCircular(obj: any): boolean {
-        try {JSON.stringify(obj)}
-        catch (e) {return true}
+        try { JSON.stringify(obj) }
+        catch (e) { return true }
         return false;
     }
 
     private check(property1: any, property2: any): boolean {
-        if(property1 === null && (property1 !== property2)) {
+        if (property1 === null && property1 !== property2) {
             return false;
-        } else if(property1 === null && (property1 === property2)) {
+        } else if (property1 === null && property1 === property2) {
             return true;
         } else {
-            switch (property1.constructor) {
-                case Array :
-                case (<any>Object) :
-                case Function : {
-                    if(this.isCircular(property1) || this.isCircular(property2)) {
-                        return false;
-                    } else {
-                        return JSON.stringify(property1) === JSON.stringify(property2);
+            if (property1 && property1.constructor) {
+                switch (property1.constructor) {
+                    case Array:
+                    case Object:
+                    case Function: {
+                        if (this.isCircular(property1) || this.isCircular(property2)) {
+                            return false;
+                        } else {
+                            return JSON.stringify(property1) === JSON.stringify(property2);
+                        }
+                    }
+                    case Number:
+                    case String:
+                    case Boolean:
+                    default: {
+                        return property1 === property2;
                     }
                 }
-                case Number :
-                case String : 
-                case Boolean : 
-                default : {
-                    return property1 === property2;
-                }
+            } else {
+                return property1 === property2;
             }
         }
     }
