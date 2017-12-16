@@ -6,14 +6,24 @@
 
 Shared states for React.js (a flux-way shared stores without actions and dispatchers).
 
-
 ## How to install
-```
-npm i react-stores --save
-```
+`yarn add react-stores` or `npm i react-stores --save`
+
+## Demo
+1. Clone this repo
+2. `cd` into it
+3. `yarn install` or `npm i`
+4. `npm run demo`
+5. `localhost:9000` in your favorite browser
+6. ...
+7. Profit!
+
+[Online demo](https://ibitcy.github.io/react-stores/)
+
+## Tests
+`npm run test`
 
 ## How to use
-
 First you need to create a `Store` singleton
 ```typescript
 // store.ts
@@ -26,7 +36,7 @@ export namespace CommonStore {
     }
 
     // Store's state initial values
-    let initialState: State = {
+    const initialState: State = {
         counter: 0
     };
 
@@ -39,7 +49,7 @@ Then you need to create a `StoreComponent` that will use store singleton
 // component.tsx
 import * as React from "react";
 import {StoreComponent, Store} from "react-stores";
-import {CommonStore} from "./store.ts";
+import {CommonStore} from "./store";
 
 interface Props {
     name: string
@@ -59,28 +69,16 @@ export class App extends StoreComponent<Props, State, StoresState> {
             common: CommonStore.store
         });
     }
-    
-    // This method is required by abstract method in StoreComponent
-    //it works as default React.Component.componentDidMount()
-    storeComponentDidMount() {
-
-    }
-    
-    // This method is required by abstract method in StoreComponent
-    // it works as default React.Component.componentWillUnmount()
-    storeComponentWillUnmount() {
-
-    }
 
     private increaseCommon():void {
         // You can mutate stores as local component state values
         this.stores.common.setState({
             counter: this.stores.common.state.counter + 1
-        };
+        });
     }
 
     private increaseLocal():void {
-        // You can use local state as natural React.Component
+        // Also you can use local state as natural React.Component
         this.setState({
             counter: this.state.counter + 1
         });
@@ -90,7 +88,7 @@ export class App extends StoreComponent<Props, State, StoresState> {
         return (
             <div>
                 <p>Component name: {this.props.name}</p>
-	            <p>Shared counter value: {this.stores.common.state.counter.toString()}</p>
+	        <p>Common counter value: {this.stores.common.state.counter.toString()}</p>
                 <p>Local counter value: {this.state.counter.toString()}</p>
 
                 <button onClick={this.increaseCommon.bind(this)}>Increase common counter value</button>
@@ -173,15 +171,32 @@ storeComponentDidUpdate(prevProps:Props, prevState:State): void
 shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean
 ```
 
+```typescript
+storeComponentStoreWillUpdate(): void
+```
+
+```typescript
+storeComponentStoreDidUpdate(): void
+```
+
+
 ### Store
 ```typescript
 setState(newState: StoreState): void
 ```
 
+```typescript
+resetState(): void
+```
+
+```typescript
+update(): void
+```
+
 ## ES5/6
 Usage example on [RunKit](https://runkit.com/589af3775af6a4001487d9de/589af3775af6a4001487d9df)
 
-##License
+## License
 
 The MIT License (MIT)
 

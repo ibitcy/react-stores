@@ -5,28 +5,36 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
     private isStoreMounted: boolean = false;
 
     public storeComponentDidMount(): void {
-    
-    };
+
+    }
 
     public storeComponentWillUnmount(): void {
 
-    };
+    }
 
-    public storeComponentWillReceiveProps(nextProps:Props): void {
+    public storeComponentWillReceiveProps(nextProps: Props): void {
 
-    };
+    }
 
-    public storeComponentWillUpdate(nextProps:Props, nextState:State): void {
+    public storeComponentWillUpdate(nextProps: Props, nextState: State): void {
 
-    };
+    }
 
-    public storeComponentDidUpdate(prevProps:Props, prevState:State): void {
+    public storeComponentDidUpdate(prevProps: Props, prevState: State): void {
 
-    };
+    }
 
-    public shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean {
+    public shouldStoreComponentUpdate(nextProps: Props, nextState: State): boolean {
         return true;
-    };
+    }
+
+    public storeComponentStoreWillUpdate(): void {
+
+    }
+
+    public storeComponentStoreDidUpdate(): void {
+
+    }
 
     constructor(stores: StoreState) {
         super();
@@ -41,29 +49,29 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
         }
     }
 
-    componentDidMount() {
+    public componentDidMount(): void {
         this.isStoreMounted = true;
         this.storeComponentDidMount();
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount(): void {
         this.isStoreMounted = false;
         this.storeComponentWillUnmount();
     }
 
-    componentWillReceiveProps(nextProps:Props) {
+    public componentWillReceiveProps(nextProps: Props): void {
         this.storeComponentWillReceiveProps(nextProps);
     }
 
-    componentWillUpdate(nextProps:Props, nextState:State) {
+    public componentWillUpdate(nextProps: Props, nextState: State): void {
         this.storeComponentWillUpdate(nextProps, nextState);
     }
 
-    componentDidUpdate(prevProps:Props, prevState:State) {
+    public componentDidUpdate(prevProps: Props, prevState: State): void {
         this.storeComponentDidUpdate(prevProps, prevState);
     }
 
-    shouldComponentUpdate(nextProps:Props, nextState:State) {
+    public shouldComponentUpdate(nextProps: Props, nextState: State) {
         return this.shouldStoreComponentUpdate(nextProps, nextState);
     }
 }
@@ -71,9 +79,51 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 export class Store<StoreState> {
     public components = [];
     public state: StoreState = null;
+    private initialState: StoreState = null;
 
     constructor(state: StoreState) {
-        this.state = state;
+        this.state = this.copyState(state);
+        this.initialState = this.copyState(state);
+    }
+
+    private copyState(state: StoreState): StoreState {
+        return (<any>Object).assign({}, state);
+    }
+
+    private isCircular(obj: any): boolean {
+        try { JSON.stringify(obj) }
+        catch (e) { return true }
+        return false;
+    }
+
+    private check(property1: any, property2: any): boolean {
+        if (property1 === null && property1 !== property2) {
+            return false;
+        } else if (property1 === null && property1 === property2) {
+            return true;
+        } else {
+            if (property1 && property1.constructor) {
+                switch (property1.constructor) {
+                    case Array:
+                    case Object:
+                    case Function: {
+                        if (this.isCircular(property1) || this.isCircular(property2)) {
+                            return false;
+                        } else {
+                            return JSON.stringify(property1) === JSON.stringify(property2);
+                        }
+                    }
+                    case Number:
+                    case String:
+                    case Boolean:
+                    default: {
+                        return property1 === property2;
+                    }
+                }
+            } else {
+                return property1 === property2;
+            }
+        }
     }
 
     public setState(newState: StoreState): void {
@@ -81,7 +131,7 @@ export class Store<StoreState> {
 
         for (let property in newState) {
             if (newState.hasOwnProperty(property) && this.state.hasOwnProperty(property)) {
-                if (this.state[property] !== newState[property]) {
+                if (!this.check(this.state[property], newState[property])) {
                     this.state[property] = newState[property];
                     updated = true;
                 }
@@ -93,10 +143,16 @@ export class Store<StoreState> {
         }
     }
 
-    private update(): void {
+    public resetState(): void {
+        this.setState(this.initialState);
+    }
+
+    public update(): void {
         this.components.forEach((component) => {
             if (component.isStoreMounted) {
+                component.storeComponentStoreWillUpdate();
                 component.forceUpdate();
+                component.storeComponentStoreDidUpdate();
             }
         });
     }

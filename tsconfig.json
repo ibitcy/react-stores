@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"traceResolution": true,
+		"declaration": true,
+		"jsx": "react",
+		"target": "es5",
+		"lib": [
+			"dom", "es6"
+		],
+		"outDir": "dist",
+		"experimentalDecorators": true,
+		"moduleResolution": "node",
+		"noImplicitAny": false,
+		"typeRoots": [
+			"./node_modules/@types/"
+		]
+	}
+}

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import * as React from 'react';
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     stores: StoreState;
@@ -8,6 +9,8 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
     storeComponentWillUpdate(nextProps: Props, nextState: State): void;
     storeComponentDidUpdate(prevProps: Props, prevState: State): void;
     shouldStoreComponentUpdate(nextProps: Props, nextState: State): boolean;
+    storeComponentStoreWillUpdate(): void;
+    storeComponentStoreDidUpdate(): void;
     constructor(stores: StoreState);
     componentDidMount(): void;
     componentWillUnmount(): void;
@@ -19,7 +22,12 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
 export declare class Store<StoreState> {
     components: any[];
     state: StoreState;
+    private initialState;
     constructor(state: StoreState);
+    private copyState(state);
+    private isCircular(obj);
+    private check(property1, property2);
     setState(newState: StoreState): void;
-    private update();
+    resetState(): void;
+    update(): void;
 }
