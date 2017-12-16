@@ -87,7 +87,7 @@ export class Store<StoreState> {
     }
 
     private copyState(state: StoreState): StoreState {
-        return (<any>Object).assign({}, state);
+	    return {...{}, ...state as any};
     }
 
     private isCircular(obj: any): boolean {
