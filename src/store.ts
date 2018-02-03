@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { Map, List } from 'immutable';
 
-export enum StoreEvents {
-    storeUpdated = 'storeUpdatd'
-}
-
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     public readonly stores: StoreState = {} as StoreState;
     private isStoreMounted: boolean = false;
@@ -86,8 +82,10 @@ export class Store<StoreState> {
     public state: StoreState = null;
     private stateImmutable = null;
     private initialStateImmutable = null;
+    private eventManager: StoreEventManager<StoreState> = null;
 
     constructor(state: StoreState) {
+        this.eventManager = new StoreEventManager();
         this.stateImmutable = Map(state);
         this.initialStateImmutable = Map(state);
         this.state = this.stateImmutable.toJS();
@@ -117,13 +115,70 @@ export class Store<StoreState> {
                 component.storeComponentStoreDidUpdate();
             }
         });
+
+        this.eventManager.fire(StoreEventType.storeUpdated, this.stateImmutable.toJS());
     }
 
     public getInitialState(): StoreState {
         return this.initialStateImmutable.toJS();
     }
 
-    public on(event: StoreEvents): void {
-        
+    public on(eventType: StoreEventType, callback: (storeState: StoreState) => void): StoreEvent<StoreState> {
+        return this.eventManager.add(eventType, callback);
+    }
+}
+
+export enum StoreEventType {
+    storeUpdated = 'storeUpdated'
+}
+
+export class StoreEvent<StoreState> {
+    constructor(
+        readonly id: string,
+        readonly type: StoreEventType,
+        readonly onFire: (storeState: StoreState) => void,
+        readonly onRemove: (id: string) => void
+    ) { }
+
+    public remove(): void {
+        this.onRemove(this.id);
+    }
+}
+
+class StoreEventManager<StoreState> {
+    private events: StoreEvent<StoreState>[] = [];
+    private eventCounter: number = 0;
+
+    private generateEventId(): string {
+        return `${++this.eventCounter}${Date.now()}${Math.random()}`;
+    }
+
+    public fire(type: StoreEventType, storeState: StoreState): void {
+        this.events.forEach((event: StoreEvent<StoreState>) => {
+            if (event.type === type) {
+                event.onFire(storeState);
+            }
+        });
+    }
+
+    public remove(id: string): void {
+        this.events = this.events.filter((event: StoreEvent<StoreState>) => {
+            return event.id !== id;
+        });
+    }
+
+    public add(eventType: StoreEventType, callback: (storeState: StoreState) => void): StoreEvent<StoreState> {
+        const event: StoreEvent<StoreState> = new StoreEvent<StoreState>(
+            this.generateEventId(),
+            eventType,
+            callback,
+            (id: string) => {
+                this.remove(id);
+            }
+        );
+
+        this.events.push(event);
+
+        return event;
     }
 }

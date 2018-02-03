@@ -103,11 +103,56 @@ export class App extends StoreComponent<Props, State, StoresState> {
         return (
             <div>
                 <p>Component name: {this.props.name}</p>
-	        <p>Common counter value: {this.stores.common.state.counter.toString()}</p>
+	            <p>Common counter value: {this.stores.common.state.counter.toString()}</p>
                 <p>Local counter value: {this.state.counter.toString()}</p>
 
                 <button onClick={this.increaseCommon.bind(this)}>Increase common counter value</button>
                 <button onClick={this.increaseLocal.bind(this)}>Increase local counter value</button>
+            </div>
+        );
+    }
+}
+```
+
+Or you can use event driven component–store connection (from v1.2.0)
+```typescript
+import * as React from "react";
+import {StoreComponent, Store, StoreEventType, StoreEvent} from "react-stores";
+import {CommonStore} from "./store";
+
+interface Props {
+
+}
+
+interface State {
+    commonStoreState: CommonStore.State
+}
+
+export class App extends React.Component<Props, State> {
+    private storeEvent: StoreEvent<CommonStore.State> = null;
+
+    state: State = {
+        commonStoreState: null
+    }
+
+    comonentDidMount() {
+        // Add store state event binder
+        this.storeEvent = CommonStore.store.on(StoreEventType.storeUpdated, (storeState: StoreState) => {
+            this.setState({
+                commonStoreState: storeState
+            });
+        });
+    }
+
+    componentDidUnmount() {
+        // Remove store state event binder
+        this.storeEvent.remove();
+    }
+
+    render() {
+        return (
+            <div>
+	            <p>Common counter value: {this.state.commonStoreState.counter.toString()}</p>
             </div>
         );
     }
@@ -145,7 +190,7 @@ export class CommonActions {
 
 // Note that you always have your store interface, you haven't lost typization consistency 
 // of your app like it always occurs in Flux/Redux apps in action -> store communication
-let newState:CommonStore.State = {
+let newState: CommonStore.State = {
 	counter: 100500
 }
 
@@ -209,11 +254,17 @@ update(): void // Force update all binded components
 ```
 
 ```typescript
-on(event: StoreEvents, callback(newStore: StoreState) => void): void
+on(eventType: StoreEventType, callback: (storeState: StoreState) => void): StoreEvent<StoreState> // State event binder
 ```
 
 
-### StoreEvents
+### StoreEvent
+```typescript
+remove(): void
+```
+
+
+### StoreEventType
 
 ```
 storeUpdated // fires at each store update
