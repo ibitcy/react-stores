@@ -4,6 +4,8 @@ export declare namespace CommonStore {
         nullObj: null;
         counter: number;
         foo: string;
+        numericArray: number[];
+        objectsArray: Object[];
         settings: {
             foo: {
                 bar: number;

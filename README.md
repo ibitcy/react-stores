@@ -14,14 +14,27 @@ Shared states for React.js (a flux-way shared stores without actions and dispatc
 2. `cd` into it
 3. `yarn install` or `npm i`
 4. `npm run demo`
-5. `localhost:9000` in your favorite browser
-6. ...
-7. Profit!
+5. `localhost:9000` in your browser
 
 [Online demo](https://ibitcy.github.io/react-stores/)
 
 ## Tests
 `npm run test`
+
+
+## Roadmap
+
+### 2.0
+
+1. 📦 StoresDB
+2. 💽 Persistance
+3. 🕰 Time Machine
+4. ...
+
+### 3.0
+1. ☁️ CloudStores
+2. ⛳️ Query-oriented
+3. ...
 
 ## How to use
 First you need to create a `Store` singleton
@@ -182,15 +195,26 @@ storeComponentStoreDidUpdate(): void
 
 ### Store
 ```typescript
-setState(newState: StoreState): void
+setState(newState: StoreState): void // Set store's state to provided new one
 ```
 
 ```typescript
-resetState(): void
+resetState(): void // Reset srote to it's initialState
 ```
 
 ```typescript
-update(): void
+update(): void // Force update all binded components
+```
+
+```typescript
+on(event: StoreEvents, callback(newStore: StoreState) => void): void
+```
+
+
+### StoreEvents
+
+```
+storeUpdated // fires at each store update
 ```
 
 ## ES5/6

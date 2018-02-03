@@ -1,7 +1,12 @@
 import * as React from 'react';
+import { Map, List } from 'immutable';
+
+export enum StoreEvents {
+    storeUpdated = 'storeUpdatd'
+}
 
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
-    public stores: StoreState = {} as StoreState;
+    public readonly stores: StoreState = {} as StoreState;
     private isStoreMounted: boolean = false;
 
     public storeComponentDidMount(): void {
@@ -79,72 +84,29 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 export class Store<StoreState> {
     public components = [];
     public state: StoreState = null;
-    private initialState: StoreState = null;
+    private stateImmutable = null;
+    private initialStateImmutable = null;
 
     constructor(state: StoreState) {
-        this.state = this.copyState(state);
-        this.initialState = this.copyState(state);
-    }
-
-    private copyState(state: StoreState): StoreState {
-        return (<any>Object).assign({}, state);
-    }
-
-    private isCircular(obj: any): boolean {
-        try { JSON.stringify(obj) }
-        catch (e) { return true }
-        return false;
-    }
-
-    private check(property1: any, property2: any): boolean {
-        if (property1 === null && property1 !== property2) {
-            return false;
-        } else if (property1 === null && property1 === property2) {
-            return true;
-        } else {
-            if (property1 && property1.constructor) {
-                switch (property1.constructor) {
-                    case Array:
-                    case Object:
-                    case Function: {
-                        if (this.isCircular(property1) || this.isCircular(property2)) {
-                            return false;
-                        } else {
-                            return JSON.stringify(property1) === JSON.stringify(property2);
-                        }
-                    }
-                    case Number:
-                    case String:
-                    case Boolean:
-                    default: {
-                        return property1 === property2;
-                    }
-                }
-            } else {
-                return property1 === property2;
-            }
-        }
+        this.stateImmutable = Map(state);
+        this.initialStateImmutable = Map(state);
+        this.state = this.stateImmutable.toJS();
     }
 
     public setState(newState: StoreState): void {
-        let updated: boolean = false;
+        let newStatImmutable = this.stateImmutable.mergeDeep(newState);
 
-        for (let property in newState) {
-            if (newState.hasOwnProperty(property) && this.state.hasOwnProperty(property)) {
-                if (!this.check(this.state[property], newState[property])) {
-                    this.state[property] = newState[property];
-                    updated = true;
-                }
-            }
-        }
-
-        if (updated) {
+        if (!newStatImmutable.equals(this.stateImmutable)) {
+            this.stateImmutable = newStatImmutable;
+            this.state = this.stateImmutable.toJS();
             this.update();
         }
     }
 
     public resetState(): void {
-        this.setState(this.initialState);
+        this.stateImmutable = Map(this.initialStateImmutable);
+        this.state = this.stateImmutable.toJS();
+        this.update();
     }
 
     public update(): void {
@@ -155,5 +117,13 @@ export class Store<StoreState> {
                 component.storeComponentStoreDidUpdate();
             }
         });
+    }
+
+    public getInitialState(): StoreState {
+        return this.initialStateImmutable.toJS();
+    }
+
+    public on(event: StoreEvents): void {
+        
     }
 }
