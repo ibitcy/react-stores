@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import * as React from 'react';
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
-    stores: StoreState;
+    readonly stores: StoreState;
     private isStoreMounted;
     storeComponentDidMount(): void;
     storeComponentWillUnmount(): void;
@@ -22,12 +22,11 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
 export declare class Store<StoreState> {
     components: any[];
     state: StoreState;
-    private initialState;
+    private stateImmutable;
+    private initialStateImmutable;
     constructor(state: StoreState);
-    private copyState(state);
-    private isCircular(obj);
-    private check(property1, property2);
     setState(newState: StoreState): void;
     resetState(): void;
     update(): void;
+    getInitialState(): StoreState;
 }

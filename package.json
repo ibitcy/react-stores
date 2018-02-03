@@ -1,6 +1,6 @@
 {
 	"name": "react-stores",
-	"version": "1.1.31",
+	"version": "1.2.0",
 	"keywords": [
 		"react",
 		"stores",
@@ -19,6 +19,7 @@
 	"author": "IBIT LTD.",
 	"license": "MIT",
 	"dependencies": {
+		"immutable": "^3.8.2",
 		"react": "^15.4.2"
 	},
 	"devDependencies": {

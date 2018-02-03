@@ -14,9 +14,7 @@ Shared states for React.js (a flux-way shared stores without actions and dispatc
 2. `cd` into it
 3. `yarn install` or `npm i`
 4. `npm run demo`
-5. `localhost:9000` in your favorite browser
-6. ...
-7. Profit!
+5. `localhost:9000` in your browser
 
 [Online demo](https://ibitcy.github.io/react-stores/)
 
@@ -182,15 +180,15 @@ storeComponentStoreDidUpdate(): void
 
 ### Store
 ```typescript
-setState(newState: StoreState): void
+setState(newState: StoreState): void // Set store's state to provided new one
 ```
 
 ```typescript
-resetState(): void
+resetState(): void // Reset srote to it's initialState
 ```
 
 ```typescript
-update(): void
+update(): void // Force update all binded components
 ```
 
 ## ES5/6
