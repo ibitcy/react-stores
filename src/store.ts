@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Map, List } from 'immutable';
 
+export enum StoreEvents {
+    storeUpdated = 'storeUpdatd'
+}
+
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     public readonly stores: StoreState = {} as StoreState;
     private isStoreMounted: boolean = false;
@@ -117,5 +121,9 @@ export class Store<StoreState> {
 
     public getInitialState(): StoreState {
         return this.initialStateImmutable.toJS();
+    }
+
+    public on(event: StoreEvents): void {
+        
     }
 }

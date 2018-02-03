@@ -21,6 +21,21 @@ Shared states for React.js (a flux-way shared stores without actions and dispatc
 ## Tests
 `npm run test`
 
+
+## Roadmap
+
+### 2.0
+
+1. 📦 StoresDB
+2. 💽 Persistance
+3. 🕰 Time Machine
+4. ...
+
+### 3.0
+1. ☁️ CloudStores
+2. ⛳️ Query-oriented
+3. ...
+
 ## How to use
 First you need to create a `Store` singleton
 ```typescript
@@ -189,6 +204,17 @@ resetState(): void // Reset srote to it's initialState
 
 ```typescript
 update(): void // Force update all binded components
+```
+
+```typescript
+on(event: StoreEvents, callback(newStore: StoreState) => void): void
+```
+
+
+### StoreEvents
+
+```
+storeUpdated // fires at each store update
 ```
 
 ## ES5/6
