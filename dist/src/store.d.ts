@@ -1,5 +1,8 @@
 /// <reference types="react" />
 import * as React from 'react';
+export declare enum StoreEvents {
+    storeUpdated = "storeUpdatd",
+}
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     readonly stores: StoreState;
     private isStoreMounted;
@@ -29,4 +32,5 @@ export declare class Store<StoreState> {
     resetState(): void;
     update(): void;
     getInitialState(): StoreState;
+    on(event: StoreEvents): void;
 }

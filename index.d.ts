@@ -1,7 +1,10 @@
 /// <reference types="react" />
 import * as React from 'react';
+export declare enum StoreEvents {
+    storeUpdated = "storeUpdatd",
+}
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
-    stores: StoreState;
+    readonly stores: StoreState;
     private isStoreMounted;
     storeComponentDidMount(): void;
     storeComponentWillUnmount(): void;
@@ -25,8 +28,9 @@ export declare class Store<StoreState> {
     private stateImmutable;
     private initialStateImmutable;
     constructor(state: StoreState);
-    private equals(p1, p2);
     setState(newState: StoreState): void;
     resetState(): void;
     update(): void;
+    getInitialState(): StoreState;
+    on(event: StoreEvents): void;
 }
