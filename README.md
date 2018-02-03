@@ -159,7 +159,7 @@ export class App extends React.Component<Props, State> {
 }
 ```
 
-Now you can use it as usial
+Now you can use it as usual
 ```typescript
 import {App} from "./component";
 
