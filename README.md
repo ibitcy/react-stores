@@ -24,8 +24,10 @@ Shared states for React.js (a flux-way shared stores without actions and dispatc
 
 ## Roadmap
 
-### 2.0
+### 1.0
+1. Event-oriented store
 
+### 2.0
 1. 📦 StoresDB
 2. 💽 Persistance
 3. 🕰 Time Machine
