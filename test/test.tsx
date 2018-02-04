@@ -1,4 +1,4 @@
-import { Store, StoreComponent } from '../src/store';
+import { Store, StoreComponent, StoreEventType } from '../src/store';
 import * as ReactTestUtils from 'react-dom/test-utils';
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
@@ -56,7 +56,7 @@ describe('testStoreState', () => {
     it('bar should be setted to 100', (done) => {
         CommonStore.store.resetState();
         CommonActions.setSettings(100, 200);
-        
+
         expect(CommonStore.store.state.settings.foo.bar).toEqual(100);
         done();
     });
@@ -86,7 +86,7 @@ describe('testStoreState', () => {
         done();
     });
 
-    it('Store init test', (done) => {
+    it('store init test', (done) => {
         CommonStore.store.resetState();
 
         const result: string = JSON.stringify(CommonStore.store.state);
@@ -96,7 +96,7 @@ describe('testStoreState', () => {
         done();
     });
 
-    it('Update numeric collection', (done) => {
+    it('update numeric collection', (done) => {
         CommonStore.store.resetState();
 
         const newNumericArray = [3, 2];
@@ -112,7 +112,7 @@ describe('testStoreState', () => {
         done();
     });
 
-    it('Update objects collection', (done) => {
+    it('update objects collection', (done) => {
         CommonStore.store.resetState();
 
         const newObjectsArray: Object[] = [{
@@ -140,7 +140,7 @@ describe('testStoreState', () => {
         done();
     });
 
-    it('Mutable test', (done) => {
+    it('mutable test', (done) => {
         CommonStore.store.resetState();
 
         let objectsArrayFromStore: Object[] = CommonStore.store.state.objectsArray;
@@ -162,7 +162,24 @@ describe('testStoreState', () => {
         done();
     });
 
-    it('Store data', (done) => {
+    it('event driven', (done) => {
+        CommonStore.store.resetState();
+
+        let counter: number = 0;
+
+        CommonStore.store.on(StoreEventType.storeUpdated, (storeState: CommonStore.State) => {
+            counter = storeState.counter;
+        });
+
+        for (let i = 0; i < 4; i++) {
+            CommonActions.increaseCounter();
+        }
+
+        expect(counter).toEqual(4);
+        done();
+    });
+
+    it('store state replace', (done) => {
         CommonStore.store.resetState();
 
         for (let i = 0; i < 4; i++) {

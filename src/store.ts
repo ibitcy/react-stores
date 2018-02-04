@@ -124,7 +124,9 @@ export class Store<StoreState> {
     }
 
     public on(eventType: StoreEventType, callback: (storeState: StoreState) => void): StoreEvent<StoreState> {
-        return this.eventManager.add(eventType, callback);
+        const event: StoreEvent<StoreState> = this.eventManager.add(eventType, callback);
+        this.eventManager.fire(eventType, this.state);
+        return event;
     }
 }
 
