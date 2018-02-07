@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Map, List } from 'immutable';
 
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
-    public readonly stores: StoreState = {} as StoreState;
+    public stores: StoreState = {} as StoreState;
     private isStoreMounted: boolean = false;
 
     public storeComponentDidMount(): void {
@@ -56,6 +56,24 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
     }
 
     public componentWillUnmount(): void {
+        if(this.stores) {
+            for (let storeObject in this.stores) {
+                if (this.stores.hasOwnProperty(storeObject)) {
+                    const store: any = this.stores[storeObject];
+                    const newComponents = [];
+                    
+                    store.components.forEach((component) => {
+                        if(component !== this) {
+                            newComponents.push(component);
+                        }
+                    });
+
+                    store.components = newComponents;
+                }
+            }
+        }
+
+        this.stores = null;
         this.isStoreMounted = false;
         this.storeComponentWillUnmount();
     }

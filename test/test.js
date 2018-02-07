@@ -1752,6 +1752,26 @@ var StoreComponent = /** @class */ (function (_super) {
         this.storeComponentDidMount();
     };
     StoreComponent.prototype.componentWillUnmount = function () {
+        var _this = this;
+        if (this.stores) {
+            var _loop_1 = function (storeObject) {
+                if (this_1.stores.hasOwnProperty(storeObject)) {
+                    var store = this_1.stores[storeObject];
+                    var newComponents_1 = [];
+                    store.components.forEach(function (component) {
+                        if (component !== _this) {
+                            newComponents_1.push(component);
+                        }
+                    });
+                    store.components = newComponents_1;
+                }
+            };
+            var this_1 = this;
+            for (var storeObject in this.stores) {
+                _loop_1(storeObject);
+            }
+        }
+        this.stores = null;
         this.isStoreMounted = false;
         this.storeComponentWillUnmount();
     };
