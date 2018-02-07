@@ -8,6 +8,7 @@ import { CommonActions } from '../demo/src/actions';
 import { Test } from '../demo/src/test';
 import { Counter } from '../demo/src/counter';
 import * as Mocha from 'mocha';
+import * as Immutable from 'immutable';
 
 expect.extend(expectJsx);
 
@@ -162,12 +163,65 @@ describe('testStoreState', () => {
         done();
     });
 
+    it('deep array object', (done) => {
+        CommonStore.store.resetState();
+
+        const objectsArray: Object[] = CommonStore.store.state.objectsArray.concat();
+
+        objectsArray[1] = [];
+
+        CommonStore.store.setState({
+            objectsArray: objectsArray
+        } as CommonStore.State);
+
+        const result: string = JSON.stringify([]);
+        const etalon: string = JSON.stringify(CommonStore.store.state.objectsArray[1]);
+
+        expect(result).toEqual(etalon);
+        done();
+    });
+
+    // it('deep array object value', (done) => {
+    //     CommonStore.store.resetState();
+
+    //     const objectsArray: Object[] = CommonStore.store.state.objectsArray
+    //     const newObjectsArray: Object[] = [];
+
+    //     objectsArray.forEach((a) => {
+    //         if(a['d']){
+    //             let aa = [];
+                
+    //             a['d'].forEach((b, i) => {
+    //                 if(i === 0) {
+    //                     b['enabled'] = false; 
+    //                 }
+
+    //                 return aa.push(b);
+    //             });
+
+    //             a['d'] = aa;
+    //         }
+
+    //         newObjectsArray.push(a);
+    //     });
+
+    //     CommonStore.store.setState({
+    //         objectsArray: newObjectsArray
+    //     } as CommonStore.State);
+
+    //     const result: string = JSON.stringify(false);
+    //     const etalon: string = JSON.stringify(CommonStore.store.state.objectsArray[1]['d'][0]['enabled']);
+
+    //     expect(result).toEqual(etalon);
+    //     done();
+    // });
+
     it('event driven', (done) => {
         CommonStore.store.resetState();
 
         let counter: number = 0;
 
-        CommonStore.store.on(StoreEventType.storeUpdated, (storeState: CommonStore.State) => {
+        CommonStore.store.on(StoreEventType.update, (storeState: CommonStore.State) => {
             counter = storeState.counter;
         });
 
@@ -206,7 +260,11 @@ describe('testStoreState', () => {
                 c: {
                     a: 1,
                     b: [1, 2, 3]
-                }
+                },
+                d: [
+                    {id: 1, name: 'test 1', enabled: true},
+                    {id: 2, name: 'test 2', enabled: false}
+                ]
             }],
             settings: {
                 foo: {
@@ -217,6 +275,61 @@ describe('testStoreState', () => {
         });
 
         expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('store state reset', (done) => {
+        CommonStore.store.resetState();
+        
+        const result: string = JSON.stringify(CommonStore.store.state);
+        const etalon: string = JSON.stringify({
+            nullObj: null,
+            counter: 0,
+            foo: 'foo',
+            numericArray: [1, 2, 3],
+            objectsArray: [{
+                a: 1,
+                b: 2,
+                c: 3
+            },
+            {
+                a: 3,
+                b: 2,
+                c: {
+                    a: 1,
+                    b: [1, 2, 3]
+                },
+                d: [
+                    {id: 1, name: 'test 1', enabled: true},
+                    {id: 2, name: 'test 2', enabled: false}
+                ]
+            }],
+            settings: {
+                foo: {
+                    bar: 1
+                },
+                baz: 2
+            }
+        });
+
+        expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('update trigger', (done) => {
+        CommonStore.store.resetState();
+
+        let updated: string = 'false';
+
+        CommonStore.store.on(StoreEventType.update, (storeState: CommonStore.State) => {
+            updated = 'true';
+        });
+
+        CommonStore.store.setState({
+            counter: 0
+        } as CommonStore.State);
+        
+        expect(updated).toEqual('false');
         done();
     });
 });

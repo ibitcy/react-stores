@@ -1683,7 +1683,11 @@ var CommonStore;
                 c: {
                     a: 1,
                     b: [1, 2, 3]
-                }
+                },
+                d: [
+                    { id: 1, name: 'test 1', enabled: true },
+                    { id: 2, name: 'test 2', enabled: false }
+                ]
             }],
         settings: {
             foo: {
@@ -1712,9 +1716,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(92);
-var immutable_1 = __webpack_require__(71);
+var Immutable = __webpack_require__(71);
 var StoreComponent = /** @class */ (function (_super) {
     __extends(StoreComponent, _super);
     function StoreComponent(stores) {
@@ -1798,21 +1810,22 @@ var Store = /** @class */ (function () {
         this.initialStateImmutable = null;
         this.eventManager = null;
         this.eventManager = new StoreEventManager();
-        this.stateImmutable = immutable_1.Map(state);
-        this.initialStateImmutable = immutable_1.Map(state);
+        this.stateImmutable = Immutable.Map(Immutable.fromJS(state));
+        this.initialStateImmutable = Immutable.Map(state);
         this.state = this.stateImmutable.toJS();
     }
     Store.prototype.setState = function (newState) {
-        var newStatImmutable = this.stateImmutable.mergeDeep(newState);
-        if (!newStatImmutable.equals(this.stateImmutable)) {
-            this.stateImmutable = newStatImmutable;
+        var current = this.state;
+        var merged = __assign({}, current, newState);
+        if (JSON.stringify(current) !== JSON.stringify(merged)) {
+            this.stateImmutable = this.stateImmutable.mergeDeep(Immutable.fromJS(newState));
             this.state = this.stateImmutable.toJS();
             this.update();
         }
     };
     Store.prototype.resetState = function () {
-        this.stateImmutable = immutable_1.Map(this.initialStateImmutable);
-        this.state = this.stateImmutable.toJS();
+        this.stateImmutable = Immutable.Map(this.initialStateImmutable.toJS());
+        this.state = this.initialStateImmutable.toJS();
         this.update();
     };
     Store.prototype.update = function () {
@@ -1823,14 +1836,21 @@ var Store = /** @class */ (function () {
                 component.storeComponentStoreDidUpdate();
             }
         });
-        this.eventManager.fire(StoreEventType.storeUpdated, this.stateImmutable.toJS());
+        this.eventManager.fire(StoreEventType.update, this.stateImmutable.toJS());
     };
     Store.prototype.getInitialState = function () {
         return this.initialStateImmutable.toJS();
     };
     Store.prototype.on = function (eventType, callback) {
-        var event = this.eventManager.add(eventType, callback);
-        this.eventManager.fire(eventType, this.state);
+        var eventTypes = [];
+        if (eventType && eventType.constructor === Array) {
+            eventTypes = eventType;
+        }
+        else {
+            eventTypes = [eventType];
+        }
+        var event = this.eventManager.add(eventTypes, callback);
+        this.eventManager.fire(StoreEventType.init, this.state);
         return event;
     };
     return Store;
@@ -1838,12 +1858,14 @@ var Store = /** @class */ (function () {
 exports.Store = Store;
 var StoreEventType;
 (function (StoreEventType) {
-    StoreEventType["storeUpdated"] = "storeUpdated";
+    StoreEventType["all"] = "all";
+    StoreEventType["init"] = "init";
+    StoreEventType["update"] = "update";
 })(StoreEventType = exports.StoreEventType || (exports.StoreEventType = {}));
 var StoreEvent = /** @class */ (function () {
-    function StoreEvent(id, type, onFire, onRemove) {
+    function StoreEvent(id, types, onFire, onRemove) {
         this.id = id;
-        this.type = type;
+        this.types = types;
         this.onFire = onFire;
         this.onRemove = onRemove;
     }
@@ -1863,7 +1885,7 @@ var StoreEventManager = /** @class */ (function () {
     };
     StoreEventManager.prototype.fire = function (type, storeState) {
         this.events.forEach(function (event) {
-            if (event.type === type) {
+            if (event.types.indexOf(type) >= 0 || event.types.indexOf(StoreEventType.all) >= 0) {
                 event.onFire(storeState);
             }
         });
@@ -1873,9 +1895,9 @@ var StoreEventManager = /** @class */ (function () {
             return event.id !== id;
         });
     };
-    StoreEventManager.prototype.add = function (eventType, callback) {
+    StoreEventManager.prototype.add = function (eventTypes, callback) {
         var _this = this;
-        var event = new StoreEvent(this.generateEventId(), eventType, callback, function (id) {
+        var event = new StoreEvent(this.generateEventId(), eventTypes, callback, function (id) {
             _this.remove(id);
         });
         this.events.push(event);
@@ -3727,10 +3749,47 @@ describe('testStoreState', function () {
         expect(result).toEqual(etalon);
         done();
     });
+    it('deep array object', function (done) {
+        store_2.CommonStore.store.resetState();
+        var objectsArray = store_2.CommonStore.store.state.objectsArray.concat();
+        objectsArray[1] = [];
+        store_2.CommonStore.store.setState({
+            objectsArray: objectsArray
+        });
+        var result = JSON.stringify([]);
+        var etalon = JSON.stringify(store_2.CommonStore.store.state.objectsArray[1]);
+        expect(result).toEqual(etalon);
+        done();
+    });
+    // it('deep array object value', (done) => {
+    //     CommonStore.store.resetState();
+    //     const objectsArray: Object[] = CommonStore.store.state.objectsArray
+    //     const newObjectsArray: Object[] = [];
+    //     objectsArray.forEach((a) => {
+    //         if(a['d']){
+    //             let aa = [];
+    //             a['d'].forEach((b, i) => {
+    //                 if(i === 0) {
+    //                     b['enabled'] = false; 
+    //                 }
+    //                 return aa.push(b);
+    //             });
+    //             a['d'] = aa;
+    //         }
+    //         newObjectsArray.push(a);
+    //     });
+    //     CommonStore.store.setState({
+    //         objectsArray: newObjectsArray
+    //     } as CommonStore.State);
+    //     const result: string = JSON.stringify(false);
+    //     const etalon: string = JSON.stringify(CommonStore.store.state.objectsArray[1]['d'][0]['enabled']);
+    //     expect(result).toEqual(etalon);
+    //     done();
+    // });
     it('event driven', function (done) {
         store_2.CommonStore.store.resetState();
         var counter = 0;
-        store_2.CommonStore.store.on(store_1.StoreEventType.storeUpdated, function (storeState) {
+        store_2.CommonStore.store.on(store_1.StoreEventType.update, function (storeState) {
             counter = storeState.counter;
         });
         for (var i = 0; i < 4; i++) {
@@ -3763,7 +3822,11 @@ describe('testStoreState', function () {
                     c: {
                         a: 1,
                         b: [1, 2, 3]
-                    }
+                    },
+                    d: [
+                        { id: 1, name: 'test 1', enabled: true },
+                        { id: 2, name: 'test 2', enabled: false }
+                    ]
                 }],
             settings: {
                 foo: {
@@ -3773,6 +3836,53 @@ describe('testStoreState', function () {
             }
         });
         expect(result).toEqual(etalon);
+        done();
+    });
+    it('store state reset', function (done) {
+        store_2.CommonStore.store.resetState();
+        var result = JSON.stringify(store_2.CommonStore.store.state);
+        var etalon = JSON.stringify({
+            nullObj: null,
+            counter: 0,
+            foo: 'foo',
+            numericArray: [1, 2, 3],
+            objectsArray: [{
+                    a: 1,
+                    b: 2,
+                    c: 3
+                },
+                {
+                    a: 3,
+                    b: 2,
+                    c: {
+                        a: 1,
+                        b: [1, 2, 3]
+                    },
+                    d: [
+                        { id: 1, name: 'test 1', enabled: true },
+                        { id: 2, name: 'test 2', enabled: false }
+                    ]
+                }],
+            settings: {
+                foo: {
+                    bar: 1
+                },
+                baz: 2
+            }
+        });
+        expect(result).toEqual(etalon);
+        done();
+    });
+    it('update trigger', function (done) {
+        store_2.CommonStore.store.resetState();
+        var updated = 'false';
+        store_2.CommonStore.store.on(store_1.StoreEventType.update, function (storeState) {
+            updated = 'true';
+        });
+        store_2.CommonStore.store.setState({
+            counter: 0
+        });
+        expect(updated).toEqual('false');
         done();
     });
 });

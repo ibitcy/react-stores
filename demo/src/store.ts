@@ -33,7 +33,11 @@ export namespace CommonStore {
             c: {
                 a: 1,
                 b: [1, 2, 3]
-            }
+            },
+            d: [
+                {id: 1, name: 'test 1', enabled: true},
+                {id: 2, name: 'test 2', enabled: false}
+            ]
         }],
         settings: {
             foo: {

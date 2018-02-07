@@ -30,16 +30,18 @@ export declare class Store<StoreState> {
     resetState(): void;
     update(): void;
     getInitialState(): StoreState;
-    on(eventType: StoreEventType, callback: (storeState: StoreState) => void): StoreEvent<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState>;
 }
 export declare enum StoreEventType {
-    storeUpdated = "storeUpdated",
+    all = "all",
+    init = "init",
+    update = "update",
 }
 export declare class StoreEvent<StoreState> {
     readonly id: string;
-    readonly type: StoreEventType;
+    readonly types: StoreEventType[];
     readonly onFire: (storeState: StoreState) => void;
     readonly onRemove: (id: string) => void;
-    constructor(id: string, type: StoreEventType, onFire: (storeState: StoreState) => void, onRemove: (id: string) => void);
+    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState) => void, onRemove: (id: string) => void);
     remove(): void;
 }

@@ -254,7 +254,7 @@ update(): void // Force update all binded components
 ```
 
 ```typescript
-on(eventType: StoreEventType, callback: (storeState: StoreState) => void): StoreEvent<StoreState> // State event binder
+on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState> // State event binder
 ```
 
 
@@ -267,7 +267,9 @@ remove(): void
 ### StoreEventType
 
 ```
-storeUpdated // fires at each store update
+all // fires with every other events (init or update)
+init // fires once at as soon as event has bound
+update // fires at each store update
 ```
 
 ## ES5/6
