@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Immutable from 'immutable';
 
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     public stores: StoreState = {} as StoreState;
@@ -98,31 +97,30 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 export class Store<StoreState> {
     public components = [];
     public state: StoreState = null;
-    private stateImmutable = null;
-    private initialStateImmutable = null;
+    private initialState = null;
     private eventManager: StoreEventManager<StoreState> = null;
 
     constructor(state: StoreState) {
         this.eventManager = new StoreEventManager();
-        this.stateImmutable = Immutable.Map(Immutable.fromJS(state));
-        this.initialStateImmutable = Immutable.Map(state);
-        this.state = this.stateImmutable.toJS();
+        this.initialState = this.mergeStates(state, {});
+        this.state = this.mergeStates(state, {});
+    }
+
+    private mergeStates(state1: Object, state2: Object): StoreState {
+        return {...{}, ...state1, ...state2} as StoreState;
     }
 
     public setState(newState: StoreState): void {
-        let current: StoreState = this.state;
-        let merged: StoreState = {...{}, ...current as Object, ...newState as Object} as StoreState;
+        let merged: StoreState = this.mergeStates(this.state, newState);
 
-        if (JSON.stringify(current) !== JSON.stringify(merged)) {
-            this.stateImmutable = this.stateImmutable.mergeDeep(Immutable.fromJS(newState));
-            this.state = this.stateImmutable.toJS();
+        if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
+            this.state = merged;
             this.update();
         }
     }
 
     public resetState(): void {
-        this.stateImmutable = Immutable.Map(this.initialStateImmutable.toJS());
-        this.state = this.initialStateImmutable.toJS();
+        this.state = this.initialState;
         this.update();
     }
 
@@ -135,11 +133,11 @@ export class Store<StoreState> {
             }
         });
 
-        this.eventManager.fire(StoreEventType.update, this.stateImmutable.toJS());
+        this.eventManager.fire(StoreEventType.update, this.mergeStates(this.state, {}));
     }
 
     public getInitialState(): StoreState {
-        return this.initialStateImmutable.toJS();
+        return this.mergeStates(this.initialState, {});
     }
 
     public on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState> {
@@ -152,7 +150,7 @@ export class Store<StoreState> {
         }
 
         const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
-        this.eventManager.fire(StoreEventType.init, this.state);
+        this.eventManager.fire(StoreEventType.init, this.mergeStates(this.state, {}));
         return event;
     }
 }

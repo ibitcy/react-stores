@@ -1,4 +1,4 @@
-import { Store, StoreComponent, StoreEventType } from '../src/store';
+import { Store, StoreComponent, StoreEventType, StoreEvent } from '../src/store';
 import * as ReactTestUtils from 'react-dom/test-utils';
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
@@ -8,7 +8,6 @@ import { CommonActions } from '../demo/src/actions';
 import { Test } from '../demo/src/test';
 import { Counter } from '../demo/src/counter';
 import * as Mocha from 'mocha';
-import * as Immutable from 'immutable';
 
 expect.extend(expectJsx);
 
@@ -181,55 +180,23 @@ describe('testStoreState', () => {
         done();
     });
 
-    // it('deep array object value', (done) => {
-    //     CommonStore.store.resetState();
-
-    //     const objectsArray: Object[] = CommonStore.store.state.objectsArray
-    //     const newObjectsArray: Object[] = [];
-
-    //     objectsArray.forEach((a) => {
-    //         if(a['d']){
-    //             let aa = [];
-                
-    //             a['d'].forEach((b, i) => {
-    //                 if(i === 0) {
-    //                     b['enabled'] = false; 
-    //                 }
-
-    //                 return aa.push(b);
-    //             });
-
-    //             a['d'] = aa;
-    //         }
-
-    //         newObjectsArray.push(a);
-    //     });
-
-    //     CommonStore.store.setState({
-    //         objectsArray: newObjectsArray
-    //     } as CommonStore.State);
-
-    //     const result: string = JSON.stringify(false);
-    //     const etalon: string = JSON.stringify(CommonStore.store.state.objectsArray[1]['d'][0]['enabled']);
-
-    //     expect(result).toEqual(etalon);
-    //     done();
-    // });
-
     it('event driven', (done) => {
         CommonStore.store.resetState();
 
-        let counter: number = 0;
+        let counter: string = CommonStore.store.state.counter.toString();
 
-        CommonStore.store.on(StoreEventType.update, (storeState: CommonStore.State) => {
-            counter = storeState.counter;
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on(StoreEventType.update, (storeState: CommonStore.State) => {
+            counter = storeState.counter.toString();
         });
 
         for (let i = 0; i < 4; i++) {
             CommonActions.increaseCounter();
         }
 
-        expect(counter).toEqual(4);
+        event.remove();
+
+        expect(counter).toEqual('4');
+
         done();
     });
 

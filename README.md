@@ -21,23 +21,6 @@ Shared states for React.js (a flux-way shared stores without actions and dispatc
 ## Tests
 `npm run test`
 
-
-## Roadmap
-
-### 1.0
-1. 💡 Event-oriented store
-
-### 2.0
-1. 📦 StoresDB
-2. 💽 Persistance
-3. 🕰 Time Machine
-4. ...
-
-### 3.0
-1. ☁️ CloudStores
-2. ⛳️ Query-oriented
-3. ...
-
 ## How to use
 First you need to create a `Store` singleton
 ```typescript

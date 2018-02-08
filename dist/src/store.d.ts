@@ -22,10 +22,10 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
 export declare class Store<StoreState> {
     components: any[];
     state: StoreState;
-    private stateImmutable;
-    private initialStateImmutable;
+    private initialState;
     private eventManager;
     constructor(state: StoreState);
+    private mergeStates(state1, state2);
     setState(newState: StoreState): void;
     resetState(): void;
     update(): void;
