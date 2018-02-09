@@ -32,11 +32,7 @@ export declare class Store<StoreState> {
     getInitialState(): StoreState;
     on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState>;
 }
-export declare enum StoreEventType {
-    all = "all",
-    init = "init",
-    update = "update",
-}
+export declare type StoreEventType = 'all' | 'init' | 'update';
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];

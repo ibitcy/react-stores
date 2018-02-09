@@ -408,7 +408,7 @@ var warning = __webpack_require__(2);
 var canDefineProperty = __webpack_require__(9);
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
-var REACT_ELEMENT_TYPE = __webpack_require__(23);
+var REACT_ELEMENT_TYPE = __webpack_require__(22);
 
 var RESERVED_PROPS = {
   key: true,
@@ -1092,7 +1092,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _react = __webpack_require__(10);
 
-var _tree = __webpack_require__(21);
+var _tree = __webpack_require__(20);
 
 var getReactElementDisplayName = function getReactElementDisplayName(element) {
   return element.type.displayName || element.type.name || ( // function name
@@ -1663,7 +1663,7 @@ module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var store_1 = __webpack_require__(19);
+var store_1 = __webpack_require__(38);
 var CommonStore;
 (function (CommonStore) {
     // Store's state initial values
@@ -1706,210 +1706,6 @@ var CommonStore;
 
 "use strict";
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(91);
-var StoreComponent = /** @class */ (function (_super) {
-    __extends(StoreComponent, _super);
-    function StoreComponent(stores) {
-        var _this = _super.call(this) || this;
-        _this.stores = {};
-        _this.isStoreMounted = false;
-        _this.stores = stores;
-        for (var storeObject in _this.stores) {
-            if (_this.stores.hasOwnProperty(storeObject)) {
-                var store = _this.stores[storeObject];
-                store.components.push(_this);
-            }
-        }
-        return _this;
-    }
-    StoreComponent.prototype.storeComponentDidMount = function () {
-    };
-    StoreComponent.prototype.storeComponentWillUnmount = function () {
-    };
-    StoreComponent.prototype.storeComponentWillReceiveProps = function (nextProps) {
-    };
-    StoreComponent.prototype.storeComponentWillUpdate = function (nextProps, nextState) {
-    };
-    StoreComponent.prototype.storeComponentDidUpdate = function (prevProps, prevState) {
-    };
-    StoreComponent.prototype.shouldStoreComponentUpdate = function (nextProps, nextState) {
-        return true;
-    };
-    StoreComponent.prototype.storeComponentStoreWillUpdate = function () {
-    };
-    StoreComponent.prototype.storeComponentStoreDidUpdate = function () {
-    };
-    StoreComponent.prototype.componentDidMount = function () {
-        this.isStoreMounted = true;
-        this.storeComponentDidMount();
-    };
-    StoreComponent.prototype.componentWillUnmount = function () {
-        var _this = this;
-        if (this.stores) {
-            var _loop_1 = function (storeObject) {
-                if (this_1.stores.hasOwnProperty(storeObject)) {
-                    var store = this_1.stores[storeObject];
-                    var newComponents_1 = [];
-                    store.components.forEach(function (component) {
-                        if (component !== _this) {
-                            newComponents_1.push(component);
-                        }
-                    });
-                    store.components = newComponents_1;
-                }
-            };
-            var this_1 = this;
-            for (var storeObject in this.stores) {
-                _loop_1(storeObject);
-            }
-        }
-        this.stores = null;
-        this.isStoreMounted = false;
-        this.storeComponentWillUnmount();
-    };
-    StoreComponent.prototype.componentWillReceiveProps = function (nextProps) {
-        this.storeComponentWillReceiveProps(nextProps);
-    };
-    StoreComponent.prototype.componentWillUpdate = function (nextProps, nextState) {
-        this.storeComponentWillUpdate(nextProps, nextState);
-    };
-    StoreComponent.prototype.componentDidUpdate = function (prevProps, prevState) {
-        this.storeComponentDidUpdate(prevProps, prevState);
-    };
-    StoreComponent.prototype.shouldComponentUpdate = function (nextProps, nextState) {
-        return this.shouldStoreComponentUpdate(nextProps, nextState);
-    };
-    return StoreComponent;
-}(React.Component));
-exports.StoreComponent = StoreComponent;
-var Store = /** @class */ (function () {
-    function Store(state) {
-        this.components = [];
-        this.state = null;
-        this.initialState = null;
-        this.eventManager = null;
-        this.eventManager = new StoreEventManager();
-        this.initialState = this.mergeStates(state, {});
-        this.state = this.mergeStates(state, {});
-    }
-    Store.prototype.mergeStates = function (state1, state2) {
-        return __assign({}, state1, state2);
-    };
-    Store.prototype.setState = function (newState) {
-        var merged = this.mergeStates(this.state, newState);
-        if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
-            this.state = merged;
-            this.update();
-        }
-    };
-    Store.prototype.resetState = function () {
-        this.state = this.initialState;
-        this.update();
-    };
-    Store.prototype.update = function () {
-        this.components.forEach(function (component) {
-            if (component.isStoreMounted) {
-                component.storeComponentStoreWillUpdate();
-                component.forceUpdate();
-                component.storeComponentStoreDidUpdate();
-            }
-        });
-        this.eventManager.fire(StoreEventType.update, this.mergeStates(this.state, {}));
-    };
-    Store.prototype.getInitialState = function () {
-        return this.mergeStates(this.initialState, {});
-    };
-    Store.prototype.on = function (eventType, callback) {
-        var eventTypes = [];
-        if (eventType && eventType.constructor === Array) {
-            eventTypes = eventType;
-        }
-        else {
-            eventTypes = [eventType];
-        }
-        var event = this.eventManager.add(eventTypes, callback);
-        this.eventManager.fire(StoreEventType.init, this.mergeStates(this.state, {}));
-        return event;
-    };
-    return Store;
-}());
-exports.Store = Store;
-var StoreEventType;
-(function (StoreEventType) {
-    StoreEventType["all"] = "all";
-    StoreEventType["init"] = "init";
-    StoreEventType["update"] = "update";
-})(StoreEventType = exports.StoreEventType || (exports.StoreEventType = {}));
-var StoreEvent = /** @class */ (function () {
-    function StoreEvent(id, types, onFire, onRemove) {
-        this.id = id;
-        this.types = types;
-        this.onFire = onFire;
-        this.onRemove = onRemove;
-    }
-    StoreEvent.prototype.remove = function () {
-        this.onRemove(this.id);
-    };
-    return StoreEvent;
-}());
-exports.StoreEvent = StoreEvent;
-var StoreEventManager = /** @class */ (function () {
-    function StoreEventManager() {
-        this.events = [];
-        this.eventCounter = 0;
-    }
-    StoreEventManager.prototype.generateEventId = function () {
-        return "" + ++this.eventCounter + Date.now() + Math.random();
-    };
-    StoreEventManager.prototype.fire = function (type, storeState) {
-        this.events.forEach(function (event) {
-            if (event.types.indexOf(type) >= 0 || event.types.indexOf(StoreEventType.all) >= 0) {
-                event.onFire(storeState);
-            }
-        });
-    };
-    StoreEventManager.prototype.remove = function (id) {
-        this.events = this.events.filter(function (event) {
-            return event.id !== id;
-        });
-    };
-    StoreEventManager.prototype.add = function (eventTypes, callback) {
-        var _this = this;
-        var event = new StoreEvent(this.generateEventId(), eventTypes, callback, function (id) {
-            _this.remove(id);
-        });
-        this.events.push(event);
-        return event;
-    };
-    return StoreEventManager;
-}());
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 
 module.exports = collapse;
 
@@ -1920,7 +1716,7 @@ function collapse(value) {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1958,7 +1754,7 @@ var createReactElementTreeNode = exports.createReactElementTreeNode = function c
 //# sourceMappingURL=tree.js.map
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1975,7 +1771,7 @@ var createReactElementTreeNode = exports.createReactElementTreeNode = function c
 var _prodInvariant = __webpack_require__(5),
     _assign = __webpack_require__(4);
 
-var ReactNoopUpdateQueue = __webpack_require__(25);
+var ReactNoopUpdateQueue = __webpack_require__(24);
 
 var canDefineProperty = __webpack_require__(9);
 var emptyObject = __webpack_require__(11);
@@ -2105,7 +1901,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2128,7 +1924,7 @@ var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol
 module.exports = REACT_ELEMENT_TYPE;
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2156,7 +1952,7 @@ var ReactElement = __webpack_require__(3);
 var checkReactTypeSpec = __webpack_require__(61);
 
 var canDefineProperty = __webpack_require__(9);
-var getIteratorFn = __webpack_require__(26);
+var getIteratorFn = __webpack_require__(25);
 var warning = __webpack_require__(2);
 var lowPriorityWarning = __webpack_require__(15);
 
@@ -2387,7 +2183,7 @@ module.exports = ReactElementValidator;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2486,7 +2282,7 @@ module.exports = ReactNoopUpdateQueue;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2530,7 +2326,7 @@ function getIteratorFn(maybeIterable) {
 module.exports = getIteratorFn;
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2556,9 +2352,9 @@ var _assert = __webpack_require__(16);
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _SpyUtils = __webpack_require__(28);
+var _SpyUtils = __webpack_require__(27);
 
-var _TestUtils = __webpack_require__(29);
+var _TestUtils = __webpack_require__(28);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2946,7 +2742,7 @@ for (var alias in aliases) {
 }exports.default = Expectation;
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2963,7 +2759,7 @@ var _assert = __webpack_require__(16);
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _TestUtils = __webpack_require__(29);
+var _TestUtils = __webpack_require__(28);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3073,7 +2869,7 @@ var spyOn = exports.spyOn = function spyOn(object, methodName) {
 };
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3086,7 +2882,7 @@ exports.stringContains = exports.objectContains = exports.arrayContains = export
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var _isRegex = __webpack_require__(32);
+var _isRegex = __webpack_require__(31);
 
 var _isRegex2 = _interopRequireDefault(_isRegex);
 
@@ -3094,7 +2890,7 @@ var _why = __webpack_require__(76);
 
 var _why2 = _interopRequireDefault(_why);
 
-var _objectKeys = __webpack_require__(34);
+var _objectKeys = __webpack_require__(33);
 
 var _objectKeys2 = _interopRequireDefault(_objectKeys);
 
@@ -3225,17 +3021,17 @@ var stringContains = exports.stringContains = function stringContains(string, va
 };
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _Expectation = __webpack_require__(27);
+var _Expectation = __webpack_require__(26);
 
 var _Expectation2 = _interopRequireDefault(_Expectation);
 
-var _SpyUtils = __webpack_require__(28);
+var _SpyUtils = __webpack_require__(27);
 
 var _assert = __webpack_require__(16);
 
@@ -3261,7 +3057,7 @@ expect.extend = _extend2.default;
 module.exports = expect;
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3307,7 +3103,7 @@ module.exports = function isCallable(value) {
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3353,7 +3149,7 @@ module.exports = function isRegex(value) {
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3387,7 +3183,7 @@ if (hasSymbols) {
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3534,7 +3330,7 @@ module.exports = keysShim;
 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3550,7 +3346,7 @@ module.exports = keysShim;
 if (process.env.NODE_ENV !== 'production') {
   var invariant = __webpack_require__(1);
   var warning = __webpack_require__(2);
-  var ReactPropTypesSecret = __webpack_require__(36);
+  var ReactPropTypesSecret = __webpack_require__(35);
   var loggedTypeFailures = {};
 }
 
@@ -3601,7 +3397,7 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3620,94 +3416,93 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var store_1 = __webpack_require__(19);
-var expect = __webpack_require__(30);
+var expect = __webpack_require__(29);
 var expect_jsx_1 = __webpack_require__(43);
-var store_2 = __webpack_require__(18);
-var actions_1 = __webpack_require__(38);
+var store_1 = __webpack_require__(18);
+var actions_1 = __webpack_require__(37);
 expect.extend(expect_jsx_1.default);
 describe('testStoreState', function () {
     it('counter should be 4', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         for (var i = 0; i < 4; i++) {
             actions_1.CommonActions.increaseCounter();
         }
-        expect(store_2.CommonStore.store.state.counter).toEqual(4);
+        expect(store_1.CommonStore.store.state.counter).toEqual(4);
         done();
     });
     it('foo should be bar', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         actions_1.CommonActions.toggleFooBar();
-        expect(store_2.CommonStore.store.state.foo).toEqual('bar');
+        expect(store_1.CommonStore.store.state.foo).toEqual('bar');
         done();
     });
     it('foo should be resetted to foo', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         actions_1.CommonActions.toggleFooBar();
-        store_2.CommonStore.store.resetState();
-        expect(store_2.CommonStore.store.state.foo).toEqual('foo');
+        store_1.CommonStore.store.resetState();
+        expect(store_1.CommonStore.store.state.foo).toEqual('foo');
         done();
     });
     it('counter should be resetted to 0', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         for (var i = 0; i < 4; i++) {
             actions_1.CommonActions.increaseCounter();
         }
-        store_2.CommonStore.store.resetState();
-        expect(store_2.CommonStore.store.state.counter).toEqual(0);
+        store_1.CommonStore.store.resetState();
+        expect(store_1.CommonStore.store.state.counter).toEqual(0);
         done();
     });
     it('bar should be setted to 100', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         actions_1.CommonActions.setSettings(100, 200);
-        expect(store_2.CommonStore.store.state.settings.foo.bar).toEqual(100);
+        expect(store_1.CommonStore.store.state.settings.foo.bar).toEqual(100);
         done();
     });
     it('baz should be setted to 200', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         actions_1.CommonActions.setSettings(100, 200);
-        expect(store_2.CommonStore.store.state.settings.baz).toEqual(200);
+        expect(store_1.CommonStore.store.state.settings.baz).toEqual(200);
         done();
     });
     it('bar should be resetted to 1', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         actions_1.CommonActions.setSettings(100, 200);
-        store_2.CommonStore.store.resetState();
-        expect(store_2.CommonStore.store.state.settings.foo.bar).toEqual(1);
+        store_1.CommonStore.store.resetState();
+        expect(store_1.CommonStore.store.state.settings.foo.bar).toEqual(1);
         done();
     });
     it('nullObj should be null', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         actions_1.CommonActions.setNull(null);
-        expect(store_2.CommonStore.store.state.nullObj).toEqual(null);
+        expect(store_1.CommonStore.store.state.nullObj).toEqual(null);
         done();
     });
     it('store init test', function (done) {
-        store_2.CommonStore.store.resetState();
-        var result = JSON.stringify(store_2.CommonStore.store.state);
-        var etalon = JSON.stringify(store_2.CommonStore.initialState);
+        store_1.CommonStore.store.resetState();
+        var result = JSON.stringify(store_1.CommonStore.store.state);
+        var etalon = JSON.stringify(store_1.CommonStore.initialState);
         expect(result).toEqual(etalon);
         done();
     });
     it('update numeric collection', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         var newNumericArray = [3, 2];
-        store_2.CommonStore.store.setState({
+        store_1.CommonStore.store.setState({
             numericArray: newNumericArray
         });
-        var result = JSON.stringify(store_2.CommonStore.store.state.numericArray);
+        var result = JSON.stringify(store_1.CommonStore.store.state.numericArray);
         var etalon = JSON.stringify(newNumericArray);
         expect(result).toEqual(etalon);
         done();
     });
     it('update objects collection', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         var newObjectsArray = [{
                 x: 1,
                 y: 2,
@@ -3721,17 +3516,17 @@ describe('testStoreState', function () {
                     b: [true, false, null]
                 }
             }];
-        store_2.CommonStore.store.setState({
+        store_1.CommonStore.store.setState({
             objectsArray: newObjectsArray
         });
-        var result = JSON.stringify(store_2.CommonStore.store.state.objectsArray);
+        var result = JSON.stringify(store_1.CommonStore.store.state.objectsArray);
         var etalon = JSON.stringify(newObjectsArray);
         expect(result).toEqual(etalon);
         done();
     });
     it('mutable test', function (done) {
-        store_2.CommonStore.store.resetState();
-        var objectsArrayFromStore = store_2.CommonStore.store.state.objectsArray;
+        store_1.CommonStore.store.resetState();
+        var objectsArrayFromStore = store_1.CommonStore.store.state.objectsArray;
         objectsArrayFromStore = [{
                 id: 0,
                 foo: 1,
@@ -3741,27 +3536,27 @@ describe('testStoreState', function () {
             }, [], [], [], {
                 id: 1
             }];
-        var result = JSON.stringify(store_2.CommonStore.store.state.objectsArray);
-        var etalon = JSON.stringify(store_2.CommonStore.store.getInitialState().objectsArray);
+        var result = JSON.stringify(store_1.CommonStore.store.state.objectsArray);
+        var etalon = JSON.stringify(store_1.CommonStore.store.getInitialState().objectsArray);
         expect(result).toEqual(etalon);
         done();
     });
     it('deep array object', function (done) {
-        store_2.CommonStore.store.resetState();
-        var objectsArray = store_2.CommonStore.store.state.objectsArray.concat();
+        store_1.CommonStore.store.resetState();
+        var objectsArray = store_1.CommonStore.store.state.objectsArray.concat();
         objectsArray[1] = [];
-        store_2.CommonStore.store.setState({
+        store_1.CommonStore.store.setState({
             objectsArray: objectsArray
         });
         var result = JSON.stringify([]);
-        var etalon = JSON.stringify(store_2.CommonStore.store.state.objectsArray[1]);
+        var etalon = JSON.stringify(store_1.CommonStore.store.state.objectsArray[1]);
         expect(result).toEqual(etalon);
         done();
     });
     it('event driven', function (done) {
-        store_2.CommonStore.store.resetState();
-        var counter = store_2.CommonStore.store.state.counter.toString();
-        var event = store_2.CommonStore.store.on(store_1.StoreEventType.update, function (storeState) {
+        store_1.CommonStore.store.resetState();
+        var counter = store_1.CommonStore.store.state.counter.toString();
+        var event = store_1.CommonStore.store.on('update', function (storeState) {
             counter = storeState.counter.toString();
         });
         for (var i = 0; i < 4; i++) {
@@ -3772,13 +3567,13 @@ describe('testStoreState', function () {
         done();
     });
     it('store state replace', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         for (var i = 0; i < 4; i++) {
             actions_1.CommonActions.increaseCounter();
         }
         actions_1.CommonActions.setSettings(100, 200);
         actions_1.CommonActions.toggleFooBar();
-        var result = JSON.stringify(store_2.CommonStore.store.state);
+        var result = JSON.stringify(store_1.CommonStore.store.state);
         var etalon = JSON.stringify({
             nullObj: null,
             counter: 4,
@@ -3812,8 +3607,8 @@ describe('testStoreState', function () {
         done();
     });
     it('store state reset', function (done) {
-        store_2.CommonStore.store.resetState();
-        var result = JSON.stringify(store_2.CommonStore.store.state);
+        store_1.CommonStore.store.resetState();
+        var result = JSON.stringify(store_1.CommonStore.store.state);
         var etalon = JSON.stringify({
             nullObj: null,
             counter: 0,
@@ -3847,12 +3642,12 @@ describe('testStoreState', function () {
         done();
     });
     it('update trigger', function (done) {
-        store_2.CommonStore.store.resetState();
+        store_1.CommonStore.store.resetState();
         var updated = 'false';
-        store_2.CommonStore.store.on(store_1.StoreEventType.update, function (storeState) {
+        store_1.CommonStore.store.on('update', function (storeState) {
             updated = 'true';
         });
-        store_2.CommonStore.store.setState({
+        store_1.CommonStore.store.setState({
             counter: 0
         });
         expect(updated).toEqual('false');
@@ -3862,7 +3657,7 @@ describe('testStoreState', function () {
 
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3905,6 +3700,198 @@ var CommonActions = /** @class */ (function () {
     return CommonActions;
 }());
 exports.CommonActions = CommonActions;
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(91);
+var StoreComponent = /** @class */ (function (_super) {
+    __extends(StoreComponent, _super);
+    function StoreComponent(stores) {
+        var _this = _super.call(this) || this;
+        _this.stores = {};
+        _this.isStoreMounted = false;
+        _this.stores = stores;
+        for (var storeObject in _this.stores) {
+            if (_this.stores.hasOwnProperty(storeObject)) {
+                var store = _this.stores[storeObject];
+                store.components.push(_this);
+            }
+        }
+        return _this;
+    }
+    StoreComponent.prototype.storeComponentDidMount = function () {
+    };
+    StoreComponent.prototype.storeComponentWillUnmount = function () {
+    };
+    StoreComponent.prototype.storeComponentWillReceiveProps = function (nextProps) {
+    };
+    StoreComponent.prototype.storeComponentWillUpdate = function (nextProps, nextState) {
+    };
+    StoreComponent.prototype.storeComponentDidUpdate = function (prevProps, prevState) {
+    };
+    StoreComponent.prototype.shouldStoreComponentUpdate = function (nextProps, nextState) {
+        return true;
+    };
+    StoreComponent.prototype.storeComponentStoreWillUpdate = function () {
+    };
+    StoreComponent.prototype.storeComponentStoreDidUpdate = function () {
+    };
+    StoreComponent.prototype.componentDidMount = function () {
+        this.isStoreMounted = true;
+        this.storeComponentDidMount();
+    };
+    StoreComponent.prototype.componentWillUnmount = function () {
+        var _this = this;
+        if (this.stores) {
+            var _loop_1 = function (storeObject) {
+                if (this_1.stores.hasOwnProperty(storeObject)) {
+                    var store = this_1.stores[storeObject];
+                    var newComponents_1 = [];
+                    store.components.forEach(function (component) {
+                        if (component !== _this) {
+                            newComponents_1.push(component);
+                        }
+                    });
+                    store.components = newComponents_1;
+                }
+            };
+            var this_1 = this;
+            for (var storeObject in this.stores) {
+                _loop_1(storeObject);
+            }
+        }
+        this.stores = null;
+        this.isStoreMounted = false;
+        this.storeComponentWillUnmount();
+    };
+    StoreComponent.prototype.componentWillReceiveProps = function (nextProps) {
+        this.storeComponentWillReceiveProps(nextProps);
+    };
+    StoreComponent.prototype.componentWillUpdate = function (nextProps, nextState) {
+        this.storeComponentWillUpdate(nextProps, nextState);
+    };
+    StoreComponent.prototype.componentDidUpdate = function (prevProps, prevState) {
+        this.storeComponentDidUpdate(prevProps, prevState);
+    };
+    StoreComponent.prototype.shouldComponentUpdate = function (nextProps, nextState) {
+        return this.shouldStoreComponentUpdate(nextProps, nextState);
+    };
+    return StoreComponent;
+}(React.Component));
+exports.StoreComponent = StoreComponent;
+var Store = /** @class */ (function () {
+    function Store(state) {
+        this.components = [];
+        this.state = null;
+        this.initialState = null;
+        this.eventManager = null;
+        this.eventManager = new StoreEventManager();
+        this.initialState = this.mergeStates(state, {});
+        this.state = this.mergeStates(state, {});
+    }
+    Store.prototype.mergeStates = function (state1, state2) {
+        return __assign({}, state1, state2);
+    };
+    Store.prototype.setState = function (newState) {
+        var merged = this.mergeStates(this.state, newState);
+        if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
+            this.state = merged;
+            this.update();
+        }
+    };
+    Store.prototype.resetState = function () {
+        this.state = this.initialState;
+        this.update();
+    };
+    Store.prototype.update = function () {
+        this.components.forEach(function (component) {
+            if (component.isStoreMounted) {
+                component.storeComponentStoreWillUpdate();
+                component.forceUpdate();
+                component.storeComponentStoreDidUpdate();
+            }
+        });
+        this.eventManager.fire('update', this.mergeStates(this.state, {}));
+    };
+    Store.prototype.getInitialState = function () {
+        return this.mergeStates(this.initialState, {});
+    };
+    Store.prototype.on = function (eventType, callback) {
+        var eventTypes = eventType && eventType.constructor === Array ? eventType : [eventType];
+        var event = this.eventManager.add(eventTypes, callback);
+        this.eventManager.fire('init', this.mergeStates(this.state, {}));
+        return event;
+    };
+    return Store;
+}());
+exports.Store = Store;
+var StoreEvent = /** @class */ (function () {
+    function StoreEvent(id, types, onFire, onRemove) {
+        this.id = id;
+        this.types = types;
+        this.onFire = onFire;
+        this.onRemove = onRemove;
+    }
+    StoreEvent.prototype.remove = function () {
+        this.onRemove(this.id);
+    };
+    return StoreEvent;
+}());
+exports.StoreEvent = StoreEvent;
+var StoreEventManager = /** @class */ (function () {
+    function StoreEventManager() {
+        this.events = [];
+        this.eventCounter = 0;
+    }
+    StoreEventManager.prototype.generateEventId = function () {
+        return "" + ++this.eventCounter + Date.now() + Math.random();
+    };
+    StoreEventManager.prototype.fire = function (type, storeState) {
+        this.events.forEach(function (event) {
+            if (event.types.indexOf(type) >= 0 || event.types.indexOf('all') >= 0) {
+                event.onFire(storeState);
+            }
+        });
+    };
+    StoreEventManager.prototype.remove = function (id) {
+        this.events = this.events.filter(function (event) {
+            return event.id !== id;
+        });
+    };
+    StoreEventManager.prototype.add = function (eventTypes, callback) {
+        var _this = this;
+        var event = new StoreEvent(this.generateEventId(), eventTypes, callback, function (id) {
+            _this.remove(id);
+        });
+        this.events.push(event);
+        return event;
+    };
+    return StoreEventManager;
+}());
 
 
 /***/ }),
@@ -6710,7 +6697,7 @@ module.exports = factory;
 "use strict";
 
 
-var keys = __webpack_require__(34);
+var keys = __webpack_require__(33);
 var foreach = __webpack_require__(66);
 var hasSymbols = typeof Symbol === 'function' && typeof Symbol() === 'symbol';
 
@@ -6777,11 +6764,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _expect = __webpack_require__(30);
+var _expect = __webpack_require__(29);
 
 var _expect2 = _interopRequireDefault(_expect);
 
-var _collapseWhiteSpace = __webpack_require__(20);
+var _collapseWhiteSpace = __webpack_require__(19);
 
 var _collapseWhiteSpace2 = _interopRequireDefault(_collapseWhiteSpace);
 
@@ -6820,7 +6807,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _collapseWhiteSpace = __webpack_require__(20);
+var _collapseWhiteSpace = __webpack_require__(19);
 
 var _collapseWhiteSpace2 = _interopRequireDefault(_collapseWhiteSpace);
 
@@ -7231,7 +7218,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _tree = __webpack_require__(21);
+var _tree = __webpack_require__(20);
 
 exports.default = function (previousNodes, currentNode) {
   var nodes = previousNodes.slice(0, previousNodes.length > 0 ? previousNodes.length - 1 : 0);
@@ -7541,7 +7528,7 @@ module.exports = PooledClass;
 
 var _assign = __webpack_require__(4);
 
-var ReactBaseClasses = __webpack_require__(22);
+var ReactBaseClasses = __webpack_require__(21);
 var ReactChildren = __webpack_require__(55);
 var ReactDOMFactories = __webpack_require__(56);
 var ReactElement = __webpack_require__(3);
@@ -7558,7 +7545,7 @@ var cloneElement = ReactElement.cloneElement;
 if (process.env.NODE_ENV !== 'production') {
   var lowPriorityWarning = __webpack_require__(15);
   var canDefineProperty = __webpack_require__(9);
-  var ReactElementValidator = __webpack_require__(24);
+  var ReactElementValidator = __webpack_require__(23);
   var didWarnPropTypesDeprecated = false;
   createElement = ReactElementValidator.createElement;
   createFactory = ReactElementValidator.createFactory;
@@ -7878,7 +7865,7 @@ var ReactElement = __webpack_require__(3);
  */
 var createDOMFactory = ReactElement.createFactory;
 if (process.env.NODE_ENV !== 'production') {
-  var ReactElementValidator = __webpack_require__(24);
+  var ReactElementValidator = __webpack_require__(23);
   createDOMFactory = ReactElementValidator.createFactory;
 }
 
@@ -8221,13 +8208,13 @@ module.exports = checkReactTypeSpec;
 
 
 
-var _require = __webpack_require__(22),
+var _require = __webpack_require__(21),
     Component = _require.Component;
 
 var _require2 = __webpack_require__(3),
     isValidElement = _require2.isValidElement;
 
-var ReactNoopUpdateQueue = __webpack_require__(25);
+var ReactNoopUpdateQueue = __webpack_require__(24);
 var factory = __webpack_require__(41);
 
 module.exports = factory(Component, isValidElement, ReactNoopUpdateQueue);
@@ -8292,9 +8279,9 @@ module.exports = onlyChild;
 var _prodInvariant = __webpack_require__(5);
 
 var ReactCurrentOwner = __webpack_require__(8);
-var REACT_ELEMENT_TYPE = __webpack_require__(23);
+var REACT_ELEMENT_TYPE = __webpack_require__(22);
 
-var getIteratorFn = __webpack_require__(26);
+var getIteratorFn = __webpack_require__(25);
 var invariant = __webpack_require__(1);
 var KeyEscapeUtils = __webpack_require__(52);
 var warning = __webpack_require__(2);
@@ -8465,7 +8452,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Expectation = __webpack_require__(27);
+var _Expectation = __webpack_require__(26);
 
 var _Expectation2 = _interopRequireDefault(_Expectation);
 
@@ -8691,7 +8678,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 "use strict";
 
 
-var isCallable = __webpack_require__(31);
+var isCallable = __webpack_require__(30);
 var fnToStr = Function.prototype.toString;
 var isNonArrowFnRegex = /^\s*function/;
 var isArrowFnWithParensRegex = /^\([^\)]*\) *=>/;
@@ -8800,7 +8787,7 @@ module.exports = function () {
 "use strict";
 
 
-var isSymbol = __webpack_require__(33);
+var isSymbol = __webpack_require__(32);
 
 module.exports = function getSymbolIterator() {
 	var symbolIterator = typeof Symbol === 'function' && isSymbol(Symbol.iterator) ? Symbol.iterator : null;
@@ -8833,10 +8820,10 @@ var isBoolean = __webpack_require__(72);
 var isDate = __webpack_require__(73);
 var isGenerator = __webpack_require__(77);
 var isNumber = __webpack_require__(78);
-var isRegex = __webpack_require__(32);
+var isRegex = __webpack_require__(31);
 var isString = __webpack_require__(82);
-var isSymbol = __webpack_require__(33);
-var isCallable = __webpack_require__(31);
+var isSymbol = __webpack_require__(32);
+var isCallable = __webpack_require__(30);
 
 var isProto = Object.prototype.isPrototypeOf;
 
@@ -9621,8 +9608,8 @@ var invariant = __webpack_require__(1);
 var warning = __webpack_require__(2);
 var assign = __webpack_require__(4);
 
-var ReactPropTypesSecret = __webpack_require__(36);
-var checkPropTypes = __webpack_require__(35);
+var ReactPropTypesSecret = __webpack_require__(35);
+var checkPropTypes = __webpack_require__(34);
 
 module.exports = function(isValidElement, throwOnDirectAccess) {
   /* global Symbol */
@@ -10179,7 +10166,7 @@ var emptyObject = __webpack_require__(11);
 var invariant = __webpack_require__(1);
 var warning = __webpack_require__(2);
 var emptyFunction = __webpack_require__(6);
-var checkPropTypes = __webpack_require__(35);
+var checkPropTypes = __webpack_require__(34);
 
 // TODO: this is special because it gets imported during build.
 
@@ -11946,7 +11933,7 @@ module.exports = g;
 /* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(37);
+module.exports = __webpack_require__(36);
 
 
 /***/ })

@@ -6,7 +6,8 @@
 		"jsx": "react",
 		"target": "es5",
 		"lib": [
-			"dom", "es6"
+			"dom", 
+			"es6"
 		],
 		"outDir": "dist",
 		"experimentalDecorators": true,

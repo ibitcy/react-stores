@@ -55,14 +55,14 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
     }
 
     public componentWillUnmount(): void {
-        if(this.stores) {
+        if (this.stores) {
             for (let storeObject in this.stores) {
                 if (this.stores.hasOwnProperty(storeObject)) {
                     const store: any = this.stores[storeObject];
                     const newComponents = [];
-                    
+
                     store.components.forEach((component) => {
-                        if(component !== this) {
+                        if (component !== this) {
                             newComponents.push(component);
                         }
                     });
@@ -107,7 +107,7 @@ export class Store<StoreState> {
     }
 
     private mergeStates(state1: Object, state2: Object): StoreState {
-        return {...{}, ...state1, ...state2} as StoreState;
+        return { ...{}, ...state1, ...state2 } as StoreState;
     }
 
     public setState(newState: StoreState): void {
@@ -133,7 +133,7 @@ export class Store<StoreState> {
             }
         });
 
-        this.eventManager.fire(StoreEventType.update, this.mergeStates(this.state, {}));
+        this.eventManager.fire('update', this.mergeStates(this.state, {}));
     }
 
     public getInitialState(): StoreState {
@@ -141,25 +141,19 @@ export class Store<StoreState> {
     }
 
     public on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState> {
-        let eventTypes: StoreEventType[] = [];
-
-        if(eventType && eventType.constructor === Array) {
-            eventTypes = eventType as StoreEventType[];
-        } else {
-            eventTypes = [eventType as StoreEventType];
-        }
-
+        const eventTypes: StoreEventType[] = eventType && eventType.constructor === Array ? eventType as StoreEventType[] : [eventType] as StoreEventType[];
         const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
-        this.eventManager.fire(StoreEventType.init, this.mergeStates(this.state, {}));
+
+        this.eventManager.fire('init', this.mergeStates(this.state, {}));
+
         return event;
     }
 }
 
-export enum StoreEventType {
-    all = 'all',
-    init = 'init',
-    update = 'update'
-}
+export type StoreEventType = 
+    'all' |
+    'init' |
+    'update'
 
 export class StoreEvent<StoreState> {
     constructor(
@@ -184,7 +178,7 @@ class StoreEventManager<StoreState> {
 
     public fire(type: StoreEventType, storeState: StoreState): void {
         this.events.forEach((event: StoreEvent<StoreState>) => {
-            if (event.types.indexOf(type) >= 0 || event.types.indexOf(StoreEventType.all) >= 0) {
+            if (event.types.indexOf(type) >= 0 || event.types.indexOf('all') >= 0) {
                 event.onFire(storeState);
             }
         });

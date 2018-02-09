@@ -20,7 +20,7 @@ export class CounterEvents extends React.Component<Props, State> {
 	};
 
 	componentDidMount() {
-		this.event = CommonStore.store.on(StoreEventType.all, (storeState: CommonStore.State) => {
+		this.event = CommonStore.store.on('all', (storeState: CommonStore.State) => {
 			this.setState({
 				commonStoreState: storeState
 			});

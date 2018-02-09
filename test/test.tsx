@@ -185,7 +185,7 @@ describe('testStoreState', () => {
 
         let counter: string = CommonStore.store.state.counter.toString();
 
-        const event: StoreEvent<CommonStore.State> = CommonStore.store.on(StoreEventType.update, (storeState: CommonStore.State) => {
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('update', (storeState: CommonStore.State) => {
             counter = storeState.counter.toString();
         });
 
@@ -288,7 +288,7 @@ describe('testStoreState', () => {
 
         let updated: string = 'false';
 
-        CommonStore.store.on(StoreEventType.update, (storeState: CommonStore.State) => {
+        CommonStore.store.on('update', (storeState: CommonStore.State) => {
             updated = 'true';
         });
 
