@@ -1,18 +1,20 @@
-import {Store, StoreComponent} from '../src/store';
+import { Store, StoreComponent, StoreEventType, StoreEvent } from '../src/store';
 import * as ReactTestUtils from 'react-dom/test-utils';
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
 import * as React from 'react';
-import {CommonStore} from '../demo/src/store';
-import {CommonActions} from '../demo/src/actions';
-import {Test} from '../demo/src/test';
-import {Counter} from '../demo/src/counter';
+import { CommonStore } from '../demo/src/store';
+import { CommonActions } from '../demo/src/actions';
+import { Test } from '../demo/src/test';
+import { Counter } from '../demo/src/counter';
 import * as Mocha from 'mocha';
 
 expect.extend(expectJsx);
 
 describe('testStoreState', () => {
     it('counter should be 4', (done) => {
+        CommonStore.store.resetState();
+
         for (let i = 0; i < 4; i++) {
             CommonActions.increaseCounter();
         }
@@ -22,32 +24,37 @@ describe('testStoreState', () => {
     });
 
     it('foo should be bar', (done) => {
+        CommonStore.store.resetState();
         CommonActions.toggleFooBar();
 
         expect(CommonStore.store.state.foo).toEqual('bar');
         done();
     });
 
-    it('foo should be reseted to foo', (done) => {
+    it('foo should be resetted to foo', (done) => {
+        CommonStore.store.resetState();
         CommonActions.toggleFooBar();
-        CommonActions.reset();
+        CommonStore.store.resetState();
 
         expect(CommonStore.store.state.foo).toEqual('foo');
         done();
     });
 
-    it('counter should be reseted to 0', (done) => {
+    it('counter should be resetted to 0', (done) => {
+        CommonStore.store.resetState();
+
         for (let i = 0; i < 4; i++) {
             CommonActions.increaseCounter();
         }
 
-        CommonActions.reset();
+        CommonStore.store.resetState();
 
         expect(CommonStore.store.state.counter).toEqual(0);
         done();
     });
 
     it('bar should be setted to 100', (done) => {
+        CommonStore.store.resetState();
         CommonActions.setSettings(100, 200);
 
         expect(CommonStore.store.state.settings.foo.bar).toEqual(100);
@@ -55,13 +62,15 @@ describe('testStoreState', () => {
     });
 
     it('baz should be setted to 200', (done) => {
+        CommonStore.store.resetState();
         CommonActions.setSettings(100, 200);
 
         expect(CommonStore.store.state.settings.baz).toEqual(200);
         done();
     });
 
-    it('bar should be reseted to 1', (done) => {
+    it('bar should be resetted to 1', (done) => {
+        CommonStore.store.resetState();
         CommonActions.setSettings(100, 200);
         CommonStore.store.resetState();
 
@@ -70,21 +79,130 @@ describe('testStoreState', () => {
     });
 
     it('nullObj should be null', (done) => {
+        CommonStore.store.resetState();
         CommonActions.setNull(null);
 
         expect(CommonStore.store.state.nullObj).toEqual(null);
         done();
     });
 
-    it('Store init test', (done) => {
-        let result = JSON.stringify(CommonStore.store.state);
-        let etalon = JSON.stringify(CommonStore.initialState);
+    it('store init test', (done) => {
+        CommonStore.store.resetState();
+
+        const result: string = JSON.stringify(CommonStore.store.state);
+        const etalon: string = JSON.stringify(CommonStore.initialState);
 
         expect(result).toEqual(etalon);
         done();
     });
 
-    it('Store data', (done) => {
+    it('update numeric collection', (done) => {
+        CommonStore.store.resetState();
+
+        const newNumericArray = [3, 2];
+
+        CommonStore.store.setState({
+            numericArray: newNumericArray
+        } as CommonStore.State);
+
+        const result: string = JSON.stringify(CommonStore.store.state.numericArray);
+        const etalon: string = JSON.stringify(newNumericArray);
+
+        expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('update objects collection', (done) => {
+        CommonStore.store.resetState();
+
+        const newObjectsArray: Object[] = [{
+            x: 1,
+            y: 2,
+            z: 3
+        },
+        {
+            x: 3,
+            y: 2,
+            z: {
+                a: 1,
+                b: [true, false, null]
+            }
+        }];
+
+        CommonStore.store.setState({
+            objectsArray: newObjectsArray
+        } as CommonStore.State);
+
+        const result: string = JSON.stringify(CommonStore.store.state.objectsArray);
+        const etalon: string = JSON.stringify(newObjectsArray);
+
+        expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('mutable test', (done) => {
+        CommonStore.store.resetState();
+
+        let objectsArrayFromStore: Object[] = CommonStore.store.state.objectsArray;
+
+        objectsArrayFromStore = [{
+            id: 0,
+            foo: 1,
+            bar: {
+                baz: 123
+            }
+        }, [], [], [], {
+            id: 1
+        }];
+
+        const result: string = JSON.stringify(CommonStore.store.state.objectsArray);
+        const etalon: string = JSON.stringify(CommonStore.store.getInitialState().objectsArray);
+
+        expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('deep array object', (done) => {
+        CommonStore.store.resetState();
+
+        const objectsArray: Object[] = CommonStore.store.state.objectsArray.concat();
+
+        objectsArray[1] = [];
+
+        CommonStore.store.setState({
+            objectsArray: objectsArray
+        } as CommonStore.State);
+
+        const result: string = JSON.stringify([]);
+        const etalon: string = JSON.stringify(CommonStore.store.state.objectsArray[1]);
+
+        expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('event driven', (done) => {
+        CommonStore.store.resetState();
+
+        let counter: string = CommonStore.store.state.counter.toString();
+
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('update', (storeState: CommonStore.State) => {
+            counter = storeState.counter.toString();
+        });
+
+        for (let i = 0; i < 4; i++) {
+            CommonActions.increaseCounter();
+        }
+
+        event.remove();
+
+        expect(counter).toEqual('4');
+
+        done();
+    });
+
+    it('store state replace', (done) => {
+        CommonStore.store.resetState();
+
         for (let i = 0; i < 4; i++) {
             CommonActions.increaseCounter();
         }
@@ -92,11 +210,29 @@ describe('testStoreState', () => {
         CommonActions.setSettings(100, 200);
         CommonActions.toggleFooBar();
 
-        let result = JSON.stringify(CommonStore.store.state);
-        let etalon = JSON.stringify({
+        const result: string = JSON.stringify(CommonStore.store.state);
+        const etalon: string = JSON.stringify({
             nullObj: null,
             counter: 4,
             foo: 'bar',
+            numericArray: [1, 2, 3],
+            objectsArray: [{
+                a: 1,
+                b: 2,
+                c: 3
+            },
+            {
+                a: 3,
+                b: 2,
+                c: {
+                    a: 1,
+                    b: [1, 2, 3]
+                },
+                d: [
+                    {id: 1, name: 'test 1', enabled: true},
+                    {id: 2, name: 'test 2', enabled: false}
+                ]
+            }],
             settings: {
                 foo: {
                     bar: 100
@@ -106,6 +242,61 @@ describe('testStoreState', () => {
         });
 
         expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('store state reset', (done) => {
+        CommonStore.store.resetState();
+        
+        const result: string = JSON.stringify(CommonStore.store.state);
+        const etalon: string = JSON.stringify({
+            nullObj: null,
+            counter: 0,
+            foo: 'foo',
+            numericArray: [1, 2, 3],
+            objectsArray: [{
+                a: 1,
+                b: 2,
+                c: 3
+            },
+            {
+                a: 3,
+                b: 2,
+                c: {
+                    a: 1,
+                    b: [1, 2, 3]
+                },
+                d: [
+                    {id: 1, name: 'test 1', enabled: true},
+                    {id: 2, name: 'test 2', enabled: false}
+                ]
+            }],
+            settings: {
+                foo: {
+                    bar: 1
+                },
+                baz: 2
+            }
+        });
+
+        expect(result).toEqual(etalon);
+        done();
+    });
+
+    it('update trigger', (done) => {
+        CommonStore.store.resetState();
+
+        let updated: string = 'false';
+
+        CommonStore.store.on('update', (storeState: CommonStore.State) => {
+            updated = 'true';
+        });
+
+        CommonStore.store.setState({
+            counter: 0
+        } as CommonStore.State);
+        
+        expect(updated).toEqual('false');
         done();
     });
 });

@@ -55,6 +55,24 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
     }
 
     public componentWillUnmount(): void {
+        if (this.stores) {
+            for (let storeObject in this.stores) {
+                if (this.stores.hasOwnProperty(storeObject)) {
+                    const store: any = this.stores[storeObject];
+                    const newComponents = [];
+
+                    store.components.forEach((component) => {
+                        if (component !== this) {
+                            newComponents.push(component);
+                        }
+                    });
+
+                    store.components = newComponents;
+                }
+            }
+        }
+
+        this.stores = null;
         this.isStoreMounted = false;
         this.storeComponentWillUnmount();
     }
@@ -79,72 +97,31 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 export class Store<StoreState> {
     public components = [];
     public state: StoreState = null;
-    private initialState: StoreState = null;
+    private initialState = null;
+    private eventManager: StoreEventManager<StoreState> = null;
 
     constructor(state: StoreState) {
-        this.state = this.copyState(state);
-        this.initialState = this.copyState(state);
+        this.eventManager = new StoreEventManager();
+        this.initialState = this.mergeStates(state, {});
+        this.state = this.mergeStates(state, {});
     }
 
-    private copyState(state: StoreState): StoreState {
-	    return {...{}, ...state as any};
-    }
-
-    private isCircular(obj: any): boolean {
-        try { JSON.stringify(obj) }
-        catch (e) { return true }
-        return false;
-    }
-
-    private check(property1: any, property2: any): boolean {
-        if (property1 === null && property1 !== property2) {
-            return false;
-        } else if (property1 === null && property1 === property2) {
-            return true;
-        } else {
-            if (property1 && property1.constructor) {
-                switch (property1.constructor) {
-                    case Array:
-                    case Object:
-                    case Function: {
-                        if (this.isCircular(property1) || this.isCircular(property2)) {
-                            return false;
-                        } else {
-                            return JSON.stringify(property1) === JSON.stringify(property2);
-                        }
-                    }
-                    case Number:
-                    case String:
-                    case Boolean:
-                    default: {
-                        return property1 === property2;
-                    }
-                }
-            } else {
-                return property1 === property2;
-            }
-        }
+    private mergeStates(state1: Object, state2: Object): StoreState {
+        return { ...{}, ...state1, ...state2 } as StoreState;
     }
 
     public setState(newState: StoreState): void {
-        let updated: boolean = false;
+        let merged: StoreState = this.mergeStates(this.state, newState);
 
-        for (let property in newState) {
-            if (newState.hasOwnProperty(property) && this.state.hasOwnProperty(property)) {
-                if (!this.check(this.state[property], newState[property])) {
-                    this.state[property] = newState[property];
-                    updated = true;
-                }
-            }
-        }
-
-        if (updated) {
+        if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
+            this.state = merged;
             this.update();
         }
     }
 
     public resetState(): void {
-        this.setState(this.initialState);
+        this.state = this.initialState;
+        this.update();
     }
 
     public update(): void {
@@ -155,5 +132,76 @@ export class Store<StoreState> {
                 component.storeComponentStoreDidUpdate();
             }
         });
+
+        this.eventManager.fire('update', this.mergeStates(this.state, {}));
+    }
+
+    public getInitialState(): StoreState {
+        return this.mergeStates(this.initialState, {});
+    }
+
+    public on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState> {
+        const eventTypes: StoreEventType[] = eventType && eventType.constructor === Array ? eventType as StoreEventType[] : [eventType] as StoreEventType[];
+        const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
+
+        this.eventManager.fire('init', this.mergeStates(this.state, {}));
+
+        return event;
+    }
+}
+
+export type StoreEventType = 
+    'all' |
+    'init' |
+    'update'
+
+export class StoreEvent<StoreState> {
+    constructor(
+        readonly id: string,
+        readonly types: StoreEventType[],
+        readonly onFire: (storeState: StoreState) => void,
+        readonly onRemove: (id: string) => void
+    ) { }
+
+    public remove(): void {
+        this.onRemove(this.id);
+    }
+}
+
+class StoreEventManager<StoreState> {
+    private events: StoreEvent<StoreState>[] = [];
+    private eventCounter: number = 0;
+
+    private generateEventId(): string {
+        return `${++this.eventCounter}${Date.now()}${Math.random()}`;
+    }
+
+    public fire(type: StoreEventType, storeState: StoreState): void {
+        this.events.forEach((event: StoreEvent<StoreState>) => {
+            if (event.types.indexOf(type) >= 0 || event.types.indexOf('all') >= 0) {
+                event.onFire(storeState);
+            }
+        });
+    }
+
+    public remove(id: string): void {
+        this.events = this.events.filter((event: StoreEvent<StoreState>) => {
+            return event.id !== id;
+        });
+    }
+
+    public add(eventTypes: StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState> {
+        const event: StoreEvent<StoreState> = new StoreEvent<StoreState>(
+            this.generateEventId(),
+            eventTypes,
+            callback,
+            (id: string) => {
+                this.remove(id);
+            }
+        );
+
+        this.events.push(event);
+
+        return event;
     }
 }

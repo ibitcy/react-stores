@@ -5,7 +5,7 @@ export class CommonActions {
         let newState: CommonStore.State = {
             counter: CommonStore.store.state.counter + 1
         } as CommonStore.State;
-
+        
         CommonStore.store.setState(newState);
     }
 

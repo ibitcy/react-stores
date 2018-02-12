@@ -23,11 +23,21 @@ export declare class Store<StoreState> {
     components: any[];
     state: StoreState;
     private initialState;
+    private eventManager;
     constructor(state: StoreState);
-    private copyState(state);
-    private isCircular(obj);
-    private check(property1, property2);
+    private mergeStates(state1, state2);
     setState(newState: StoreState): void;
     resetState(): void;
     update(): void;
+    getInitialState(): StoreState;
+    on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState>;
+}
+export declare type StoreEventType = 'all' | 'init' | 'update';
+export declare class StoreEvent<StoreState> {
+    readonly id: string;
+    readonly types: StoreEventType[];
+    readonly onFire: (storeState: StoreState) => void;
+    readonly onRemove: (id: string) => void;
+    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState) => void, onRemove: (id: string) => void);
+    remove(): void;
 }

@@ -14,9 +14,7 @@ Shared states for React.js (a flux-way shared stores without actions and dispatc
 2. `cd` into it
 3. `yarn install` or `npm i`
 4. `npm run demo`
-5. `localhost:9000` in your favorite browser
-6. ...
-7. Profit!
+5. `localhost:9000` in your browser
 
 [Online demo](https://ibitcy.github.io/react-stores/)
 
@@ -88,7 +86,7 @@ export class App extends StoreComponent<Props, State, StoresState> {
         return (
             <div>
                 <p>Component name: {this.props.name}</p>
-	        <p>Common counter value: {this.stores.common.state.counter.toString()}</p>
+	            <p>Common counter value: {this.stores.common.state.counter.toString()}</p>
                 <p>Local counter value: {this.state.counter.toString()}</p>
 
                 <button onClick={this.increaseCommon.bind(this)}>Increase common counter value</button>
@@ -99,7 +97,52 @@ export class App extends StoreComponent<Props, State, StoresState> {
 }
 ```
 
-Now you can use it as usial
+Or you can use event driven component–store connection (from v1.2.0)
+```typescript
+import * as React from "react";
+import {StoreComponent, Store, StoreEventType, StoreEvent} from "react-stores";
+import {CommonStore} from "./store";
+
+interface Props {
+
+}
+
+interface State {
+    commonStoreState: CommonStore.State
+}
+
+export class App extends React.Component<Props, State> {
+    private storeEvent: StoreEvent<CommonStore.State> = null;
+
+    state: State = {
+        commonStoreState: null
+    }
+
+    comonentDidMount() {
+        // Add store state event binder
+        this.storeEvent = CommonStore.store.on(StoreEventType.storeUpdated, (storeState: StoreState) => {
+            this.setState({
+                commonStoreState: storeState
+            });
+        });
+    }
+
+    componentDidUnmount() {
+        // Remove store state event binder
+        this.storeEvent.remove();
+    }
+
+    render() {
+        return (
+            <div>
+	            <p>Common counter value: {this.state.commonStoreState.counter.toString()}</p>
+            </div>
+        );
+    }
+}
+```
+
+Now you can use it as usual
 ```typescript
 import {App} from "./component";
 
@@ -130,7 +173,7 @@ export class CommonActions {
 
 // Note that you always have your store interface, you haven't lost typization consistency 
 // of your app like it always occurs in Flux/Redux apps in action -> store communication
-let newState:CommonStore.State = {
+let newState: CommonStore.State = {
 	counter: 100500
 }
 
@@ -182,15 +225,33 @@ storeComponentStoreDidUpdate(): void
 
 ### Store
 ```typescript
-setState(newState: StoreState): void
+setState(newState: StoreState): void // Set store's state to provided new one
 ```
 
 ```typescript
-resetState(): void
+resetState(): void // Reset srote to it's initialState
 ```
 
 ```typescript
-update(): void
+update(): void // Force update all binded components
+```
+
+```typescript
+on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState> // State event binder
+```
+
+
+### StoreEvent
+```typescript
+remove(): void
+```
+
+
+### StoreEventType
+```
+'all' // fires with every other events (init or update)
+'init' // fires once at as soon as event has bound
+'update' // fires at each store update
 ```
 
 ## ES5/6
