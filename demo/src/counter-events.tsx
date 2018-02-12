@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { CommonActions } from './actions';
-import { Store, StoreComponent, StoreEventType, StoreEvent } from '../../src/store';
-import { CommonStore } from './store';
+import {CommonActions} from './actions';
+import {Store, StoreComponent, StoreEventType, StoreEvent} from '../../src/store';
+import {CommonStore} from './store';
 
 interface Props {
 
@@ -32,7 +32,7 @@ export class CounterEvents extends React.Component<Props, State> {
 	}
 
 	public render() {
-		if(this.state.commonStoreState) {
+		if (this.state.commonStoreState) {
 			return (
 				<div>
 					<h2>
@@ -43,8 +43,10 @@ export class CounterEvents extends React.Component<Props, State> {
 						Shared state counter: {this.state.commonStoreState.counter.toString()}
 					</p>
 
-					<button onClick={() => { CommonActions.increaseCounter(); }}>
-						Shred +1
+					<button onClick={() => {
+						CommonActions.increaseCounter();
+					}}>
+						Shared +1
 					</button>
 				</div>
 			);

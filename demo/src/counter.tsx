@@ -38,7 +38,7 @@ export class Counter extends StoreComponent<Props, State, StoresState> {
 				<p>Shared state counter: {this.stores.common.state.counter.toString()}</p>
 
 				<button onClick={() => { CommonActions.increaseCounter(); }}>
-					Shred +1
+					Shared +1
 				</button>
 			</div>
 		);

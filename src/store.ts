@@ -205,3 +205,30 @@ class StoreEventManager<StoreState> {
         return event;
     }
 }
+
+
+export const followStore = (store: Store<any>) => (WrappedComponent: React.ComponentClass): any => {
+	class Component extends React.Component {
+		private storeEvent: StoreEvent<any> = null;
+
+		state = {
+			storeState: null
+		};
+
+		componentWillMount() {
+			this.storeEvent = store.on('all', (storeState: any) => {
+				this.forceUpdate();
+			})
+		}
+
+		componentWillUnmount() {
+			this.storeEvent.remove();
+		}
+
+		public render() {
+			return React.createElement(WrappedComponent, this.props);
+		}
+	}
+
+	return Component;
+};
