@@ -36,7 +36,7 @@ export class CounterEvents extends React.Component<Props, State> {
 			return (
 				<div>
 					<h2>
-						Another comonent with event driven states
+						Another component with event driven states
 					</h2>
 
 					<p>
