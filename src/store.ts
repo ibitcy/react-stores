@@ -113,7 +113,12 @@ export class Store<StoreState> {
     public setState(newState: StoreState): void {
         let merged: StoreState = this.mergeStates(this.state, newState);
 
-        if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
+        try {
+            if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
+                this.state = merged;
+                this.update();
+            }
+        } catch(err) {
             this.state = merged;
             this.update();
         }

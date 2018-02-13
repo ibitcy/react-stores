@@ -3818,7 +3818,13 @@ var Store = /** @class */ (function () {
     };
     Store.prototype.setState = function (newState) {
         var merged = this.mergeStates(this.state, newState);
-        if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
+        try {
+            if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
+                this.state = merged;
+                this.update();
+            }
+        }
+        catch (err) {
             this.state = merged;
             this.update();
         }
