@@ -97,7 +97,7 @@ export class App extends StoreComponent<Props, State, StoresState> {
 }
 ```
 
-Or you can use event driven component–store connection (from v1.2.0)
+v1.2.0 Event driven component–store connection
 ```typescript
 import * as React from "react";
 import {StoreComponent, Store, StoreEventType, StoreEvent} from "react-stores";
@@ -139,6 +139,23 @@ export class App extends React.Component<Props, State> {
             </div>
         );
     }
+}
+```
+
+v1.3.0 Decorator for make React Component React Sores driven. You can use multiple
+```typescript
+@followStore(CommonStore.store)
+@followStore(SomeOtherStore.store)
+export class CounterDecorator extends React.Component<Props, State> {
+	public render() {
+		return (
+			<div>
+				<p>
+					Shared state counter: {CommonStore.store.state.counter.toString()}
+				</p>
+			</div>
+		);
+	}
 }
 ```
 
