@@ -41,3 +41,4 @@ export declare class StoreEvent<StoreState> {
     constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState) => void, onRemove: (id: string) => void);
     remove(): void;
 }
+export declare const followStore: (store: Store<any>) => (WrappedComponent: React.ComponentClass<{}>) => any;
