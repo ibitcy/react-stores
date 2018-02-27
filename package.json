@@ -10,7 +10,7 @@
 		"components"
 	],
 	"description": "React direct state stores",
-	"main": "index.js",
+	"main": "lib",
 	"scripts": {
 		"build": "tsc src/store.ts --jsx 'react' -d --outDir './' && mkdir -p ./lib && mv ./store.d.ts ./index.d.ts && mv ./store.js ./lib/index.js",
 		"test": "cd test && webpack --config ./webpack.config.js && cd .. && node_modules/.bin/mocha test/test.js",
