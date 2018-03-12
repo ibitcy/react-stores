@@ -36,9 +36,9 @@ export declare type StoreEventType = 'all' | 'init' | 'update';
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];
-    readonly onFire: (storeState: StoreState) => void;
+    readonly onFire: (storeState: StoreState, type?: StoreEventType) => void;
     readonly onRemove: (id: string) => void;
-    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState) => void, onRemove: (id: string) => void);
+    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
     remove(): void;
 }
 export declare const followStore: (store: Store<any>) => (WrappedComponent: React.ComponentClass<{}>) => any;

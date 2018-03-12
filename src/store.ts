@@ -164,7 +164,7 @@ export class StoreEvent<StoreState> {
     constructor(
         readonly id: string,
         readonly types: StoreEventType[],
-        readonly onFire: (storeState: StoreState) => void,
+        readonly onFire: (storeState: StoreState, type?: StoreEventType) => void,
         readonly onRemove: (id: string) => void
     ) { }
 
@@ -184,7 +184,7 @@ class StoreEventManager<StoreState> {
     public fire(type: StoreEventType, storeState: StoreState): void {
         this.events.forEach((event: StoreEvent<StoreState>) => {
             if (event.types.indexOf(type) >= 0 || event.types.indexOf('all') >= 0) {
-                event.onFire(storeState);
+                event.onFire(storeState, type);
             }
         });
     }
@@ -211,7 +211,6 @@ class StoreEventManager<StoreState> {
     }
 }
 
-
 export const followStore = (store: Store<any>) => (WrappedComponent: React.ComponentClass): any => {
 	class Component extends React.Component {
 		private storeEvent: StoreEvent<any> = null;
@@ -223,7 +222,7 @@ export const followStore = (store: Store<any>) => (WrappedComponent: React.Compo
 		componentWillMount() {
 			this.storeEvent = store.on('all', (storeState: any) => {
 				this.forceUpdate();
-			})
+			});
 		}
 
 		componentWillUnmount() {
