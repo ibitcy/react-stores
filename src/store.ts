@@ -145,7 +145,7 @@ export class Store<StoreState> {
         return this.mergeStates(this.initialState, {});
     }
 
-    public on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void, type?: StoreEventType): StoreEvent<StoreState> {
+    public on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState> {
         const eventTypes: StoreEventType[] = eventType && eventType.constructor === Array ? eventType as StoreEventType[] : [eventType] as StoreEventType[];
         const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
 
