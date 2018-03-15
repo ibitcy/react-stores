@@ -30,7 +30,7 @@ export declare class Store<StoreState> {
     resetState(): void;
     update(): void;
     getInitialState(): StoreState;
-    on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState>;
 }
 export declare type StoreEventType = 'all' | 'init' | 'update';
 export declare class StoreEvent<StoreState> {
