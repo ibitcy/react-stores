@@ -143,10 +143,6 @@ export class App extends React.Component<Props, State> {
 ```
 
 v1.3.0 Decorator for make React Component React Sores driven. You can use multiple
-```jtypescript
-followStore(store: StoreState, followingState?:stings[])
-```
-
 ```typescript jsx
 @followStore(CommonStore.store, ['counter']) // follow for only "counter" store state
 @followStore(SomeOtherStore.store) // follow for all store's states 
