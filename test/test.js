@@ -3807,8 +3807,9 @@ var Store = /** @class */ (function () {
     function Store(state) {
         this.components = [];
         this.state = null;
-        this.initialState = null;
+        this.prevState = null;
         this.eventManager = null;
+        this.initialState = null;
         this.eventManager = new StoreEventManager();
         this.initialState = this.mergeStates(state, {});
         this.state = this.mergeStates(state, {});
@@ -3818,6 +3819,7 @@ var Store = /** @class */ (function () {
     };
     Store.prototype.setState = function (newState) {
         var merged = this.mergeStates(this.state, newState);
+        this.prevState = this.mergeStates(this.state, {});
         try {
             if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
                 this.state = merged;
@@ -3841,7 +3843,7 @@ var Store = /** @class */ (function () {
                 component.storeComponentStoreDidUpdate();
             }
         });
-        this.eventManager.fire('update', this.mergeStates(this.state, {}));
+        this.eventManager.fire('update', this.mergeStates(this.state, {}), this.prevState);
     };
     Store.prototype.getInitialState = function () {
         return this.mergeStates(this.initialState, {});
@@ -3849,7 +3851,7 @@ var Store = /** @class */ (function () {
     Store.prototype.on = function (eventType, callback) {
         var eventTypes = eventType && eventType.constructor === Array ? eventType : [eventType];
         var event = this.eventManager.add(eventTypes, callback);
-        this.eventManager.fire('init', this.mergeStates(this.state, {}));
+        this.eventManager.fire('init', this.mergeStates(this.state, {}), this.state);
         return event;
     };
     return Store;
@@ -3876,10 +3878,10 @@ var StoreEventManager = /** @class */ (function () {
     StoreEventManager.prototype.generateEventId = function () {
         return "" + ++this.eventCounter + Date.now() + Math.random();
     };
-    StoreEventManager.prototype.fire = function (type, storeState) {
+    StoreEventManager.prototype.fire = function (type, storeState, prevStoreState) {
         this.events.forEach(function (event) {
             if (event.types.indexOf(type) >= 0 || event.types.indexOf('all') >= 0) {
-                event.onFire(storeState, type);
+                event.onFire(storeState, prevStoreState, type);
             }
         });
     };
@@ -3898,7 +3900,7 @@ var StoreEventManager = /** @class */ (function () {
     };
     return StoreEventManager;
 }());
-exports.followStore = function (store) { return function (WrappedComponent) {
+exports.followStore = function (store, followProps) { return function (WrappedComponent) {
     var Component = /** @class */ (function (_super) {
         __extends(Component, _super);
         function Component() {
@@ -3911,8 +3913,24 @@ exports.followStore = function (store) { return function (WrappedComponent) {
         }
         Component.prototype.componentWillMount = function () {
             var _this = this;
-            this.storeEvent = store.on('all', function (storeState) {
-                _this.forceUpdate();
+            this.storeEvent = store.on('all', function (storeState, prevStoreState) {
+                console.log(storeState, prevStoreState);
+                if (followProps && followProps.length > 0) {
+                    var update = false;
+                    for (var _i = 0, followProps_1 = followProps; _i < followProps_1.length; _i++) {
+                        var prop = followProps_1[_i];
+                        console.log(prop, storeState.hasOwnProperty(prop), storeState[prop]);
+                        if (storeState.hasOwnProperty(prop) && (JSON.stringify(storeState[prop]) !== JSON.stringify(prevStoreState[prop]))) {
+                            update = true;
+                        }
+                    }
+                    if (update) {
+                        _this.forceUpdate();
+                    }
+                }
+                else {
+                    _this.forceUpdate();
+                }
             });
         };
         Component.prototype.componentWillUnmount = function () {

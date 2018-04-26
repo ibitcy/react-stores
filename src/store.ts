@@ -97,8 +97,9 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 export class Store<StoreState> {
     public components = [];
     public state: StoreState = null;
-    private initialState = null;
+	private prevState: StoreState = null;
     private eventManager: StoreEventManager<StoreState> = null;
+    private readonly initialState = null;
 
     constructor(state: StoreState) {
         this.eventManager = new StoreEventManager();
@@ -112,6 +113,7 @@ export class Store<StoreState> {
 
     public setState(newState: StoreState): void {
         let merged: StoreState = this.mergeStates(this.state, newState);
+	    this.prevState = this.mergeStates(this.state, {});
 
         try {
             if (JSON.stringify(this.state) !== JSON.stringify(merged)) {
@@ -138,7 +140,7 @@ export class Store<StoreState> {
             }
         });
 
-        this.eventManager.fire('update', this.mergeStates(this.state, {}));
+        this.eventManager.fire('update', this.mergeStates(this.state, {}), this.prevState);
     }
 
     public getInitialState(): StoreState {
@@ -149,22 +151,22 @@ export class Store<StoreState> {
         const eventTypes: StoreEventType[] = eventType && eventType.constructor === Array ? eventType as StoreEventType[] : [eventType] as StoreEventType[];
         const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
 
-        this.eventManager.fire('init', this.mergeStates(this.state, {}));
+        this.eventManager.fire('init', this.mergeStates(this.state, {}), this.state);
 
         return event;
     }
 }
 
-export type StoreEventType = 
-    'all' |
-    'init' |
-    'update'
+export type StoreEventType =
+	'all' |
+	'init' |
+	'update' ;
 
 export class StoreEvent<StoreState> {
     constructor(
         readonly id: string,
         readonly types: StoreEventType[],
-        readonly onFire: (storeState: StoreState, type?: StoreEventType) => void,
+        readonly onFire: (storeState: StoreState, prevStoreState?: StoreState, type?: StoreEventType) => void,
         readonly onRemove: (id: string) => void
     ) { }
 
@@ -181,10 +183,10 @@ class StoreEventManager<StoreState> {
         return `${++this.eventCounter}${Date.now()}${Math.random()}`;
     }
 
-    public fire(type: StoreEventType, storeState: StoreState): void {
+    public fire(type: StoreEventType, storeState: StoreState, prevStoreState: StoreState): void {
         this.events.forEach((event: StoreEvent<StoreState>) => {
             if (event.types.indexOf(type) >= 0 || event.types.indexOf('all') >= 0) {
-                event.onFire(storeState, type);
+                event.onFire(storeState, prevStoreState, type);
             }
         });
     }
@@ -211,7 +213,7 @@ class StoreEventManager<StoreState> {
     }
 }
 
-export const followStore = (store: Store<any>) => (WrappedComponent: React.ComponentClass): any => {
+export const followStore = (store: Store<any>, followStates?: string[]) => (WrappedComponent: React.ComponentClass): any => {
 	class Component extends React.Component {
 		private storeEvent: StoreEvent<any> = null;
 
@@ -220,8 +222,22 @@ export const followStore = (store: Store<any>) => (WrappedComponent: React.Compo
 		};
 
 		componentWillMount() {
-			this.storeEvent = store.on('all', (storeState: any) => {
-				this.forceUpdate();
+			this.storeEvent = store.on('all', (storeState: any, prevStoreState: any) => {
+				if(followStates && followStates.length > 0){
+					let update: boolean = false;
+
+					for(const prop of followStates){
+						if(storeState.hasOwnProperty(prop) && (JSON.stringify(storeState[prop]) !== JSON.stringify(prevStoreState[prop]))){
+							update = true;
+						}
+					}
+
+					if(update){
+						this.forceUpdate();
+					}
+				} else {
+					this.forceUpdate();
+				}
 			});
 		}
 

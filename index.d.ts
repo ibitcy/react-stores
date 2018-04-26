@@ -22,8 +22,9 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
 export declare class Store<StoreState> {
     components: any[];
     state: StoreState;
-    private initialState;
+    private prevState;
     private eventManager;
+    private readonly initialState;
     constructor(state: StoreState);
     private mergeStates(state1, state2);
     setState(newState: StoreState): void;
@@ -36,9 +37,9 @@ export declare type StoreEventType = 'all' | 'init' | 'update';
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];
-    readonly onFire: (storeState: StoreState, type?: StoreEventType) => void;
+    readonly onFire: (storeState: StoreState, prevStoreState?: StoreState, type?: StoreEventType) => void;
     readonly onRemove: (id: string) => void;
-    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
+    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevStoreState?: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
     remove(): void;
 }
-export declare const followStore: (store: Store<any>) => (WrappedComponent: React.ComponentClass<{}>) => any;
+export declare const followStore: (store: Store<any>, followStates?: string[]) => (WrappedComponent: React.ComponentClass<{}>) => any;
