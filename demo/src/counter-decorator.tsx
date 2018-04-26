@@ -10,7 +10,7 @@ interface Props {
 interface State {
 }
 
-@followStore(CommonStore.store)
+@followStore(CommonStore.store, ['counter'])
 export class CounterDecorator extends React.Component<Props, State> {
 	public render() {
 		return (

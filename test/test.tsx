@@ -1,13 +1,10 @@
-import { Store, StoreComponent, StoreEventType, StoreEvent } from '../src/store';
-import * as ReactTestUtils from 'react-dom/test-utils';
+import { StoreEventType, StoreEvent } from '../src/store';
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
 import * as React from 'react';
 import { CommonStore } from '../demo/src/store';
 import { CommonActions } from '../demo/src/actions';
-import { Test } from '../demo/src/test';
-import { Counter } from '../demo/src/counter';
-import * as Mocha from 'mocha';
+
 
 expect.extend(expectJsx);
 

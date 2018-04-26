@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import {CommonActions} from './actions';
-import {Store, StoreComponent, StoreEventType, StoreEvent} from '../../src/store';
-import {CommonStore} from './store';
+import { CommonActions } from './actions';
+import { StoreEvent } from '../../src/store';
+import { CommonStore } from './store';
 
 interface Props {
 

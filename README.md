@@ -43,7 +43,7 @@ export namespace CommonStore {
 ```
 
 Then you need to create a `StoreComponent` that will use store singleton
-```typescript
+```typescript jsx
 // component.tsx
 import * as React from "react";
 import {StoreComponent, Store} from "react-stores";
@@ -98,7 +98,7 @@ export class App extends StoreComponent<Props, State, StoresState> {
 ```
 
 v1.2.0 Event driven component–store connection
-```typescript
+```typescript jsx
 import * as React from "react";
 import {StoreComponent, Store, StoreEventType, StoreEvent} from "react-stores";
 import {CommonStore} from "./store";
@@ -120,7 +120,7 @@ export class App extends React.Component<Props, State> {
 
     comonentDidMount() {
         // Add store state event binder
-        this.storeEvent = CommonStore.store.on(StoreEventType.storeUpdated, (storeState: StoreState) => {
+        this.storeEvent = CommonStore.store.on(StoreEventType.storeUpdated, (storeState: StoreState, prevState: StoreState) => {
             this.setState({
                 commonStoreState: storeState
             });
@@ -143,9 +143,13 @@ export class App extends React.Component<Props, State> {
 ```
 
 v1.3.0 Decorator for make React Component React Sores driven. You can use multiple
-```typescript
-@followStore(CommonStore.store)
-@followStore(SomeOtherStore.store)
+```jtypescript
+followStore(store: StoreState, followingState?:stings[])
+```
+
+```typescript jsx
+@followStore(CommonStore.store, ['counter']) // follow for only "counter" store state
+@followStore(SomeOtherStore.store) // follow for all store's states 
 export class CounterDecorator extends React.Component<Props, State> {
 	public render() {
 		return (
