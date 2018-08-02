@@ -1,6 +1,6 @@
 {
 	"name": "react-stores",
-	"version": "1.4.6",
+	"version": "1.4.7",
 	"keywords": [
 		"react",
 		"stores",
@@ -9,6 +9,9 @@
 		"states",
 		"components"
 	],
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org/"
+	},
 	"description": "React direct state stores",
 	"main": "lib",
 	"scripts": {

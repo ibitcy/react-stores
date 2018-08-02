@@ -111,7 +111,7 @@ export class Store<StoreState> {
         return { ...{}, ...state1, ...state2 } as StoreState;
     }
 
-    public setState(newState: StoreState): void {
+    public setState(newState: Partial<StoreState>): void {
         let merged: StoreState = this.mergeStates(this.state, newState);
 	    this.prevState = this.mergeStates(this.state, {});
 
