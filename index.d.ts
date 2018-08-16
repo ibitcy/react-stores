@@ -19,27 +19,32 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
     componentDidUpdate(prevProps: Props, prevState: State): void;
     shouldComponentUpdate(nextProps: Props, nextState: State): boolean;
 }
+export interface StoreOptions {
+    live?: boolean;
+    freezeInstances?: boolean;
+    mutable?: boolean;
+}
 export declare class Store<StoreState> {
     components: any[];
-    state: StoreState;
-    private prevState;
     private eventManager;
+    private readonly frozenState;
     private readonly initialState;
-    constructor(state: StoreState);
+    constructor(state: StoreState, options?: StoreOptions);
+    readonly state: StoreState;
     private mergeStates(state1, state2);
     setState(newState: Partial<StoreState>): void;
     resetState(): void;
-    update(): void;
+    update(currentState: StoreState, prevState: StoreState): void;
     getInitialState(): StoreState;
-    on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState>;
 }
 export declare type StoreEventType = 'all' | 'init' | 'update';
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];
-    readonly onFire: (storeState: StoreState, prevStoreState?: StoreState, type?: StoreEventType) => void;
+    readonly onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void;
     readonly onRemove: (id: string) => void;
-    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevStoreState?: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
+    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
     remove(): void;
 }
-export declare const followStore: (store: Store<any>, followStates?: string[]) => (WrappedComponent: React.ComponentClass<{}>) => any;
+export declare const followStore: <StoreState>(store: Store<StoreState>, followStates?: string[]) => (WrappedComponent: React.ComponentClass<{}>) => any;

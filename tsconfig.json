@@ -1,13 +1,14 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "system",
 		"traceResolution": true,
 		"declaration": true,
+		"outFile": "src/store.ts",
 		"jsx": "react",
 		"target": "es5",
 		"lib": [
 			"dom", 
-			"es6"
+			"es6",
 		],
 		"outDir": "dist",
 		"experimentalDecorators": true,
