@@ -138,19 +138,12 @@ export class Store<StoreState> {
 
   public setState(newState: Partial<StoreState>): void {
     let update: boolean = false;
-    let updCo = 0;
 
     for (const prop in newState) {
       if (newState.hasOwnProperty(prop) && new Freezer(newState).get(prop) !== this.frozenState.get(prop)) {
         update = true;
-        updCo++;
-        console.log('xxx', prop);
-    
       }
-    }
-
-    console.log('updc', updCo);
-    
+    }    
 
     if(update) {
       this.frozenState.get().set(newState);
