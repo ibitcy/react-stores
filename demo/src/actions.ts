@@ -2,11 +2,9 @@ import { CommonStore } from './store';
 
 export class CommonActions {
     public static increaseCounter(): void {
-        let newState: CommonStore.State = {
+        CommonStore.store.setState({
             counter: CommonStore.store.state.counter + 1
-        } as CommonStore.State;
-        
-        CommonStore.store.setState(newState);
+        });
     }
 
     public static toggleFooBar(): void {

@@ -1,10 +1,8 @@
 import { StoreEventType, StoreEvent } from '../src/store';
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
-import * as React from 'react';
 import { CommonStore } from '../demo/src/store';
 import { CommonActions } from '../demo/src/actions';
-
 
 expect.extend(expectJsx);
 
@@ -180,9 +178,9 @@ describe('testStoreState', () => {
     it('event driven', (done) => {
         CommonStore.store.resetState();
 
-        let counter: string = CommonStore.store.state.counter.toString();
+        let counter: string = null;
 
-        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('update', (storeState: CommonStore.State) => {
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('update', (storeState: CommonStore.State, prevState: CommonStore.State, type: StoreEventType) => {
             counter = storeState.counter.toString();
         });
 
@@ -243,6 +241,11 @@ describe('testStoreState', () => {
     });
 
     it('store state reset', (done) => {
+        CommonStore.store.setState({
+            foo: 'asdasd',
+            counter: 12123123,
+        });
+
         CommonStore.store.resetState();
         
         const result: string = JSON.stringify(CommonStore.store.state);
@@ -294,6 +297,122 @@ describe('testStoreState', () => {
         } as CommonStore.State);
         
         expect(updated).toEqual('false');
+        done();
+    });
+
+    it('previous state', (done) => {
+        CommonStore.store.resetState();
+
+        let prev = '0';
+
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('update', (storeState: CommonStore.State, prevState: CommonStore.State, type: StoreEventType) => {
+            prev = prevState.counter.toString();
+        });
+
+        CommonStore.store.setState({
+            counter: 5,
+        });
+        
+        expect(prev).toEqual('0');
+        done();
+    });
+
+    it('update event trigger', (done) => {
+        CommonStore.store.resetState();
+
+        let eventType = null;
+
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('update', (storeState: CommonStore.State, prevState: CommonStore.State, type: StoreEventType) => {
+            eventType = type;
+        });
+
+        CommonStore.store.setState({
+            counter: 100,
+        });
+        
+        expect(eventType).toEqual('update');
+        done();
+    });
+
+    it('init event trigger', (done) => {
+        CommonStore.store.resetState();
+
+        let eventType = null;
+
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('init', (storeState: CommonStore.State, prevState: CommonStore.State, type: StoreEventType) => {
+            eventType = type;
+        });
+
+        expect(eventType).toEqual('init');
+        done();
+    });
+
+    it('all event trigger', (done) => {
+        CommonStore.store.resetState();
+
+        let eventCount = 0;
+
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('all', (storeState: CommonStore.State, prevState: CommonStore.State, type: StoreEventType) => {
+            eventCount++;
+        });
+
+        CommonStore.store.setState({
+            counter: 100,
+        });
+        
+        expect(eventCount).toEqual(2);
+        done();
+    });
+
+    it('unnecessary updates', (done) => {
+        CommonStore.store.resetState();
+
+        let eventCount = 0;
+
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('all', (storeState: CommonStore.State, prevState: CommonStore.State, type: StoreEventType) => {
+            eventCount++;
+        });
+
+        CommonStore.store.setState({
+            counter: 0,
+        });
+
+        CommonStore.store.setState({
+            counter: 0,
+        });
+
+        CommonStore.store.setState({
+            counter: 0,
+        });
+        
+        expect(eventCount).toEqual(1);
+        done();
+    });
+
+    it('bulk update', (done) => {
+        CommonStore.store.resetState();
+
+        let eventCount = 0;
+
+        const event: StoreEvent<CommonStore.State> = CommonStore.store.on('update', (storeState: CommonStore.State, prevState: CommonStore.State, type: StoreEventType) => {
+            eventCount++;
+        });
+
+        CommonStore.store.setState({
+            nullObj: null,
+            counter: 3,
+            foo: 'foo',
+            numericArray: [1, 2, 3,],
+            objectsArray: [{
+                a: 1,
+                b: 2,
+                c: 3
+            }],
+        });
+
+        const c = CommonStore.store.state.counter
+        
+        expect(eventCount).toEqual(1);
         done();
     });
 });

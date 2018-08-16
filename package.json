@@ -1,6 +1,6 @@
 {
 	"name": "react-stores",
-	"version": "1.4.7",
+	"version": "2.0.0",
 	"keywords": [
 		"react",
 		"stores",
@@ -23,6 +23,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"clone": "^2.1.1",
+		"freezer-js": "^0.14.1",
 		"react": "^16.2.0"
 	},
 	"devDependencies": {

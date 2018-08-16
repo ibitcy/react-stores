@@ -27,9 +27,9 @@ export class Counter extends StoreComponent<Props, State, StoresState> {
 	public render() {
 		return (
 			<div>
-                <h2>
-                    Another comonent
-                </h2>
+				<h2>
+					Another comonent
+				</h2>
 
 				<p>
 					FooBar state is <strong>{this.stores.common.state.foo}</strong>

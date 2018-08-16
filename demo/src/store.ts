@@ -47,5 +47,7 @@ export namespace CommonStore {
         }
     };
 
-    export let store: Store<State> = new Store<State>(initialState);
+    export let store: Store<State> = new Store<State>(initialState, {
+        live: true,
+    });
 }

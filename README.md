@@ -242,6 +242,32 @@ storeComponentStoreDidUpdate(): void
 
 ### Store
 ```typescript
+constructor<StoreState>(initialState<StoreState>, options: StoreOptions);
+```
+
+```typescript
+interface StoreOptions {
+  /* 
+    Populated from Freezer.
+    With live mode on, freezer emits the update events just when the changes happen, instead of batching all the changes and emiting the event on the next tick. This is useful if you want freezer to store input field values.
+  */
+  live?: boolean; // (default: false)
+
+  /*
+    Populated from Freezer.
+    It's possible to store class instances in freezer. They are handled like strings or numbers, added to the state like non-frozen leaves. Keep in mind that if their internal state changes, freezer won't emit any update event. If you want freezer to handle them as freezer nodes, set 'freezerInstances: true'. They will be frozen and you will be able to update their attributes using freezer methods, but remember that any instance method that update its internal state may fail (the instance is frozen) and wouldn't emit any update event.
+  */
+  freezeInstances?: boolean; // (default: false)
+
+  /*
+    Populated from Freezer.
+    Once you get used to freezer, you can see that immutability is not necessary if you learn that you shouldn't update the data directly. In that case, disable immutability in the case that you need a small performance boost.
+  */
+  mutable?: boolean; // (default: false)
+}
+```
+
+```typescript
 setState(newState: StoreState): void // Set store's state to provided new one
 ```
 
@@ -254,7 +280,7 @@ update(): void // Force update all binded components
 ```
 
 ```typescript
-on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState) => void): StoreEvent<StoreState> // State event binder
+on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void): StoreEvent<StoreState> // State event binder
 ```
 
 

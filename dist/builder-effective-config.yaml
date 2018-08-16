@@ -1,0 +1,4 @@
+directories:
+  output: dist
+  buildResources: build
+electronVersion: 2.1.0-unsupported.20180809

@@ -1256,6 +1256,10 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
+freezer-js@^0.14.1:
+  version "0.14.1"
+  resolved "https://npmjs.eoadm.com/freezer-js/-/freezer-js-0.14.1.tgz#c033f88e740ab84437f758303241578ff662b01c"
+
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
