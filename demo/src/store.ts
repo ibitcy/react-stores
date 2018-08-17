@@ -17,7 +17,7 @@ export namespace CommonStore {
     }
 
     // Store's state initial values
-    export const initialState: State = {
+    export const initialState: State = Object.freeze({
         nullObj: null,
         counter: 0,
         foo: 'foo',
@@ -45,7 +45,7 @@ export namespace CommonStore {
             },
             baz: 2
         }
-    };
+    });
 
     export let store: Store<State> = new Store<State>(initialState, {
         live: true,

@@ -118,40 +118,35 @@ export class Store<StoreState> {
       opts.live = options.live === true;
       opts.freezeInstances = options.freezeInstances === true;
       opts.mutable = options.mutable === true;
+      opts['singleParent'] = true;
     }
 
     this.eventManager = new StoreEventManager();
-    this.initialState = new Freezer(state);
-    this.frozenState = new Freezer(state, opts);
-    this.frozenState.on('update', (currentState: StoreState, prevState: StoreState) => {
-      this.update(currentState, prevState);
+    this.initialState = new Freezer({state});
+    this.frozenState = new Freezer({state}, opts);
+    this.frozenState.on('update', (currentState, prevState) => {
+      this.update(currentState.state, prevState.state);
     });
   }
 
   get state(): StoreState {
-    return this.frozenState.get();
-  }
-
-  private mergeStates(state1: Object, state2: Object): StoreState {
-    return { ...{}, ...state1, ...state2 } as StoreState;
+    return this.frozenState.get().state;
   }
 
   public setState(newState: Partial<StoreState>): void {
-    let update: boolean = false;
+    const newFrozenState = new Freezer(newState);
 
     for (const prop in newState) {
-      if (newState.hasOwnProperty(prop) && new Freezer(newState).get(prop) !== this.frozenState.get(prop)) {
-        update = true;
-      }
-    }    
+      const newFrozenProp = newFrozenState.get()[prop];
 
-    if(update) {
-      this.frozenState.get().set(newState);
+      if (newFrozenProp !== this.frozenState.get().state[prop]) {
+        this.frozenState.get().state.set(prop, newFrozenProp);
+      }
     }
   }
 
   public resetState(): void {
-    this.frozenState.get().set(this.initialState.get());
+    this.frozenState.get().state.set(this.initialState.get().state);
   }
 
   public update(currentState: StoreState, prevState: StoreState): void {
@@ -161,20 +156,20 @@ export class Store<StoreState> {
         component.forceUpdate();
         component.storeComponentStoreDidUpdate();
       }
-    });    
+    });
 
     this.eventManager.fire('update', currentState, prevState);
   }
 
   public getInitialState(): StoreState {
-    return this.initialState.get();
+    return this.initialState.get().state;
   }
 
   public on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState> {
     const eventTypes: StoreEventType[] = eventType && eventType.constructor === Array ? eventType as StoreEventType[] : [eventType] as StoreEventType[];
     const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
 
-    this.eventManager.fire('init', this.frozenState.get(), this.frozenState.get());
+    this.eventManager.fire('init', this.frozenState.get().state, this.frozenState.get().state);
 
     return event;
   }
@@ -190,7 +185,7 @@ export class StoreEvent<StoreState> {
     readonly id: string,
     readonly types: StoreEventType[],
     readonly onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void,
-    readonly onRemove: (id: string) => void
+    readonly onRemove: (id: string) => void,
   ) { }
 
   public remove(): void {
@@ -246,21 +241,7 @@ export const followStore = <StoreState>(store: Store<StoreState>, followStates?:
 
     componentWillMount() {
       this.storeEvent = store.on('all', (storeState: StoreState, prevState: StoreState, type?: StoreEventType) => {
-        if (followStates && followStates.length > 0) {
-          let update: boolean = false;
-
-          for (const prop of followStates) {
-            if (storeState.hasOwnProperty(prop) && new Freezer(storeState).get(prop) !== new Freezer(prevState).get(prop)) {
-              update = true;
-            }
-          }
-
-          if (update) {
-            this.forceUpdate();
-          }
-        } else {
-          this.forceUpdate();
-        }
+        this.forceUpdate();
       });
     }
 

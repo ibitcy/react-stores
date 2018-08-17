@@ -74,6 +74,11 @@ describe('testStoreState', () => {
     });
 
     it('nullObj should be null', (done) => {
+
+        CommonStore.store.setState({
+            nullObj: undefined,
+        });
+
         CommonStore.store.resetState();
         CommonActions.setNull(null);
 
@@ -400,19 +405,80 @@ describe('testStoreState', () => {
 
         CommonStore.store.setState({
             nullObj: null,
-            counter: 3,
+            counter: 0,
             foo: 'foo',
-            numericArray: [1, 2, 3,],
-            objectsArray: [{
-                a: 1,
-                b: 2,
-                c: 3
-            }],
         });
 
-        const c = CommonStore.store.state.counter
+        CommonStore.store.setState({
+            numericArray: [1, 2, 3],
+        });
         
         expect(eventCount).toEqual(1);
+        done();
+    });
+
+    it('deep objects mutation', (done) => {
+        CommonStore.store.resetState();
+
+        const newObjArr = CommonStore.store.state.objectsArray.concat();
+
+        newObjArr[0] = {
+            test: 1,
+        };
+
+        CommonStore.store.setState({
+            objectsArray: newObjArr,
+        });
+
+        expect(JSON.stringify(CommonStore.store.state.objectsArray[0])).toEqual('{"test":1}');
+        done();
+    });
+
+    it('deep objects direct assign throws', (done) => {
+        CommonStore.store.resetState();
+
+        const newObjArr = CommonStore.store.state.objectsArray;
+
+        expect(() => {
+            newObjArr[0] = {
+                test: 1,
+            };
+        }).toThrow();
+    
+        done();
+    });
+
+    it('deep objects instance mutations', (done) => {
+        CommonStore.store.resetState();
+
+        const newObjArr1 = CommonStore.store.state.objectsArray.concat();
+        const TheClass = function(a) {
+            this.a = a;
+            this.setA = function(a) {
+                this.a = a;
+            }
+        };
+        
+        newObjArr1[0] = new TheClass(1);
+        CommonStore.store.setState({
+            objectsArray: newObjArr1,
+        });
+        expect(CommonStore.store.state.objectsArray[0]['a']).toEqual(1);
+
+        const newObjArr2 = CommonStore.store.state.objectsArray.concat();
+        newObjArr2[0]['a'] = 2;
+        CommonStore.store.setState({
+            objectsArray: newObjArr2,
+        });
+        expect(CommonStore.store.state.objectsArray[0]['a']).toEqual(2);
+
+        const newObjArr3 = CommonStore.store.state.objectsArray.concat();
+        newObjArr3[0]['setA'](3);
+        CommonStore.store.setState({
+            objectsArray: newObjArr3,
+        });
+        expect(CommonStore.store.state.objectsArray[0]['a']).toEqual(3);
+
         done();
     });
 });

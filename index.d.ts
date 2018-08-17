@@ -31,7 +31,6 @@ export declare class Store<StoreState> {
     private readonly initialState;
     constructor(state: StoreState, options?: StoreOptions);
     readonly state: StoreState;
-    private mergeStates(state1, state2);
     setState(newState: Partial<StoreState>): void;
     resetState(): void;
     update(currentState: StoreState, prevState: StoreState): void;
