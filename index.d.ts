@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import * as React from 'react';
 export interface StorePersistantPacket<StoreState> {
     data: StoreState;
@@ -50,7 +49,7 @@ export interface StoreOptions {
     mutable?: boolean;
 }
 export declare class Store<StoreState> {
-    readonly persistenceDriver: StorePersistantDriver<StoreState>;
+    readonly persistenceDriver?: StorePersistantDriver<StoreState>;
     components: any[];
     private eventManager;
     private readonly frozenState;

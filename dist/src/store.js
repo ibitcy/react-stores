@@ -105,7 +105,6 @@ class Store {
             if (newState.hasOwnProperty(prop) && new Freezer(newState).get(prop) !== this.frozenState.get(prop)) {
                 update = true;
                 updCo++;
-                console.log('xxx', prop);
             }
         }
         console.log('updc', updCo);
