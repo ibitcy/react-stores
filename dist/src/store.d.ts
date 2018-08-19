@@ -1,20 +1,29 @@
 /// <reference types="react" />
 import * as React from 'react';
-export declare class StorePersistantLocalSrorageDriver<StoreState> implements StorePersistantDriver<StoreState> {
-    readonly name: string;
-    readonly lifetime: number;
-    private storage;
-    constructor(name: string, lifetime?: number);
-    private readonly storeName;
-    write(state: StoreState): void;
-    read(): StoreState;
+export interface StorePersistantPacket<StoreState> {
+    data: StoreState;
+    timestamp: number;
 }
 export declare abstract class StorePersistantDriver<StoreState> {
     readonly name: string;
     readonly lifetime: number;
     constructor(name: string, lifetime?: number);
-    abstract write(state: StoreState): void;
-    abstract read(): StoreState;
+    initialState: StoreState;
+    abstract type: string;
+    abstract write(pack: StorePersistantPacket<StoreState>): void;
+    abstract read(): StorePersistantPacket<StoreState>;
+    pack(data: StoreState): StorePersistantPacket<StoreState>;
+    reset(): StorePersistantPacket<StoreState>;
+    readonly storeName: string;
+}
+export declare class StorePersistantLocalSrorageDriver<StoreState> extends StorePersistantDriver<StoreState> {
+    readonly name: string;
+    readonly lifetime: number;
+    private storage;
+    type: string;
+    constructor(name: string, lifetime?: number);
+    write(pack: StorePersistantPacket<StoreState>): void;
+    read(): StorePersistantPacket<StoreState>;
 }
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     stores: StoreState;
@@ -46,7 +55,8 @@ export declare class Store<StoreState> {
     private eventManager;
     private readonly frozenState;
     private readonly initialState;
-    constructor(state: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistantDriver<StoreState>);
+    private opts;
+    constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistantDriver<StoreState>);
     readonly state: StoreState;
     resetPersistence(): void;
     setState(newState: Partial<StoreState>): void;
