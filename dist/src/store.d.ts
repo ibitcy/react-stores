@@ -1,5 +1,21 @@
 /// <reference types="react" />
 import * as React from 'react';
+export declare class StorePersistantLocalSrorageDriver<StoreState> implements StorePersistantDriver<StoreState> {
+    readonly name: string;
+    readonly lifetime: number;
+    private storage;
+    constructor(name: string, lifetime?: number);
+    private readonly storeName;
+    write(state: StoreState): void;
+    read(): StoreState;
+}
+export declare abstract class StorePersistantDriver<StoreState> {
+    readonly name: string;
+    readonly lifetime: number;
+    constructor(name: string, lifetime?: number);
+    abstract write(state: StoreState): void;
+    abstract read(): StoreState;
+}
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     stores: StoreState;
     private isStoreMounted;
@@ -25,12 +41,14 @@ export interface StoreOptions {
     mutable?: boolean;
 }
 export declare class Store<StoreState> {
+    readonly persistenceDriver: StorePersistantDriver<StoreState>;
     components: any[];
     private eventManager;
     private readonly frozenState;
     private readonly initialState;
-    constructor(state: StoreState, options?: StoreOptions);
+    constructor(state: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistantDriver<StoreState>);
     readonly state: StoreState;
+    resetPersistence(): void;
     setState(newState: Partial<StoreState>): void;
     resetState(): void;
     update(currentState: StoreState, prevState: StoreState): void;

@@ -1,6 +1,88 @@
 import * as React from 'react';
 import * as Freezer from 'freezer-js';
 
+export interface StorePersistantPacket<StoreState> {
+  data: StoreState;
+  timestamp: number;
+}
+
+export abstract class StorePersistantDriver<StoreState> {
+  constructor(
+    readonly name: string, 
+    readonly lifetime: number = Infinity,
+  ) {
+
+  }
+
+  public initialState: StoreState = null;
+  public abstract type: string;
+  public abstract write(pack: StorePersistantPacket<StoreState>): void;
+  public abstract read(): StorePersistantPacket<StoreState>;
+  
+  public pack(data: StoreState): StorePersistantPacket<StoreState> {
+    return {
+      data: data,
+      timestamp: Date.now(),
+    }
+  }
+
+  public reset(): StorePersistantPacket<StoreState> {
+    const pack = this.pack(this.initialState);
+    this.write(pack);
+    return pack;
+  }
+
+  public get storeName(): string {
+    return `store-persistent-${this.type}-${this.name}`.toLowerCase();
+  }
+}
+
+export class StorePersistantLocalSrorageDriver<StoreState> extends StorePersistantDriver<StoreState> {
+  private storage = null;
+  public type = 'localStorage';
+
+  constructor(
+    readonly name: string, 
+    readonly lifetime: number = Infinity,
+  ) {
+    super(name, lifetime);
+
+    if(typeof window !== 'undefined' && window.localStorage) {
+      this.storage = window.localStorage;
+    }
+  }
+
+  public write(pack: StorePersistantPacket<StoreState>): void {
+    if(this.storage) {
+      try {
+        this.storage.setItem(this.storeName, JSON.stringify(pack));
+      } catch(e) {
+        console.error(e);
+      }
+    }
+  }
+
+  public read(): StorePersistantPacket<StoreState> {
+    if(this.storage) {
+      let dump = null;
+
+      try {
+        dump = JSON.parse(this.storage.getItem(this.storeName));
+
+        if(!Boolean(dump) && !Boolean(dump.timestamp)) {
+          dump = this.reset();
+        }
+      } catch(e) {
+        dump = this.reset();
+      }     
+
+      return dump;
+    } else {
+      return this.reset();
+    }
+  }
+}
+
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
   public stores: StoreState = {} as StoreState;
   private isStoreMounted: boolean = false;
@@ -107,30 +189,53 @@ export class Store<StoreState> {
   private readonly frozenState = null;
   private readonly initialState = null;
 
-  constructor(state: StoreState, options?: StoreOptions) {
-    let opts: StoreOptions = {
-      live: false,
-      freezeInstances: false,
-      mutable: false,
-    };
+  private opts: StoreOptions = {
+    live: false,
+    freezeInstances: false,
+    mutable: false,
+  };
+
+  constructor(initialState: StoreState, options?: StoreOptions, readonly persistenceDriver?: StorePersistantDriver<StoreState>) {
+    let currentState = null;
 
     if(options) {
-      opts.live = options.live === true;
-      opts.freezeInstances = options.freezeInstances === true;
-      opts.mutable = options.mutable === true;
-      opts['singleParent'] = true;
+      this.opts.live = options.live === true;
+      this.opts.freezeInstances = options.freezeInstances === true;
+      this.opts.mutable = options.mutable === true;
+      this.opts['singleParent'] = true;
+    }
+
+    if(this.persistenceDriver) {
+      this.persistenceDriver.initialState = initialState;
+      const persistantState = this.persistenceDriver.read().data;
+      
+      if(persistantState) {
+        currentState = persistantState;
+      }
+    }
+
+    if(currentState === null) {
+      currentState = initialState;
     }
 
     this.eventManager = new StoreEventManager();
-    this.initialState = new Freezer({state});
-    this.frozenState = new Freezer({state}, opts);
+    this.initialState = new Freezer({state: initialState});
+    this.frozenState = new Freezer({state: currentState}, this.opts);
     this.frozenState.on('update', (currentState, prevState) => {
       this.update(currentState.state, prevState.state);
+
+      if(this.persistenceDriver) {
+        this.persistenceDriver.write(this.persistenceDriver.pack(currentState.state));
+      }
     });
   }
 
   get state(): StoreState {
     return this.frozenState.get().state;
+  }
+
+  public resetPersistence(): void {
+    this.persistenceDriver.reset();
   }
 
   public setState(newState: Partial<StoreState>): void {
@@ -146,7 +251,7 @@ export class Store<StoreState> {
   }
 
   public resetState(): void {
-    this.frozenState.get().state.set(this.initialState.get().state);
+    this.setState(this.initialState.get().state);
   }
 
   public update(currentState: StoreState, prevState: StoreState): void {

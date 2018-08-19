@@ -276,6 +276,10 @@ resetState(): void // Reset srote to it's initialState
 ```
 
 ```typescript
+resetPersistence(): void // Reset persistent data
+```
+
+```typescript
 update(): void // Force update all binded components
 ```
 
@@ -295,6 +299,21 @@ remove(): void
 'all' // fires with every other events (init or update)
 'init' // fires once at as soon as event has bound
 'update' // fires at each store update
+```
+
+## Persistence
+```
+export let store: Store<State> = new Store<State>(initialState, new StorePersistantLocalSrorageDriver('comon'));
+```
+
+### Persistent driver
+```
+abstract class StorePersistantDriver<StoreState> {
+  constructor(readonly name: string) {}
+
+  public abstract write(state: StoreState): void;
+  public abstract read(): StoreState;
+}
 ```
 
 ## ES5/6

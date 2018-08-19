@@ -1,4 +1,4 @@
-import { Store } from '../../src/store';
+import { Store, StorePersistantLocalSrorageDriver } from '../../src/store';
 
 export namespace CommonStore {
     // State interface
@@ -49,5 +49,5 @@ export namespace CommonStore {
 
     export let store: Store<State> = new Store<State>(initialState, {
         live: true,
-    });
+    }, new StorePersistantLocalSrorageDriver('comon'));
 }

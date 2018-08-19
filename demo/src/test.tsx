@@ -37,6 +37,20 @@ export class Test extends StoreComponent<Props, State, StoresState> {
 		return (
 			<div>
 				<h2>
+					Persistence
+				</h2>
+
+				<p>
+					<button onClick={() => this.stores.common.resetPersistence()}>
+						Reset persistence
+					</button>
+
+					<button onClick={() => this.stores.common.resetState()}>
+						Reset store
+					</button>
+				</p>
+
+				<h2>
 					Test component
 				</h2>
 				
