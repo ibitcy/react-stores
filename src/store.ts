@@ -42,11 +42,11 @@ export abstract class StorePersistantDriver<StoreState> {
 	}
 
 	public get storeName(): string {
-		return `store-persistent-${this.type}-${this.name}`.toLowerCase();
+		return `store.persistent.${this.type}.${this.name}`.toLowerCase();
 	}
 
 	public get dumpHystoryName(): string {
-		return `store-persistent-dump-history-${this.type}-${this.name}`.toLowerCase();
+		return `store.persistent.dump.history.${this.type}.${this.name}`.toLowerCase();
 	}
 }
 
