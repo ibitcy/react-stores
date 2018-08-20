@@ -1,9 +1,7 @@
 import * as React from 'react';
 
-import { CommonActions } from './actions';
-
 import { Store, StoreComponent } from '../../src/store';
-import { CommonStore } from './store';
+import { store, StoreState } from './store';
 
 interface Props {
 
@@ -14,30 +12,34 @@ interface State {
 }
 
 interface StoresState {
-	common: Store<CommonStore.State>
+	common: Store<StoreState>
 }
 
 export class Counter extends StoreComponent<Props, State, StoresState> {
-	constructor() {
-		super({
-			common: CommonStore.store
+	constructor(props: Props) {
+		super(props, {
+			common: store,
 		});
 	}
 
 	public render() {
 		return (
-			<div>
+			<div className="component">
 				<h2>
-					Another comonent
+					Linked comonent
 				</h2>
 
+				<p>Shared state counter: <strong>{this.stores.common.state.counter.toString()}</strong></p>
+
 				<p>
-					FooBar state is <strong>{this.stores.common.state.foo}</strong>
+					Foo state is: <strong>{this.stores.common.state.foo}</strong>
 				</p>
 
-				<p>Shared state counter: {this.stores.common.state.counter.toString()}</p>
-
-				<button onClick={() => { CommonActions.increaseCounter(); }}>
+				<button onClick={() => { 
+					store.setState({
+						counter: store.state.counter + 1,
+					});
+				}}>
 					Shared +1
 				</button>
 			</div>

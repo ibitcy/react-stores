@@ -20,15 +20,29 @@
   version "23.3.1"
   resolved "https://npmjs.eoadm.com/@types%2fjest/-/jest-23.3.1.tgz#a4319aedb071d478e6f407d1c4578ec8156829cf"
 
-"@types/react-dom@^15.5.0":
-  version "15.5.8"
-  resolved "https://npmjs.eoadm.com/@types%2freact-dom/-/react-dom-15.5.8.tgz#e2fe3d95fc443c2dc2786eba99223f4e0eeeac22"
-  dependencies:
-    "@types/react" "^15"
+"@types/node@*":
+  version "10.7.1"
+  resolved "https://npmjs.eoadm.com/@types%2fnode/-/node-10.7.1.tgz#b704d7c259aa40ee052eec678758a68d07132a2e"
 
-"@types/react@^15", "@types/react@^15.0.24":
-  version "15.6.19"
-  resolved "https://npmjs.eoadm.com/@types%2freact/-/react-15.6.19.tgz#a5de18afe65b0f29767328836b48c498a5d3a91b"
+"@types/prop-types@*":
+  version "15.5.5"
+  resolved "https://npmjs.eoadm.com/@types%2fprop-types/-/prop-types-15.5.5.tgz#17038dd322c2325f5da650a94d5f9974943625e3"
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-dom@^16.0.7":
+  version "16.0.7"
+  resolved "https://npmjs.eoadm.com/@types%2freact-dom/-/react-dom-16.0.7.tgz#54d0f867a76b90597e8432030d297982f25c20ba"
+  dependencies:
+    "@types/node" "*"
+    "@types/react" "*"
+
+"@types/react@*", "@types/react@^16.4.11":
+  version "16.4.11"
+  resolved "https://npmjs.eoadm.com/@types%2freact/-/react-16.4.11.tgz#330f3d864300f71150dc2d125e48644c098f8770"
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^2.2.0"
 
 abab@^2.0.0:
   version "2.0.0"
@@ -1087,6 +1101,10 @@ cssstyle@^1.0.0:
   resolved "https://npmjs.eoadm.com/cssstyle/-/cssstyle-1.0.0.tgz#79b16d51ec5591faec60e688891f15d2a5705129"
   dependencies:
     cssom "0.3.x"
+
+csstype@^2.2.0:
+  version "2.5.6"
+  resolved "https://npmjs.eoadm.com/csstype/-/csstype-2.5.6.tgz#2ae1db2319642d8b80a668d2d025c6196071e788"
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -4058,7 +4076,7 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-dom@^16.2.0:
+react-dom@^16.4.2:
   version "16.4.2"
   resolved "https://npmjs.eoadm.com/react-dom/-/react-dom-16.4.2.tgz#4afed569689f2c561d2b8da0b819669c38a0bda4"
   dependencies:
@@ -4094,7 +4112,7 @@ react-tools@^0.13.3:
     object-assign "^4.1.0"
     prop-types "^15.5.10"
 
-react@^16.2.0:
+react@^16.4.2:
   version "16.4.2"
   resolved "https://npmjs.eoadm.com/react/-/react-16.4.2.tgz#2cd90154e3a9d9dd8da2991149fdca3c260e129f"
   dependencies:
@@ -4986,9 +5004,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://npmjs.eoadm.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^2.2.1:
-  version "2.9.2"
-  resolved "https://npmjs.eoadm.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
+typescript@^3.0.1:
+  version "3.0.1"
+  resolved "https://npmjs.eoadm.com/typescript/-/typescript-3.0.1.tgz#43738f29585d3a87575520a4b93ab6026ef11fdb"
 
 ua-parser-js@^0.7.18:
   version "0.7.18"

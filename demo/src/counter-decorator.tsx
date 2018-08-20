@@ -1,8 +1,7 @@
 import * as React from 'react';
 
-import {CommonActions} from './actions';
-import {followStore} from '../../src/store';
-import {CommonStore} from './store';
+import { followStore } from '../../src/store';
+import { store } from './store';
 
 interface Props {
 }
@@ -10,21 +9,27 @@ interface Props {
 interface State {
 }
 
-@followStore(CommonStore.store, ['counter'])
+@followStore(store)
 export class CounterDecorator extends React.Component<Props, State> {
 	public render() {
 		return (
-			<div>
+			<div className="component">
 				<h2>
 					Component with store decorator
 				</h2>
 
 				<p>
-					Shared state counter: {CommonStore.store.state.counter.toString()}
+					Shared state counter: <strong>{store.state.counter.toString()}</strong>
+				</p>
+
+				<p>
+					Foo state is: <strong>{store.state.foo}</strong>
 				</p>
 
 				<button onClick={() => {
-					CommonActions.increaseCounter();
+					store.setState({
+						counter: store.state.counter + 1,
+					});
 				}}>
 					Shared +1
 				</button>

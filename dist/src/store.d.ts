@@ -15,7 +15,7 @@ export declare abstract class StorePersistantDriver<StoreState> {
     reset(): StorePersistantPacket<StoreState>;
     readonly storeName: string;
 }
-export declare class StorePersistantLocalSrorageDriver<StoreState> extends StorePersistantDriver<StoreState> {
+export declare class StorePersistentLocalSrorageDriver<StoreState> extends StorePersistantDriver<StoreState> {
     readonly name: string;
     readonly lifetime: number;
     private storage;
@@ -25,8 +25,9 @@ export declare class StorePersistantLocalSrorageDriver<StoreState> extends Store
     read(): StorePersistantPacket<StoreState>;
 }
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
-    stores: StoreState;
+    stores: Partial<StoreState>;
     private isStoreMounted;
+    constructor(props: Props, stores: StoreState);
     storeComponentDidMount(): void;
     storeComponentWillUnmount(): void;
     storeComponentWillReceiveProps(nextProps: Props): void;
@@ -35,7 +36,6 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
     shouldStoreComponentUpdate(nextProps: Props, nextState: State): boolean;
     storeComponentStoreWillUpdate(): void;
     storeComponentStoreDidUpdate(): void;
-    constructor(stores: StoreState);
     componentDidMount(): void;
     componentWillUnmount(): void;
     componentWillReceiveProps(nextProps: Props): void;
@@ -73,4 +73,4 @@ export declare class StoreEvent<StoreState> {
     constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
     remove(): void;
 }
-export declare const followStore: <StoreState>(store: Store<StoreState>, followStates?: string[]) => (WrappedComponent: React.ComponentClass<{}>) => any;
+export declare const followStore: <StoreState>(store: Store<StoreState>, followStates?: string[]) => (WrappedComponent: React.ComponentClass<{}, any>) => any;
