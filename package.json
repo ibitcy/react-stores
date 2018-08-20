@@ -18,6 +18,7 @@
 		"build": "tsc src/store.ts --jsx 'react' --target es5 --lib es6,dom -d --outDir './' && mkdir -p ./lib && mv ./store.d.ts ./index.d.ts && mv ./store.js ./lib/index.js",
 		"test": "yarn jest",
 		"demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
+		"release:demo": "webpack --config ./demo/webpack.prod.config.js",
 		"prepare": "yarn build"
 	},
 	"jest": {
