@@ -306,9 +306,6 @@ remove(): void
 ```
 // LocalStorage
 export let store: Store<State> = new Store<State>(initialState, new StorePersistentLocalSrorageDriver('comon'));
-
-// SessionStorage
-export let store: Store<State> = new Store<State>(initialState, new StorePersistentLocalSrorageDriver('comon'));
 ```
 
 ### Persistent driver
