@@ -299,6 +299,7 @@ remove(): void
 'all' // fires with every other events (init or update)
 'init' // fires once at as soon as event has bound
 'update' // fires at each store update
+'dumpUpdated' // fires at each dump update
 ```
 
 ## Persistence

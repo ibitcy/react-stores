@@ -1,6 +1,10 @@
 import * as React from 'react';
 import * as Freezer from 'freezer-js';
 
+export interface StorePersistantDump<StoreState> {
+	dumpHistory: StorePersistantPacket<StoreState>[];
+}
+
 export interface StorePersistantPacket<StoreState> {
 	data: StoreState;
 	timestamp: number;
@@ -18,6 +22,11 @@ export abstract class StorePersistantDriver<StoreState> {
 	public abstract type: string;
 	public abstract write(pack: StorePersistantPacket<StoreState>): void;
 	public abstract read(): StorePersistantPacket<StoreState>;
+	public abstract saveDump(pack: StorePersistantPacket<StoreState>): number;
+	public abstract readDump(id: number): StorePersistantPacket<StoreState>;
+	public abstract resetHistory(): void;
+	public abstract getDumpHistory(): number[];
+	public abstract removeDump(timestamp: number): void;
 
 	public pack(data: StoreState): StorePersistantPacket<StoreState> {
 		return {
@@ -34,6 +43,10 @@ export abstract class StorePersistantDriver<StoreState> {
 
 	public get storeName(): string {
 		return `store-persistent-${this.type}-${this.name}`.toLowerCase();
+	}
+
+	public get dumpHystoryName(): string {
+		return `store-persistent-dump-history-${this.type}-${this.name}`.toLowerCase();
 	}
 }
 
@@ -79,6 +92,104 @@ export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersista
 			return dump;
 		} else {
 			return this.reset();
+		}
+	}
+
+	public saveDump(pack: StorePersistantPacket<StoreState>): number {
+		let timestamp: number = pack.timestamp;
+
+		if (this.storage) {
+			try {
+				const dumpHistory: StorePersistantDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHystoryName));
+
+				if (dumpHistory && dumpHistory.dumpHistory) {
+					dumpHistory.dumpHistory.push(pack);
+
+					this.storage.setItem(this.dumpHystoryName, JSON.stringify(dumpHistory));
+				} else {
+					this.storage.setItem(this.dumpHystoryName, JSON.stringify({
+						dumpHistory: [pack],
+					}));
+				}
+			} catch (e) {
+				try {
+					this.storage.setItem(this.dumpHystoryName, JSON.stringify({
+						dumpHistory: [pack],
+					}));
+				} catch (e) {
+					console.error(e);
+					timestamp = null;
+				}
+
+				console.error(e);
+				timestamp = null;
+			}
+		}
+
+		return timestamp;
+	}
+
+	public removeDump(timestamp: number): void {
+		if (this.storage) {
+			try {
+				const dumpHistory: StorePersistantDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHystoryName));
+
+				if (dumpHistory && dumpHistory.dumpHistory) {
+					const newDumpHistory: StorePersistantPacket<StoreState>[] = dumpHistory.dumpHistory.filter((dump: StorePersistantPacket<StoreState>) => dump.timestamp !== timestamp);
+
+					this.storage.setItem(this.dumpHystoryName, JSON.stringify({
+						dumpHistory: newDumpHistory,
+					}));
+				}
+			} catch (e) {
+				console.error(e);
+			}
+		}
+	}
+
+	public readDump(timestamp: number): StorePersistantPacket<StoreState> {
+		let dump: StorePersistantPacket<StoreState> = null;
+
+		try {
+			const dumpHistory: StorePersistantDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHystoryName));
+
+			if (dumpHistory && dumpHistory.dumpHistory) {
+				dump = dumpHistory.dumpHistory.find((pack) => pack.timestamp === timestamp);
+			} else {
+				dump = null;
+			}
+		} catch (e) {
+			console.error(e);
+		}
+
+		return dump;
+	}
+
+	public getDumpHistory(): number[] {
+		let history: number[] = [];
+
+		if (this.storage) {
+			try {
+				const dumpHistory: StorePersistantDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHystoryName));
+				history = dumpHistory.dumpHistory.map((pack: StorePersistantPacket<StoreState>) => pack.timestamp);
+			} catch (e) {
+				console.error(e);
+				history = [];
+			}
+		}
+
+		return history;
+	}
+
+	public resetHistory(): void {
+		if (this.storage) {
+			try {
+				this.storage.setItem(this.dumpHystoryName, JSON.stringify({
+					dumpHistory: [],
+				}));
+			} catch (e) {
+				console.error(e);
+			}
 		}
 	}
 }
@@ -235,7 +346,47 @@ export class Store<StoreState> {
 	}
 
 	public resetPersistence(): void {
-		this.persistenceDriver.reset();
+		if (this.persistenceDriver) {
+			this.persistenceDriver.reset();
+		}
+	}
+
+	public resetDumpHistory(): void {
+		if (this.persistenceDriver) {
+			this.persistenceDriver.resetHistory();
+			this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
+		}
+	}
+
+	public saveDump(): void {
+		if (this.persistenceDriver) {
+			this.persistenceDriver.saveDump(this.persistenceDriver.pack(this.frozenState.get().state));
+			this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
+		}
+	}
+
+	public removeDump(timestamp: number): void {
+		if (this.persistenceDriver) {
+			this.persistenceDriver.removeDump(timestamp);
+			this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
+		}
+	}
+
+	public restoreDump(timestamp: number): void {
+		if (this.persistenceDriver) {
+			const pack: StorePersistantPacket<StoreState> = this.persistenceDriver.readDump(timestamp);
+
+			if(pack) {
+				this.setState(pack.data);
+				this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
+			} 
+		}
+	}
+
+	public getDumpHistory(): number[] {
+		if (this.persistenceDriver) {
+			return this.persistenceDriver.getDumpHistory();
+		}
 	}
 
 	public setState(newState: Partial<StoreState>): void {
@@ -275,6 +426,7 @@ export class Store<StoreState> {
 		const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
 
 		this.eventManager.fire('init', this.frozenState.get().state, this.frozenState.get().state);
+		this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
 
 		return event;
 	}
@@ -283,7 +435,8 @@ export class Store<StoreState> {
 export type StoreEventType =
 	'all' |
 	'init' |
-	'update';
+	'update' |
+	'dumpUpdate';
 
 export class StoreEvent<StoreState> {
 	constructor(

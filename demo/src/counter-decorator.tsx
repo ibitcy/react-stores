@@ -31,7 +31,7 @@ export class CounterDecorator extends React.Component<Props, State> {
 						counter: store.state.counter + 1,
 					});
 				}}>
-					Shared +1
+					Store +1
 				</button>
 			</div>
 		);

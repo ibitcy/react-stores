@@ -4,8 +4,9 @@ import { Counter } from './counter';
 import { CounterEvents } from './counter-events';
 import { CounterDecorator } from "./counter-decorator";
 import { Persistent } from './persistent';
-import { store, storePersistent } from './store';
+import { store, storePersistent, storeHistory } from './store';
 import { followStore, Store, StorePersistentLocalSrorageDriver } from '../../src/store';
+import { History } from './history';
 
 interface Props {
 
@@ -68,9 +69,23 @@ export class Container extends React.Component<Props, State> {
 						<>
 							<h1>Snapshots demo</h1>
 
-							<button onClick={() => store.resetState()}>
+							<button onClick={() => storeHistory.resetPersistence()}>
+								Reset persistence
+							</button>
+
+							<button onClick={() => storeHistory.resetState()}>
 								Reset store
 							</button>
+
+							<button onClick={() => storeHistory.resetDumpHistory()}>
+								Reset history
+							</button>
+
+							<button onClick={() => storeHistory.saveDump()}>
+								Save dump
+							</button>
+
+							<History/>
 						</>
 					)}
 				</div>

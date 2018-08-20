@@ -40,7 +40,7 @@ export class Counter extends StoreComponent<Props, State, StoresState> {
 						counter: store.state.counter + 1,
 					});
 				}}>
-					Shared +1
+					Store +1
 				</button>
 			</div>
 		);

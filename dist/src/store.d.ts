@@ -1,4 +1,7 @@
 import * as React from 'react';
+export interface StorePersistantDump<StoreState> {
+    dumpHistory: StorePersistantPacket<StoreState>[];
+}
 export interface StorePersistantPacket<StoreState> {
     data: StoreState;
     timestamp: number;
@@ -11,9 +14,15 @@ export declare abstract class StorePersistantDriver<StoreState> {
     abstract type: string;
     abstract write(pack: StorePersistantPacket<StoreState>): void;
     abstract read(): StorePersistantPacket<StoreState>;
+    abstract saveDump(pack: StorePersistantPacket<StoreState>): number;
+    abstract readDump(id: number): StorePersistantPacket<StoreState>;
+    abstract resetHistory(): void;
+    abstract getDumpHistory(): number[];
+    abstract removeDump(timestamp: number): void;
     pack(data: StoreState): StorePersistantPacket<StoreState>;
     reset(): StorePersistantPacket<StoreState>;
     readonly storeName: string;
+    readonly dumpHystoryName: string;
 }
 export declare class StorePersistentLocalSrorageDriver<StoreState> extends StorePersistantDriver<StoreState> {
     readonly name: string;
@@ -23,6 +32,11 @@ export declare class StorePersistentLocalSrorageDriver<StoreState> extends Store
     constructor(name: string, lifetime?: number);
     write(pack: StorePersistantPacket<StoreState>): void;
     read(): StorePersistantPacket<StoreState>;
+    saveDump(pack: StorePersistantPacket<StoreState>): number;
+    removeDump(timestamp: number): void;
+    readDump(timestamp: number): StorePersistantPacket<StoreState>;
+    getDumpHistory(): number[];
+    resetHistory(): void;
 }
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     stores: Partial<StoreState>;
@@ -58,13 +72,18 @@ export declare class Store<StoreState> {
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistantDriver<StoreState>);
     readonly state: StoreState;
     resetPersistence(): void;
+    resetDumpHistory(): void;
+    saveDump(): void;
+    removeDump(timestamp: number): void;
+    restoreDump(timestamp: number): void;
+    getDumpHistory(): number[];
     setState(newState: Partial<StoreState>): void;
     resetState(): void;
     update(currentState: StoreState, prevState: StoreState): void;
     getInitialState(): StoreState;
     on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState>;
 }
-export declare type StoreEventType = 'all' | 'init' | 'update';
+export declare type StoreEventType = 'all' | 'init' | 'update' | 'dumpUpdate';
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];

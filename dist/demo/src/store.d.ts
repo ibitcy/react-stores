@@ -5,3 +5,4 @@ export interface StoreState {
 }
 export declare const store: Store<StoreState>;
 export declare const storePersistent: Store<StoreState>;
+export declare const storeHistory: Store<StoreState>;

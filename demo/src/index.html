@@ -91,7 +91,7 @@
 
 		button {
 			background-color: #0074D9;
-			color: #fff;
+			color: rgb(197, 239, 255);
 			font-size: 12px;
 			border: none;
 			border-radius: 3px;
@@ -101,6 +101,14 @@
 			transition: background-color .2s;
 			min-width: 120px;
 			outline: none;
+			box-sizing: border-box;
+		}
+
+		@media (max-width: 400px) {
+			button {
+				margin-top: 20px;
+				width: 100%;
+			}
 		}
 
 		button:hover {
@@ -123,6 +131,42 @@
 
 		.inner {
 			padding: 0 30px 30px;
+		}
+
+		.empty {
+			color: #999;
+		}
+
+		.history {
+
+		}
+
+		.history .header {
+			font-weight: 600;
+			display: flex;
+			justify-content: space-between;
+			background-color: rgb(238, 246, 255);
+		}
+
+		.history .row {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.history .row:nth-child(odd) {
+			background-color: rgba(0, 0, 0, .033);
+		}
+
+		.history .col {
+			padding: 12px 20px;
+		}
+
+		.history .restore {
+			color: #0074D9;
+		}
+
+		.history .delete {
+			color: rgb(209, 0, 105);
 		}
 	</style>
 </head>
@@ -160,10 +204,11 @@
 		</section>
 
 		<footer>
-			<a href="https://github.com/ibitcy/react-stores">GitHub</a>
+			<a class="github-button" href="https://github.com/ibitcy/react-stores" data-icon="octicon-star" data-size="large" aria-label="Star ibitcy/react-stores on GitHub">Star</a>
 		</footer>
 	</main>
 	<script src="bundle.js"></script>
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 
 </html>

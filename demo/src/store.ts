@@ -17,3 +17,7 @@ export const store: Store<StoreState> = new Store<StoreState>(initialState, {
 export const storePersistent: Store<StoreState> = new Store<StoreState>(initialState, {
 	live: true,
 }, new StorePersistentLocalSrorageDriver('demo'));
+
+export const storeHistory: Store<StoreState> = new Store<StoreState>(initialState, {
+	live: true,
+}, new StorePersistentLocalSrorageDriver('demoHistory'));

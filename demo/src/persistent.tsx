@@ -43,7 +43,7 @@ export class Persistent extends React.Component<Props, State> {
 						counter: storePersistent.state.counter + 1,
 					});
 				}}>
-					Shared persistent +1
+					Store +1
 				</button>
 
 				<button onClick={() => {
@@ -51,7 +51,7 @@ export class Persistent extends React.Component<Props, State> {
 						foo: storePersistent.state.foo === 'foo' ? 'bar' : 'foo',
 					});
 				}}>
-					{storePersistent.state.foo} persistent toggle
+					Store foobar toggle
 				</button>
 			</div>
 		);

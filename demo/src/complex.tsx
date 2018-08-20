@@ -45,7 +45,7 @@ export class Complex extends React.Component<Props, State> {
 						counter: store.state.counter + 1,
 					});
 				}}>
-					Shared +1
+					Store +1
 				</button>
 
 				<button onClick={() => {
@@ -53,7 +53,7 @@ export class Complex extends React.Component<Props, State> {
 						foo: store.state.foo === 'foo' ? 'bar' : 'foo',
 					});
 				}}>
-					Foobar toggle
+					Store foobar toggle
 				</button>
 			</div>
 		);
