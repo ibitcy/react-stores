@@ -448,7 +448,7 @@ describe('testStoreState', () => {
 			counter: 100,
 		});
 
-		expect(eventCount).toEqual(2);
+		expect(eventCount).toEqual(3);
 		done();
 	});
 
@@ -458,7 +458,9 @@ describe('testStoreState', () => {
 		let eventCount = 0;
 
 		const event: StoreEvent<StoreState> = store.on('all', (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
-			eventCount++;
+			if(type !== 'dumpUpdate') {
+				eventCount++;
+			}
 		});
 
 		store.setState({
