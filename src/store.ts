@@ -11,7 +11,7 @@ export interface StorePersistantPacket<StoreState> {
 }
 
 export abstract class StorePersistantDriver<StoreState> {
-	public persistance: boolean = true;
+	public persistence: boolean = true;
 	
 	constructor(
 		readonly name: string,
@@ -68,7 +68,7 @@ export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersista
 	}
 
 	public write(pack: StorePersistantPacket<StoreState>): void {
-		if (this.storage && this.persistance) {
+		if (this.storage && this.persistence) {
 			try {
 				this.storage.setItem(this.storeName, JSON.stringify(pack));
 			} catch (e) {
@@ -78,7 +78,7 @@ export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersista
 	}
 
 	public read(): StorePersistantPacket<StoreState> {
-		if (this.storage && this.persistance) {
+		if (this.storage && this.persistence) {
 			let dump = null;
 
 			try {
@@ -100,7 +100,7 @@ export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersista
 	public saveDump(pack: StorePersistantPacket<StoreState>): number {
 		let timestamp: number = pack.timestamp;
 
-		if (this.storage && this.persistance) {
+		if (this.storage && this.persistence) {
 			try {
 				const dumpHistory: StorePersistantDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHystoryName));
 
@@ -132,7 +132,7 @@ export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersista
 	}
 
 	public removeDump(timestamp: number): void {
-		if (this.storage && this.persistance) {
+		if (this.storage && this.persistence) {
 			try {
 				const dumpHistory: StorePersistantDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHystoryName));
 
@@ -152,7 +152,7 @@ export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersista
 	public readDump(timestamp: number): StorePersistantPacket<StoreState> {
 		let dump: StorePersistantPacket<StoreState> = null;
 
-		if (this.storage && this.persistance) {
+		if (this.storage && this.persistence) {
 			try {
 				const dumpHistory: StorePersistantDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHystoryName));
 
@@ -172,7 +172,7 @@ export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersista
 	public getDumpHistory(): number[] {
 		let history: number[] = [];
 
-		if (this.storage && this.persistance) {
+		if (this.storage && this.persistence) {
 			try {
 				const dumpHistory: StorePersistantDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHystoryName));
 				history = dumpHistory.dumpHistory.map((pack: StorePersistantPacket<StoreState>) => pack.timestamp);
@@ -186,7 +186,7 @@ export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersista
 	}
 
 	public resetHistory(): void {
-		if (this.storage && this.persistance) {
+		if (this.storage && this.persistence) {
 			try {
 				this.storage.setItem(this.dumpHystoryName, JSON.stringify({
 					dumpHistory: [],
@@ -294,7 +294,7 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 
 export interface StoreOptions {
 	live?: boolean;
-	persistance?: boolean;
+	persistence?: boolean;
 	freezeInstances?: boolean;
 	mutable?: boolean;
 }
@@ -309,14 +309,14 @@ export class Store<StoreState> {
 		live: false,
 		freezeInstances: false,
 		mutable: false,
-		persistance: false,
+		persistence: false,
 	};
 
 	constructor(initialState: StoreState, options?: StoreOptions, readonly persistenceDriver?: StorePersistantDriver<StoreState>) {
 		let currentState = null;
 
 		if (options) {
-			this.opts.persistance = options.persistance === true;
+			this.opts.persistence = options.persistence === true;
 			this.opts.live = options.live === true;
 			this.opts.freezeInstances = options.freezeInstances === true;
 			this.opts.mutable = options.mutable === true;
@@ -327,7 +327,7 @@ export class Store<StoreState> {
 			this.persistenceDriver = new StorePersistentLocalSrorageDriver(this.constructor.name.toLowerCase());
 		}
 
-		this.persistenceDriver.persistance = this.opts.persistance;
+		this.persistenceDriver.persistence = this.opts.persistence;
 		this.persistenceDriver.initialState = initialState;
 
 		const persistantState = this.persistenceDriver.read().data;

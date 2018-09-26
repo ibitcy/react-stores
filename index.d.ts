@@ -9,6 +9,7 @@ export interface StorePersistantPacket<StoreState> {
 export declare abstract class StorePersistantDriver<StoreState> {
     readonly name: string;
     readonly lifetime: number;
+    persistance: boolean;
     constructor(name: string, lifetime?: number);
     initialState: StoreState;
     abstract type: string;
@@ -59,6 +60,7 @@ export declare abstract class StoreComponent<Props, State, StoreState> extends R
 }
 export interface StoreOptions {
     live?: boolean;
+    persistance?: boolean;
     freezeInstances?: boolean;
     mutable?: boolean;
 }
