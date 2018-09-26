@@ -11,6 +11,8 @@ export interface StorePersistantPacket<StoreState> {
 }
 
 export abstract class StorePersistantDriver<StoreState> {
+	public persistance: boolean = true;
+	
 	constructor(
 		readonly name: string,
 		readonly lifetime: number = Infinity,
@@ -53,7 +55,6 @@ export abstract class StorePersistantDriver<StoreState> {
 export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersistantDriver<StoreState> {
 	private storage = null;
 	public type: string = 'localStorage';
-	public persistance: boolean = true;
 
 	constructor(
 		readonly name: string,
