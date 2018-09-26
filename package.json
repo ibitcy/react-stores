@@ -1,6 +1,6 @@
 {
 	"name": "react-stores",
-	"version": "2.2.1",
+	"version": "2.3.0",
 	"keywords": [
 		"react",
 		"stores",
@@ -19,7 +19,7 @@
 		"test": "yarn jest",
 		"demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
 		"release:demo": "webpack --config ./demo/webpack.prod.config.js",
-		"prepare": "yarn build"
+		"prepare": "yarn build && yarn test"
 	},
 	"jest": {
 		"transform": {
