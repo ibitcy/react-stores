@@ -67,12 +67,14 @@ export interface StoreOptions {
 export declare class Store<StoreState> {
     readonly persistenceDriver?: StorePersistantDriver<StoreState>;
     components: any[];
+    readonly id: string;
     private eventManager;
     private readonly frozenState;
     private readonly initialState;
     private opts;
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistantDriver<StoreState>);
     readonly state: StoreState;
+    private generateStoreName;
     resetPersistence(): void;
     resetDumpHistory(): void;
     saveDump(): void;
