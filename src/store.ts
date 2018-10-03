@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as Freezer from 'freezer-js';
+import * as objectHash from 'object-hash';
 
 export interface StorePersistantDump<StoreState> {
 	dumpHistory: StorePersistantPacket<StoreState>[];
@@ -12,7 +13,7 @@ export interface StorePersistantPacket<StoreState> {
 
 export abstract class StorePersistantDriver<StoreState> {
 	public persistence: boolean = true;
-	
+
 	constructor(
 		readonly name: string,
 		readonly lifetime: number = Infinity,
@@ -301,6 +302,7 @@ export interface StoreOptions {
 
 export class Store<StoreState> {
 	public components = [];
+	public readonly id: string;
 	private eventManager: StoreEventManager<StoreState> = null;
 	private readonly frozenState = null;
 	private readonly initialState = null;
@@ -315,6 +317,8 @@ export class Store<StoreState> {
 	constructor(initialState: StoreState, options?: StoreOptions, readonly persistenceDriver?: StorePersistantDriver<StoreState>) {
 		let currentState = null;
 
+		this.id = this.generateStoreName(initialState);
+
 		if (options) {
 			this.opts.persistence = options.persistence === true;
 			this.opts.live = options.live === true;
@@ -324,7 +328,7 @@ export class Store<StoreState> {
 		}
 
 		if (!this.persistenceDriver) {
-			this.persistenceDriver = new StorePersistentLocalSrorageDriver(this.constructor.name.toLowerCase());
+			this.persistenceDriver = new StorePersistentLocalSrorageDriver(this.id);
 		}
 
 		this.persistenceDriver.persistence = this.opts.persistence;
@@ -351,6 +355,16 @@ export class Store<StoreState> {
 
 	get state(): StoreState {
 		return this.frozenState.get().state;
+	}
+
+	private generateStoreName(state: StoreState): string {
+		let flatKeys: string = '';
+
+		for (let key in state) {
+			flatKeys += key;
+		}
+		
+		return objectHash(flatKeys);
 	}
 
 	public resetPersistence(): void {
@@ -504,7 +518,7 @@ export const followStore = <StoreState>(store: Store<StoreState>, followStates?:
 		}
 
 		public render() {
-			return React.createElement(WrappedComponent, this.props);
+			return React.createElement(WrappedComponent, this.props as any);
 		}
 	}
 

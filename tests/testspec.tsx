@@ -90,6 +90,17 @@ interface StoreState {
 expect.extend(expectJsx);
 
 describe('testStoreState', () => {
+	it('check store id', (done) => {
+		store.resetState();
+
+		for (let i = 0; i < 4; i++) {
+			Actions.increaseCounter();
+		}
+
+		expect(store.id).toEqual('64811dd5e803f06585a4cae0d8039498c95c756a');
+		done();
+	});
+
 	it('counter should be 4', (done) => {
 		store.resetState();
 
