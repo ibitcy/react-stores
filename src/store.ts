@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as Freezer from 'freezer-js';
-import * as objectHash from 'object-hash';
 
 export interface StorePersistantDump<StoreState> {
 	dumpHistory: StorePersistantPacket<StoreState>[];
@@ -356,6 +355,14 @@ export class Store<StoreState> {
 	get state(): StoreState {
 		return this.frozenState.get().state;
 	}
+	
+	private hashCode(str: string): string {
+    for(var i = 0, h = 0; i < str.length; i++) {
+				h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+		}
+				
+    return h.toString(16);
+	}
 
 	private generateStoreName(state: StoreState): string {
 		let flatKeys: string = '';
@@ -363,8 +370,8 @@ export class Store<StoreState> {
 		for (let key in state) {
 			flatKeys += key;
 		}
-		
-		return objectHash(flatKeys);
+
+		return this.hashCode(flatKeys);
 	}
 
 	public resetPersistence(): void {

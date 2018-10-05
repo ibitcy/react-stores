@@ -74,6 +74,7 @@ export declare class Store<StoreState> {
     private opts;
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistantDriver<StoreState>);
     readonly state: StoreState;
+    private hashCode;
     private generateStoreName;
     resetPersistence(): void;
     resetDumpHistory(): void;

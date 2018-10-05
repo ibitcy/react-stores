@@ -97,7 +97,7 @@ describe('testStoreState', () => {
 			Actions.increaseCounter();
 		}
 
-		expect(store.id).toEqual('64811dd5e803f06585a4cae0d8039498c95c756a');
+		expect(store.id).toEqual('-1a3306b2');
 		done();
 	});
 
