@@ -416,13 +416,17 @@ export class Store<StoreState> {
 	public setState(newState: Partial<StoreState>): void {
 		const newFrozenState = new Freezer(newState);
 
+		const mergedState = {...this.frozenState.get().state};
+
 		for (const prop in newState) {
 			const newFrozenProp = newFrozenState.get()[prop];
 
-			if (newFrozenProp !== this.frozenState.get().state[prop]) {
-				this.frozenState.get().state.set(prop, newFrozenProp);
+			if (newFrozenProp !== mergedState[prop]) {
+				mergedState[prop] = newFrozenProp;
 			}
 		}
+
+		this.frozenState.get().state.set(mergedState);
 	}
 
 	public resetState(): void {
