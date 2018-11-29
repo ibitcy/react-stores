@@ -1,4 +1,4 @@
-import { Store, StorePersistentLocalSrorageDriver } from "../../src/store";
+import { Store, StorePersistentLocalStorageDriver } from "../../src/store";
 
 export interface StoreState {
 	counter: number;
@@ -16,8 +16,10 @@ export const store: Store<StoreState> = new Store<StoreState>(initialState, {
 
 export const storePersistent: Store<StoreState> = new Store<StoreState>(initialState, {
 	live: true,
-}, new StorePersistentLocalSrorageDriver('demo'));
+	persistence: true,
+}, new StorePersistentLocalStorageDriver('demo'));
 
 export const storeHistory: Store<StoreState> = new Store<StoreState>(initialState, {
 	live: true,
-}, new StorePersistentLocalSrorageDriver('demoHistory'));
+	persistence: true,
+}, new StorePersistentLocalStorageDriver('demoHistory'));

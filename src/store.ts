@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as Freezer from 'freezer-js';
-import { store } from "../demo/src/store";
 
 export interface StorePersistentDump<StoreState> {
 	dumpHistory: StorePersistentPacket<StoreState>[];
@@ -60,7 +59,7 @@ export abstract class StorePersistentDriver<StoreState> {
 	}
 }
 
-export class StorePersistentLocalSrorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
+export class StorePersistentLocalStorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
 	private storage = null;
 	public type: string = 'localStorage';
 
@@ -335,7 +334,7 @@ export class Store<StoreState> {
 		}
 
 		if (!this.persistenceDriver) {
-			this.persistenceDriver = new StorePersistentLocalSrorageDriver(this.id);
+			this.persistenceDriver = new StorePersistentLocalStorageDriver(this.id);
 		}
 
 		this.persistenceDriver.persistence = this.opts.persistence;

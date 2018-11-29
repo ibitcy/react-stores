@@ -5,7 +5,7 @@ import { CounterEvents } from './counter-events';
 import { CounterDecorator } from "./counter-decorator";
 import { Persistent } from './persistent';
 import { store, storePersistent, storeHistory } from './store';
-import { followStore, Store, StorePersistentLocalSrorageDriver } from '../../src/store';
+import { followStore, Store, StorePersistentLocalStorageDriver } from '../../src/store';
 import { History } from './history';
 
 interface Props {
@@ -20,7 +20,7 @@ const pageStore: Store<{page: number}> = new Store<{page: number}>({
 	page: 0,
 }, {
 	live: true,
-}, new StorePersistentLocalSrorageDriver('page'));
+}, new StorePersistentLocalStorageDriver('page'));
 
 @followStore(pageStore)
 export class Container extends React.Component<Props, State> {
