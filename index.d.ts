@@ -1,41 +1,41 @@
 import * as React from 'react';
-export interface StorePersistantDump<StoreState> {
-    dumpHistory: StorePersistantPacket<StoreState>[];
+export interface StorePersistentDump<StoreState> {
+    dumpHistory: StorePersistentPacket<StoreState>[];
 }
-export interface StorePersistantPacket<StoreState> {
+export interface StorePersistentPacket<StoreState> {
     data: StoreState;
     timestamp: number;
 }
-export declare abstract class StorePersistantDriver<StoreState> {
+export declare abstract class StorePersistentDriver<StoreState> {
     readonly name: string;
     readonly lifetime: number;
     persistence: boolean;
     constructor(name: string, lifetime?: number);
     initialState: StoreState;
     abstract type: string;
-    abstract write(pack: StorePersistantPacket<StoreState>): void;
-    abstract read(): StorePersistantPacket<StoreState>;
-    abstract saveDump(pack: StorePersistantPacket<StoreState>): number;
-    abstract readDump(id: number): StorePersistantPacket<StoreState>;
+    abstract write(pack: StorePersistentPacket<StoreState>): void;
+    abstract read(): StorePersistentPacket<StoreState>;
+    abstract saveDump(pack: StorePersistentPacket<StoreState>): number;
+    abstract readDump(id: number): StorePersistentPacket<StoreState>;
     abstract resetHistory(): void;
     abstract getDumpHistory(): number[];
     abstract removeDump(timestamp: number): void;
-    pack(data: StoreState): StorePersistantPacket<StoreState>;
-    reset(): StorePersistantPacket<StoreState>;
+    pack(data: StoreState): StorePersistentPacket<StoreState>;
+    reset(): StorePersistentPacket<StoreState>;
     readonly storeName: string;
-    readonly dumpHystoryName: string;
+    readonly dumpHistoryName: string;
 }
-export declare class StorePersistentLocalSrorageDriver<StoreState> extends StorePersistantDriver<StoreState> {
+export declare class StorePersistentLocalStorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
     readonly name: string;
     readonly lifetime: number;
     private storage;
     type: string;
     constructor(name: string, lifetime?: number);
-    write(pack: StorePersistantPacket<StoreState>): void;
-    read(): StorePersistantPacket<StoreState>;
-    saveDump(pack: StorePersistantPacket<StoreState>): number;
+    write(pack: StorePersistentPacket<StoreState>): void;
+    read(): StorePersistentPacket<StoreState>;
+    saveDump(pack: StorePersistentPacket<StoreState>): number;
     removeDump(timestamp: number): void;
-    readDump(timestamp: number): StorePersistantPacket<StoreState>;
+    readDump(timestamp: number): StorePersistentPacket<StoreState>;
     getDumpHistory(): number[];
     resetHistory(): void;
 }
@@ -65,14 +65,14 @@ export interface StoreOptions {
     mutable?: boolean;
 }
 export declare class Store<StoreState> {
-    readonly persistenceDriver?: StorePersistantDriver<StoreState>;
+    readonly persistenceDriver?: StorePersistentDriver<StoreState>;
     components: any[];
     readonly id: string;
     private eventManager;
     private readonly frozenState;
     private readonly initialState;
     private opts;
-    constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistantDriver<StoreState>);
+    constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState>);
     readonly state: StoreState;
     private hashCode;
     private generateStoreName;
