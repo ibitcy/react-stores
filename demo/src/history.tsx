@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { storeHistory, StoreState } from './store';
-import { StoreEvent, StorePersistantPacket } from '../../src/store';
+import { StoreEvent, StorePersistentPacket } from '../../src/store';
 
 interface Props {
 
