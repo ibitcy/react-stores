@@ -2,3 +2,7 @@ node_modules
 .DS_Store
 test/test.js
 dist
+.idea/misc.xml
+.idea/modules.xml
+.idea/react-stores.iml
+.idea/vcs.xml
