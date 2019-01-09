@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 export interface StorePersistentDump<StoreState> {
     dumpHistory: StorePersistentPacket<StoreState>[];
 }
@@ -88,7 +88,7 @@ export declare class Store<StoreState> {
     getInitialState(): StoreState;
     on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState>;
 }
-export declare type StoreEventType = 'all' | 'init' | 'update' | 'dumpUpdate';
+export declare type StoreEventType = "all" | "init" | "update" | "dumpUpdate";
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as Freezer from 'freezer-js';
+import * as React from "react";
+import * as Freezer from "freezer-js";
 
 export interface StorePersistentDump<StoreState> {
 	dumpHistory: StorePersistentPacket<StoreState>[];
@@ -13,12 +13,7 @@ export interface StorePersistentPacket<StoreState> {
 export abstract class StorePersistentDriver<StoreState> {
 	public persistence: boolean = true;
 
-	constructor(
-		readonly name: string,
-		readonly lifetime: number = Infinity,
-	) {
-
-	}
+	constructor(readonly name: string, readonly lifetime: number = Infinity) {}
 
 	public initialState: StoreState = null;
 	public abstract type: string;
@@ -40,8 +35,8 @@ export abstract class StorePersistentDriver<StoreState> {
 	public pack(data: StoreState): StorePersistentPacket<StoreState> {
 		return {
 			data: data,
-			timestamp: Date.now(),
-		}
+			timestamp: Date.now()
+		};
 	}
 
 	public reset(): StorePersistentPacket<StoreState> {
@@ -55,21 +50,22 @@ export abstract class StorePersistentDriver<StoreState> {
 	}
 
 	public get dumpHistoryName(): string {
-		return `store.persistent.dump.history.${this.type}.${this.name}`.toLowerCase();
+		return `store.persistent.dump.history.${this.type}.${
+			this.name
+		}`.toLowerCase();
 	}
 }
 
-export class StorePersistentLocalStorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
+export class StorePersistentLocalStorageDriver<
+	StoreState
+> extends StorePersistentDriver<StoreState> {
 	private storage = null;
-	public type: string = 'localStorage';
+	public type: string = "localStorage";
 
-	constructor(
-		readonly name: string,
-		readonly lifetime: number = Infinity,
-	) {
+	constructor(readonly name: string, readonly lifetime: number = Infinity) {
 		super(name, lifetime);
 
-		if (typeof window !== 'undefined' && window.localStorage) {
+		if (typeof window !== "undefined" && window.localStorage) {
 			this.storage = window.localStorage;
 		}
 	}
@@ -109,22 +105,33 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
 
 		if (this.storage && this.persistence) {
 			try {
-				const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHistoryName));
+				const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(
+					this.storage.getItem(this.dumpHistoryName)
+				);
 
 				if (dumpHistory && dumpHistory.dumpHistory) {
 					dumpHistory.dumpHistory.push(pack);
 
-					this.storage.setItem(this.dumpHistoryName, JSON.stringify(dumpHistory));
+					this.storage.setItem(
+						this.dumpHistoryName,
+						JSON.stringify(dumpHistory)
+					);
 				} else {
-					this.storage.setItem(this.dumpHistoryName, JSON.stringify({
-						dumpHistory: [pack],
-					}));
+					this.storage.setItem(
+						this.dumpHistoryName,
+						JSON.stringify({
+							dumpHistory: [pack]
+						})
+					);
 				}
 			} catch (e) {
 				try {
-					this.storage.setItem(this.dumpHistoryName, JSON.stringify({
-						dumpHistory: [pack],
-					}));
+					this.storage.setItem(
+						this.dumpHistoryName,
+						JSON.stringify({
+							dumpHistory: [pack]
+						})
+					);
 				} catch (e) {
 					console.error(e);
 					timestamp = null;
@@ -141,14 +148,24 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
 	public removeDump(timestamp: number): void {
 		if (this.storage && this.persistence) {
 			try {
-				const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHistoryName));
+				const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(
+					this.storage.getItem(this.dumpHistoryName)
+				);
 
 				if (dumpHistory && dumpHistory.dumpHistory) {
-					const newDumpHistory: StorePersistentPacket<StoreState>[] = dumpHistory.dumpHistory.filter((dump: StorePersistentPacket<StoreState>) => dump.timestamp !== timestamp);
+					const newDumpHistory: StorePersistentPacket<
+						StoreState
+					>[] = dumpHistory.dumpHistory.filter(
+						(dump: StorePersistentPacket<StoreState>) =>
+							dump.timestamp !== timestamp
+					);
 
-					this.storage.setItem(this.dumpHistoryName, JSON.stringify({
-						dumpHistory: newDumpHistory,
-					}));
+					this.storage.setItem(
+						this.dumpHistoryName,
+						JSON.stringify({
+							dumpHistory: newDumpHistory
+						})
+					);
 				}
 			} catch (e) {
 				console.error(e);
@@ -161,10 +178,14 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
 
 		if (this.storage && this.persistence) {
 			try {
-				const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHistoryName));
+				const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(
+					this.storage.getItem(this.dumpHistoryName)
+				);
 
 				if (dumpHistory && dumpHistory.dumpHistory) {
-					dump = dumpHistory.dumpHistory.find((pack) => pack.timestamp === timestamp);
+					dump = dumpHistory.dumpHistory.find(
+						pack => pack.timestamp === timestamp
+					);
 				} else {
 					dump = null;
 				}
@@ -181,8 +202,12 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
 
 		if (this.storage && this.persistence) {
 			try {
-				const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHistoryName));
-				history = dumpHistory.dumpHistory.map((pack: StorePersistentPacket<StoreState>) => pack.timestamp);
+				const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(
+					this.storage.getItem(this.dumpHistoryName)
+				);
+				history = dumpHistory.dumpHistory.map(
+					(pack: StorePersistentPacket<StoreState>) => pack.timestamp
+				);
 			} catch (e) {
 				console.error(e);
 				history = [];
@@ -195,9 +220,12 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
 	public resetHistory(): void {
 		if (this.storage && this.persistence) {
 			try {
-				this.storage.setItem(this.dumpHistoryName, JSON.stringify({
-					dumpHistory: [],
-				}));
+				this.storage.setItem(
+					this.dumpHistoryName,
+					JSON.stringify({
+						dumpHistory: []
+					})
+				);
 			} catch (e) {
 				console.error(e);
 			}
@@ -205,7 +233,11 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
 	}
 }
 
-export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
+export abstract class StoreComponent<
+	Props,
+	State,
+	StoreState
+> extends React.Component<Props, State> {
 	public stores: Partial<StoreState> = {};
 	private isStoreMounted: boolean = false;
 
@@ -222,37 +254,26 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 		}
 	}
 
-	public storeComponentDidMount(): void {
+	public storeComponentDidMount(): void {}
 
-	}
+	public storeComponentWillUnmount(): void {}
 
-	public storeComponentWillUnmount(): void {
+	public storeComponentWillReceiveProps(nextProps: Props): void {}
 
-	}
+	public storeComponentWillUpdate(nextProps: Props, nextState: State): void {}
 
-	public storeComponentWillReceiveProps(nextProps: Props): void {
+	public storeComponentDidUpdate(prevProps: Props, prevState: State): void {}
 
-	}
-
-	public storeComponentWillUpdate(nextProps: Props, nextState: State): void {
-
-	}
-
-	public storeComponentDidUpdate(prevProps: Props, prevState: State): void {
-
-	}
-
-	public shouldStoreComponentUpdate(nextProps: Props, nextState: State): boolean {
+	public shouldStoreComponentUpdate(
+		nextProps: Props,
+		nextState: State
+	): boolean {
 		return true;
 	}
 
-	public storeComponentStoreWillUpdate(): void {
+	public storeComponentStoreWillUpdate(): void {}
 
-	}
-
-	public storeComponentStoreDidUpdate(): void {
-
-	}
+	public storeComponentStoreDidUpdate(): void {}
 
 	public componentDidMount(): void {
 		this.isStoreMounted = true;
@@ -260,13 +281,15 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 	}
 
 	public componentWillUnmount(): void {
+		this.storeComponentWillUnmount();
+
 		if (this.stores) {
 			for (let storeObject in this.stores) {
 				if (this.stores.hasOwnProperty(storeObject)) {
 					const store: any = this.stores[storeObject];
 					const newComponents = [];
 
-					store.components.forEach((component) => {
+					store.components.forEach(component => {
 						if (component !== this) {
 							newComponents.push(component);
 						}
@@ -279,7 +302,6 @@ export abstract class StoreComponent<Props, State, StoreState> extends React.Com
 
 		this.stores = null;
 		this.isStoreMounted = false;
-		this.storeComponentWillUnmount();
 	}
 
 	public componentWillReceiveProps(nextProps: Props): void {
@@ -317,10 +339,14 @@ export class Store<StoreState> {
 		live: false,
 		freezeInstances: false,
 		mutable: false,
-		persistence: false,
+		persistence: false
 	};
 
-	constructor(initialState: StoreState, options?: StoreOptions, readonly persistenceDriver?: StorePersistentDriver<StoreState>) {
+	constructor(
+		initialState: StoreState,
+		options?: StoreOptions,
+		readonly persistenceDriver?: StorePersistentDriver<StoreState>
+	) {
 		let currentState = null;
 
 		this.id = this.generateStoreName(initialState);
@@ -330,7 +356,7 @@ export class Store<StoreState> {
 			this.opts.live = options.live === true;
 			this.opts.freezeInstances = options.freezeInstances === true;
 			this.opts.mutable = options.mutable === true;
-			this.opts['singleParent'] = true;
+			this.opts["singleParent"] = true;
 		}
 
 		if (!this.persistenceDriver) {
@@ -351,11 +377,13 @@ export class Store<StoreState> {
 		}
 
 		this.eventManager = new StoreEventManager();
-		this.initialState = new Freezer({state: initialState});
-		this.frozenState = new Freezer({state: currentState}, this.opts);
-		this.frozenState.on('update', (currentState, prevState) => {
+		this.initialState = new Freezer({ state: initialState });
+		this.frozenState = new Freezer({ state: currentState }, this.opts);
+		this.frozenState.on("update", (currentState, prevState) => {
 			this.update(currentState.state, prevState.state);
-			this.persistenceDriver.write(this.persistenceDriver.pack(currentState.state));
+			this.persistenceDriver.write(
+				this.persistenceDriver.pack(currentState.state)
+			);
 		});
 	}
 
@@ -365,14 +393,14 @@ export class Store<StoreState> {
 
 	private hashCode(str: string): string {
 		for (var i = 0, h = 0; i < str.length; i++) {
-			h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+			h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
 		}
 
 		return h.toString(16);
 	}
 
 	private generateStoreName(state: StoreState): string {
-		let flatKeys: string = '';
+		let flatKeys: string = "";
 
 		for (let key in state) {
 			flatKeys += key;
@@ -387,25 +415,45 @@ export class Store<StoreState> {
 
 	public resetDumpHistory(): void {
 		this.persistenceDriver.resetHistory();
-		this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
+		this.eventManager.fire(
+			"dumpUpdate",
+			this.frozenState.get().state,
+			this.frozenState.get().state
+		);
 	}
 
 	public saveDump(): void {
-		this.persistenceDriver.saveDump(this.persistenceDriver.pack(this.frozenState.get().state));
-		this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
+		this.persistenceDriver.saveDump(
+			this.persistenceDriver.pack(this.frozenState.get().state)
+		);
+		this.eventManager.fire(
+			"dumpUpdate",
+			this.frozenState.get().state,
+			this.frozenState.get().state
+		);
 	}
 
 	public removeDump(timestamp: number): void {
 		this.persistenceDriver.removeDump(timestamp);
-		this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
+		this.eventManager.fire(
+			"dumpUpdate",
+			this.frozenState.get().state,
+			this.frozenState.get().state
+		);
 	}
 
 	public restoreDump(timestamp: number): void {
-		const pack: StorePersistentPacket<StoreState> = this.persistenceDriver.readDump(timestamp);
+		const pack: StorePersistentPacket<
+			StoreState
+		> = this.persistenceDriver.readDump(timestamp);
 
 		if (pack) {
 			this.setState(pack.data);
-			this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state);
+			this.eventManager.fire(
+				"dumpUpdate",
+				this.frozenState.get().state,
+				this.frozenState.get().state
+			);
 		}
 	}
 
@@ -416,7 +464,7 @@ export class Store<StoreState> {
 	public setState(newState: Partial<StoreState>): void {
 		const newFrozenState = new Freezer(newState);
 
-		const mergedState = {...this.frozenState.get().state};
+		const mergedState = { ...this.frozenState.get().state };
 
 		for (const prop in newState) {
 			const newFrozenProp = newFrozenState.get()[prop];
@@ -434,7 +482,7 @@ export class Store<StoreState> {
 	}
 
 	public update(currentState: StoreState, prevState: StoreState): void {
-		this.components.forEach((component) => {
+		this.components.forEach(component => {
 			if (component.isStoreMounted) {
 				component.storeComponentStoreWillUpdate();
 				component.forceUpdate();
@@ -442,38 +490,60 @@ export class Store<StoreState> {
 			}
 		});
 
-		this.eventManager.fire('update', currentState, prevState);
+		this.eventManager.fire("update", currentState, prevState);
 	}
 
 	public getInitialState(): StoreState {
 		return this.initialState.get().state;
 	}
 
-	public on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState> {
-		const eventTypes: StoreEventType[] = eventType && eventType.constructor === Array ? eventType as StoreEventType[] : [eventType] as StoreEventType[];
-		const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
+	public on(
+		eventType: StoreEventType | StoreEventType[],
+		callback: (
+			storeState: StoreState,
+			prevState?: StoreState,
+			type?: StoreEventType
+		) => void
+	): StoreEvent<StoreState> {
+		const eventTypes: StoreEventType[] =
+			eventType && eventType.constructor === Array
+				? (eventType as StoreEventType[])
+				: ([eventType] as StoreEventType[]);
+		const event: StoreEvent<StoreState> = this.eventManager.add(
+			eventTypes,
+			callback
+		);
 
-		this.eventManager.fire('init', this.frozenState.get().state, this.frozenState.get().state, event);
-		this.eventManager.fire('dumpUpdate', this.frozenState.get().state, this.frozenState.get().state, event);
+		this.eventManager.fire(
+			"init",
+			this.frozenState.get().state,
+			this.frozenState.get().state,
+			event
+		);
+		this.eventManager.fire(
+			"dumpUpdate",
+			this.frozenState.get().state,
+			this.frozenState.get().state,
+			event
+		);
 
 		return event;
 	}
 }
 
-export type StoreEventType =
-	'all' |
-	'init' |
-	'update' |
-	'dumpUpdate';
+export type StoreEventType = "all" | "init" | "update" | "dumpUpdate";
 
 export class StoreEvent<StoreState> {
 	constructor(
 		readonly id: string,
 		readonly types: StoreEventType[],
-		readonly onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void,
-		readonly onRemove: (id: string) => void,
-	) {
-	}
+		readonly onFire: (
+			storeState: StoreState,
+			prevState?: StoreState,
+			type?: StoreEventType
+		) => void,
+		readonly onRemove: (id: string) => void
+	) {}
 
 	public remove(): void {
 		this.onRemove(this.id);
@@ -488,7 +558,12 @@ class StoreEventManager<StoreState> {
 		return `${++this.eventCounter}${Date.now()}${Math.random()}`;
 	}
 
-	public fire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event?: StoreEvent<StoreState>): void {
+	public fire(
+		type: StoreEventType,
+		storeState: StoreState,
+		prevState: StoreState,
+		event?: StoreEvent<StoreState>
+	): void {
 		if (event) {
 			this.doFire(type, storeState, prevState, event);
 		} else {
@@ -504,7 +579,14 @@ class StoreEventManager<StoreState> {
 		});
 	}
 
-	public add(eventTypes: StoreEventType[], callback: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState> {
+	public add(
+		eventTypes: StoreEventType[],
+		callback: (
+			storeState: StoreState,
+			prevState?: StoreState,
+			type?: StoreEventType
+		) => void
+	): StoreEvent<StoreState> {
 		const event: StoreEvent<StoreState> = new StoreEvent<StoreState>(
 			this.generateEventId(),
 			eventTypes,
@@ -519,25 +601,40 @@ class StoreEventManager<StoreState> {
 		return event;
 	}
 
-	private doFire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event: StoreEvent<StoreState>) {
-		if (event.types.indexOf(type) >= 0 || event.types.indexOf('all') >= 0) {
+	private doFire(
+		type: StoreEventType,
+		storeState: StoreState,
+		prevState: StoreState,
+		event: StoreEvent<StoreState>
+	) {
+		if (event.types.indexOf(type) >= 0 || event.types.indexOf("all") >= 0) {
 			event.onFire(storeState, prevState, type);
 		}
 	}
 }
 
-export const followStore = <StoreState>(store: Store<StoreState>, followStates?: string[]) => (WrappedComponent: React.ComponentClass): any => {
+export const followStore = <StoreState>(
+	store: Store<StoreState>,
+	followStates?: string[]
+) => (WrappedComponent: React.ComponentClass): any => {
 	class Component extends React.Component {
 		private storeEvent: StoreEvent<StoreState> = null;
 
 		state = {
-			storeState: null,
+			storeState: null
 		};
 
 		componentWillMount() {
-			this.storeEvent = store.on('all', (storeState: StoreState, prevState: StoreState, type?: StoreEventType) => {
-				this.forceUpdate();
-			});
+			this.storeEvent = store.on(
+				"all",
+				(
+					storeState: StoreState,
+					prevState: StoreState,
+					type?: StoreEventType
+				) => {
+					this.forceUpdate();
+				}
+			);
 		}
 
 		componentWillUnmount() {
