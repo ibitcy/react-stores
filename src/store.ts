@@ -13,7 +13,8 @@ export interface StorePersistentPacket<StoreState> {
 export abstract class StorePersistentDriver<StoreState> {
 	public persistence: boolean = true;
 
-	constructor(readonly name: string, readonly lifetime: number = Infinity) {}
+	constructor(readonly name: string, readonly lifetime: number = Infinity) {
+	}
 
 	public initialState: StoreState = null;
 	public abstract type: string;
@@ -52,13 +53,11 @@ export abstract class StorePersistentDriver<StoreState> {
 	public get dumpHistoryName(): string {
 		return `store.persistent.dump.history.${this.type}.${
 			this.name
-		}`.toLowerCase();
+			}`.toLowerCase();
 	}
 }
 
-export class StorePersistentLocalStorageDriver<
-	StoreState
-> extends StorePersistentDriver<StoreState> {
+export class StorePersistentLocalStorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
 	private storage = null;
 	public type: string = "localStorage";
 
@@ -153,9 +152,7 @@ export class StorePersistentLocalStorageDriver<
 				);
 
 				if (dumpHistory && dumpHistory.dumpHistory) {
-					const newDumpHistory: StorePersistentPacket<
-						StoreState
-					>[] = dumpHistory.dumpHistory.filter(
+					const newDumpHistory: StorePersistentPacket<StoreState>[] = dumpHistory.dumpHistory.filter(
 						(dump: StorePersistentPacket<StoreState>) =>
 							dump.timestamp !== timestamp
 					);
@@ -233,11 +230,9 @@ export class StorePersistentLocalStorageDriver<
 	}
 }
 
-export abstract class StoreComponent<
-	Props,
+export abstract class StoreComponent<Props,
 	State,
-	StoreState
-> extends React.Component<Props, State> {
+	StoreState> extends React.Component<Props, State> {
 	public stores: Partial<StoreState> = {};
 	private isStoreMounted: boolean = false;
 
@@ -254,15 +249,20 @@ export abstract class StoreComponent<
 		}
 	}
 
-	public storeComponentDidMount(): void {}
+	public storeComponentDidMount(): void {
+	}
 
-	public storeComponentWillUnmount(): void {}
+	public storeComponentWillUnmount(): void {
+	}
 
-	public storeComponentWillReceiveProps(nextProps: Props): void {}
+	public storeComponentWillReceiveProps(nextProps: Props): void {
+	}
 
-	public storeComponentWillUpdate(nextProps: Props, nextState: State): void {}
+	public storeComponentWillUpdate(nextProps: Props, nextState: State): void {
+	}
 
-	public storeComponentDidUpdate(prevProps: Props, prevState: State): void {}
+	public storeComponentDidUpdate(prevProps: Props, prevState: State): void {
+	}
 
 	public shouldStoreComponentUpdate(
 		nextProps: Props,
@@ -271,9 +271,11 @@ export abstract class StoreComponent<
 		return true;
 	}
 
-	public storeComponentStoreWillUpdate(): void {}
+	public storeComponentStoreWillUpdate(): void {
+	}
 
-	public storeComponentStoreDidUpdate(): void {}
+	public storeComponentStoreDidUpdate(): void {
+	}
 
 	public componentDidMount(): void {
 		this.isStoreMounted = true;
@@ -380,8 +382,8 @@ export class Store<StoreState> {
 		}
 
 		this.eventManager = new StoreEventManager(this.opts.setStateTimeout);
-		this.initialState = new Freezer({ state: initialState });
-		this.frozenState = new Freezer({ state: currentState }, this.opts);
+		this.initialState = new Freezer({state: initialState});
+		this.frozenState = new Freezer({state: currentState}, this.opts);
 		this.frozenState.on("update", (currentState, prevState) => {
 			this.update(currentState.state, prevState.state);
 			this.persistenceDriver.write(
@@ -446,9 +448,7 @@ export class Store<StoreState> {
 	}
 
 	public restoreDump(timestamp: number): void {
-		const pack: StorePersistentPacket<
-			StoreState
-		> = this.persistenceDriver.readDump(timestamp);
+		const pack: StorePersistentPacket<StoreState> = this.persistenceDriver.readDump(timestamp);
 
 		if (pack) {
 			this.setState(pack.data);
@@ -467,7 +467,7 @@ export class Store<StoreState> {
 	public setState(newState: Partial<StoreState>): void {
 		const newFrozenState = new Freezer(newState);
 
-		const mergedState = { ...this.frozenState.get().state };
+		const mergedState = {...this.frozenState.get().state};
 
 		for (const prop in newState) {
 			const newFrozenProp = newFrozenState.get()[prop];
@@ -546,7 +546,8 @@ export class StoreEvent<StoreState> {
 			type?: StoreEventType
 		) => void,
 		readonly onRemove: (id: string) => void
-	) {}
+	) {
+	}
 
 	public remove(): void {
 		this.onRemove(this.id);
