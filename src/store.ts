@@ -326,6 +326,7 @@ export interface StoreOptions {
 	persistence?: boolean;
 	freezeInstances?: boolean;
 	mutable?: boolean;
+	setStateTimeout?: number;
 }
 
 export class Store<StoreState> {
@@ -339,7 +340,8 @@ export class Store<StoreState> {
 		live: false,
 		freezeInstances: false,
 		mutable: false,
-		persistence: false
+		persistence: false,
+		setStateTimeout: 0
 	};
 
 	constructor(
@@ -357,6 +359,7 @@ export class Store<StoreState> {
 			this.opts.freezeInstances = options.freezeInstances === true;
 			this.opts.mutable = options.mutable === true;
 			this.opts["singleParent"] = true;
+			this.opts.setStateTimeout = options.setStateTimeout;
 		}
 
 		if (!this.persistenceDriver) {
@@ -376,7 +379,7 @@ export class Store<StoreState> {
 			currentState = initialState;
 		}
 
-		this.eventManager = new StoreEventManager();
+		this.eventManager = new StoreEventManager(this.opts.setStateTimeout);
 		this.initialState = new Freezer({ state: initialState });
 		this.frozenState = new Freezer({ state: currentState }, this.opts);
 		this.frozenState.on("update", (currentState, prevState) => {
@@ -553,6 +556,10 @@ export class StoreEvent<StoreState> {
 class StoreEventManager<StoreState> {
 	private events: StoreEvent<StoreState>[] = [];
 	private eventCounter: number = 0;
+	private timeout: any = null;
+
+	constructor(readonly fireTimeout: number) {
+	}
 
 	private generateEventId(): string {
 		return `${++this.eventCounter}${Date.now()}${Math.random()}`;
@@ -565,10 +572,10 @@ class StoreEventManager<StoreState> {
 		event?: StoreEvent<StoreState>
 	): void {
 		if (event) {
-			this.doFire(type, storeState, prevState, event);
+			this.doFireProxy(type, storeState, prevState, event);
 		} else {
 			this.events.forEach((event: StoreEvent<StoreState>) => {
-				this.doFire(type, storeState, prevState, event);
+				this.doFireProxy(type, storeState, prevState, event);
 			});
 		}
 	}
@@ -599,6 +606,20 @@ class StoreEventManager<StoreState> {
 		this.events.push(event);
 
 		return event;
+	}
+
+	private doFireProxy(type: StoreEventType, storeState: StoreState, prevState: StoreState, event: StoreEvent<StoreState>) {
+		if (this.fireTimeout && this.fireTimeout !== 0) {
+			if (this.timeout) {
+				clearTimeout(this.timeout);
+			}
+
+			this.timeout = setTimeout(() => {
+				this.doFire(type, storeState, prevState, event);
+			}, this.fireTimeout)
+		} else {
+			this.doFire(type, storeState, prevState, event);
+		}
 	}
 
 	private doFire(
