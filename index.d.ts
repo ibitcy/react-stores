@@ -63,6 +63,7 @@ export interface StoreOptions {
     persistence?: boolean;
     freezeInstances?: boolean;
     mutable?: boolean;
+    setStateTimeout?: number;
 }
 export declare class Store<StoreState> {
     readonly persistenceDriver?: StorePersistentDriver<StoreState>;
