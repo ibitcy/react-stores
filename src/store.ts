@@ -573,11 +573,33 @@ class StoreEventManager<StoreState> {
 		event?: StoreEvent<StoreState>
 	): void {
 		if (event) {
-			this.doFireProxy(type, storeState, prevState, event);
+			if (this.fireTimeout && this.fireTimeout !== 0) {
+				if (this.timeout) {
+					clearTimeout(this.timeout);
+				}
+
+				this.timeout = setTimeout(() => {
+					this.doFire(type, storeState, prevState, event);
+				}, this.fireTimeout)
+			} else {
+				this.doFire(type, storeState, prevState, event);
+			}
 		} else {
-			this.events.forEach((event: StoreEvent<StoreState>) => {
-				this.doFireProxy(type, storeState, prevState, event);
-			});
+			if (this.fireTimeout && this.fireTimeout !== 0) {
+				if (this.timeout) {
+					clearTimeout(this.timeout);
+				}
+
+				this.timeout = setTimeout(() => {
+					this.events.forEach((event: StoreEvent<StoreState>) => {
+						this.doFire(type, storeState, prevState, event);
+					});
+				}, this.fireTimeout)
+			} else {
+				this.events.forEach((event: StoreEvent<StoreState>) => {
+					this.doFire(type, storeState, prevState, event);
+				});
+			}
 		}
 	}
 
@@ -607,20 +629,6 @@ class StoreEventManager<StoreState> {
 		this.events.push(event);
 
 		return event;
-	}
-
-	private doFireProxy(type: StoreEventType, storeState: StoreState, prevState: StoreState, event: StoreEvent<StoreState>) {
-		if (this.fireTimeout && this.fireTimeout !== 0) {
-			if (this.timeout) {
-				clearTimeout(this.timeout);
-			}
-
-			this.timeout = setTimeout(() => {
-				this.doFire(type, storeState, prevState, event);
-			}, this.fireTimeout)
-		} else {
-			this.doFire(type, storeState, prevState, event);
-		}
 	}
 
 	private doFire(
