@@ -537,6 +537,8 @@ export class Store<StoreState> {
 export type StoreEventType = "all" | "init" | "update" | "dumpUpdate";
 
 export class StoreEvent<StoreState> {
+	public timeout: any = null;
+
 	constructor(
 		readonly id: string,
 		readonly types: StoreEventType[],
@@ -550,6 +552,10 @@ export class StoreEvent<StoreState> {
 	}
 
 	public remove(): void {
+		if (this.timeout) {
+			clearTimeout(this.timeout);
+		}
+
 		this.onRemove(this.id);
 	}
 }
@@ -574,11 +580,11 @@ class StoreEventManager<StoreState> {
 	): void {
 		if (event) {
 			if (this.fireTimeout && this.fireTimeout !== 0) {
-				if (this.timeout) {
+				if (event.timeout) {
 					clearTimeout(this.timeout);
 				}
 
-				this.timeout = setTimeout(() => {
+				event.timeout = setTimeout(() => {
 					this.doFire(type, storeState, prevState, event);
 				}, this.fireTimeout)
 			} else {
@@ -604,6 +610,14 @@ class StoreEventManager<StoreState> {
 	}
 
 	public remove(id: string): void {
+		if (this.fireTimeout && this.fireTimeout !== 0) {
+			this.events.forEach((event: StoreEvent<StoreState>) => {
+				if (event.timeout) {
+					clearTimeout(this.timeout);
+				}
+			});
+		}
+
 		this.events = this.events.filter((event: StoreEvent<StoreState>) => {
 			return event.id !== id;
 		});
