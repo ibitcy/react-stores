@@ -1,6 +1,6 @@
 {
 	"name": "react-stores",
-	"version": "2.9.0",
+	"version": "2.9.1",
 	"keywords": [
 		"react",
 		"stores",
@@ -38,7 +38,8 @@
 	"author": "IBIT LTD.",
 	"license": "MIT",
 	"dependencies": {
-		"freezer-js": "^0.14.1"
+		"freezer-js": "^0.14.1",
+		"react-testing-library": "^6.0.0"
 	},
 	"devDependencies": {
 		"@types/jest": "^23.3.1",

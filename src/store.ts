@@ -696,19 +696,12 @@ export const followStore = <StoreState>(
 export interface IUseStoreProps<T> {
 	eventType?: StoreEventType | StoreEventType[];
 	store: Store<T>;
-	keys?: [keyof T] | keyof T;
 }
 
-export function useStore<T = {}>(options: IUseStoreProps<T>) {
-	function pickKeys (state: T) {
-		if (options.keys) {
-			let pickedState = {};
-			const keys = [].concat(options.keys);
-			for (let i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				pickedState[key] = state[key];
-			}
-			return pickedState;
+export function useStore<MappedState = {}, Store = {}>(options: IUseStoreProps<Store>, callback?: (storeState: Store) => MappedState) {
+	function pickKeys (state: Store) {
+		if (callback) {
+			return callback(state);
 		}
 		return state;
 	}
@@ -716,7 +709,7 @@ export function useStore<T = {}>(options: IUseStoreProps<T>) {
 	const [state, setState] = React.useState(pickKeys(options.store.state));
 
 	React.useEffect(() => {
-		const storeEvent = options.store.on(options.eventType || 'update', (storeState: T) => {
+		const storeEvent = options.store.on(options.eventType || 'update', (storeState) => {
 			setState(pickKeys(storeState));
 		});
 

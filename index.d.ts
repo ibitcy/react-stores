@@ -103,6 +103,5 @@ export declare const followStore: <StoreState>(store: Store<StoreState>, followS
 export interface IUseStoreProps<T> {
     eventType?: StoreEventType | StoreEventType[];
     store: Store<T>;
-    keys?: [keyof T] | keyof T;
 }
-export declare function useStore<T = {}>(options: IUseStoreProps<T>): {};
+export declare function useStore<MappedState = {}, Store = {}>(options: IUseStoreProps<Store>, callback?: (storeState: Store) => MappedState): MappedState | Store;
