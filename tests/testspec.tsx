@@ -2,6 +2,8 @@ import { StoreEventType, StoreEvent, Store, useStore, IUseStoreProps } from '../
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
 import { act, cleanup, renderHook } from 'react-hooks-testing-library';
+import React = require('react');
+import { render } from 'react-testing-library';
 
 const initialState: StoreState = Object.freeze({
 	nullObj: null,
@@ -599,7 +601,7 @@ describe('useStore hook', () => {
 	});
 
 	it('Should render initial value', () => {
-		const { result } = render({
+		const { result } = renderCustomHook({
 			store,
 		});
 
@@ -607,7 +609,7 @@ describe('useStore hook', () => {
 	});
 
 	it('Should change state after store update', () => {
-		const { result } = render();
+		const { result } = renderCustomHook();
 
 		const NEXT_COUNTER_VALUE = 2;
 		act(() => {
@@ -620,7 +622,7 @@ describe('useStore hook', () => {
 	});
 
 	it('Should affect on right StoreEventType', () => {
-		const { result } = render({
+		const { result } = renderCustomHook({
 			store,
 			eventType: 'init'
 		});
@@ -635,17 +637,44 @@ describe('useStore hook', () => {
 		expect(result.current.counter).toEqual(initialState.counter);
 	});
 
-	it('Should filter state by a key', () => {
-		const { result } = render({
-			store,
-			keys: ['foo'],
-		});
+	it('Should map state', () => {
+		let foo : string;
+		hookTester(() => ({foo} = useStore<{foo: string }, StoreState>({store}, (storeState) => {
+			return {
+				foo: storeState.foo,
+			}
+		})))
 
-		expect(result.current.counter).toBe(undefined);
-		expect(result.current.foo).toBe(initialState.foo);
+		expect(foo).toBe(initialState.foo);
 	});
 
-	function render(
+	it('Should change maped state', () => {
+		let foo : string;
+		hookTester(() => ({foo} = useStore<{foo: string }, StoreState>({store}, (storeState) => {
+			return {
+				foo: storeState.foo,
+			}
+		})))
+
+		const NEXT_FOO_VALUE = 'foo';
+		store.setState({
+			foo: NEXT_FOO_VALUE
+		});
+		expect(foo).toBe(NEXT_FOO_VALUE);
+	});
+
+
+	function HookTester({callback}) {
+		callback()
+		return null
+	}
+
+	const hookTester = callback => {
+		render(<HookTester callback={callback} />)
+	}
+
+
+	function renderCustomHook(
 		initialProps: IUseStoreProps<StoreState> = {
 			store,
 		},
