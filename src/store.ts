@@ -655,10 +655,6 @@ class StoreEventManager<StoreState> {
 			event.onFire(storeState, prevState, type);
 		}
 	}
-
-	public get numberOfSubscribers(){
-		return this.events.length;
-	}
 }
 
 export const followStore = <StoreState>(
