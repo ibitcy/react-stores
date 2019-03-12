@@ -95,7 +95,14 @@ export declare class StoreEvent<StoreState> {
     readonly types: StoreEventType[];
     readonly onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void;
     readonly onRemove: (id: string) => void;
+    timeout: any;
     constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
     remove(): void;
 }
 export declare const followStore: <StoreState>(store: Store<StoreState>, followStates?: string[]) => (WrappedComponent: React.ComponentClass<{}, any>) => any;
+export interface IUseStoreProps<T> {
+    eventType?: StoreEventType | StoreEventType[];
+    store: Store<T>;
+    keys?: [keyof T] | keyof T;
+}
+export declare function useStore<T = {}>(options: IUseStoreProps<T>): {};
