@@ -698,19 +698,12 @@ export interface IUseStoreProps<T> {
 	store: Store<T>;
 }
 
-export function useStore<MappedState = {}, Store = {}>(options: IUseStoreProps<Store>, callback?: (storeState: Store) => MappedState) {
-	function pickKeys (state: Store) {
-		if (callback) {
-			return callback(state);
-		}
-		return state;
-	}
-	
-	const [state, setState] = React.useState(pickKeys(options.store.state));
+export function useStore<MappedState = {}, Store = {}>(options: IUseStoreProps<Store>, callback: (storeState: Store) => MappedState) {
+	const [state, setState] = React.useState(callback(options.store.state));
 
 	React.useEffect(() => {
 		const storeEvent = options.store.on(options.eventType || 'update', (storeState) => {
-			setState(pickKeys(storeState));
+			setState(callback(storeState));
 		});
 
 		return () => {

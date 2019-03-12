@@ -104,4 +104,4 @@ export interface IUseStoreProps<T> {
     eventType?: StoreEventType | StoreEventType[];
     store: Store<T>;
 }
-export declare function useStore<MappedState = {}, Store = {}>(options: IUseStoreProps<Store>, callback?: (storeState: Store) => MappedState): MappedState | Store;
+export declare function useStore<MappedState = {}, Store = {}>(options: IUseStoreProps<Store>, callback: (storeState: Store) => MappedState): MappedState;
