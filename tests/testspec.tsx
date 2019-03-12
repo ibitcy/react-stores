@@ -596,49 +596,46 @@ describe('testStoreState', () => {
 
 describe('useStore hook', () => {
 	afterEach(() => {
-		act(() => {store.resetState();})
+		act(() => {store.resetState();});
 		cleanup();
 	});
 
 	it('Should render initial value', () => {
-		const { result } = renderCustomHook({
-			store,
-		});
+		let counter: number;
+		hookTester(() => ({counter} = useStore<StoreState, StoreState>({store}, (storeState) => storeState)))
 
-		expect(result.current.counter).toEqual(initialState.counter);
+		expect(counter).toEqual(initialState.counter);
 	});
 
 	it('Should change state after store update', () => {
-		const { result } = renderCustomHook();
-
 		const NEXT_COUNTER_VALUE = 2;
+
+		let counter: number;
+		hookTester(() => ({counter} = useStore<StoreState, StoreState>({store}, (storeState) => storeState)))
 		act(() => {
 			store.setState({
-				counter: NEXT_COUNTER_VALUE,
+			  counter: NEXT_COUNTER_VALUE,
 			})
-		})
-
-		expect(result.current.counter).toEqual(NEXT_COUNTER_VALUE);
+		});
+		expect(counter).toEqual(NEXT_COUNTER_VALUE);
 	});
 
 	it('Should affect on right StoreEventType', () => {
-		const { result } = renderCustomHook({
-			store,
-			eventType: 'init'
-		});
+		let counter: number;
+		hookTester(() => ({counter} = useStore<StoreState, StoreState>({store, eventType: 'init'}, (storeState) => storeState)))
 
 		const NEXT_COUNTER_VALUE = 2;
 		act(() => {
 			store.setState({
 				counter: NEXT_COUNTER_VALUE,
 			})
-		})
+		});
 
-		expect(result.current.counter).toEqual(initialState.counter);
+		expect(counter).toEqual(initialState.counter);
 	});
 
 	it('Should map state', () => {
-		let foo : string;
+		let foo: string;
 		hookTester(() => ({foo} = useStore<{foo: string }, StoreState>({store}, (storeState) => {
 			return {
 				foo: storeState.foo,
@@ -657,8 +654,10 @@ describe('useStore hook', () => {
 		})))
 
 		const NEXT_FOO_VALUE = 'foo';
-		store.setState({
-			foo: NEXT_FOO_VALUE
+		act(() => {
+			store.setState({
+				foo: NEXT_FOO_VALUE
+			});
 		});
 		expect(foo).toBe(NEXT_FOO_VALUE);
 	});
@@ -671,16 +670,5 @@ describe('useStore hook', () => {
 
 	const hookTester = callback => {
 		render(<HookTester callback={callback} />)
-	}
-
-
-	function renderCustomHook(
-		initialProps: IUseStoreProps<StoreState> = {
-			store,
-		},
-	) {
-		return renderHook<IUseStoreProps<StoreState>, StoreState | Partial<StoreState>>(useStore, {
-			initialProps,
-		});
 	}
 });

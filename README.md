@@ -204,6 +204,43 @@ import {CommonStore} from "./store";
 console.log(CommonStore.store.state.counter);
 ```
 
+### How use hooks
+
+```typescript
+interface MappedState = {
+	array: number[];
+	number: number;
+	string: string;
+}
+
+export const Component: React.FunctionComponent<{index: number}> = ({ index }) => {
+	// Memoize you mapState function
+	const mapState = React.useCallback(
+		(commonState: CommonStore.State): MappedState => ({
+			array: convertArray(pairState.array),
+			counter: commonState.counter,
+			string: commonState.someObject.string,
+			item: commonState.itemsMap.get(index),
+		}),
+		[index],
+	);
+
+	// Get your state form react-stores
+	const { array, counter, string } = useStore<MappedState, CommonStore.State>(
+		{
+			store: CommonStore.store
+		},
+		mapState,
+	);
+
+	// render using mapped values
+}
+
+// If you call CommonStore.state.store.setState({}) somewhere in your code
+// Component call mapState function again and will map new state
+
+```
+
 ## API
 
 ### StoreComponent lyfecycle
@@ -316,6 +353,15 @@ abstract class StorePersistantDriver<StoreState> {
   public abstract write(state: StoreState): void;
   public abstract read(): StoreState;
 }
+```
+
+### useStore
+```typescript
+function useStore<MappedState = {}, Store = {}>
+	(
+		options: IUseStoreProps<Store>,
+		callback: (storeState: Store) => MappedState
+	): MappedState;
 ```
 
 ## ES5/6
