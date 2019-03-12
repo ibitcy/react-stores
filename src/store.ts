@@ -655,6 +655,10 @@ class StoreEventManager<StoreState> {
 			event.onFire(storeState, prevState, type);
 		}
 	}
+
+	public get numberOfSubscribers(){
+		return this.events.length;
+	}
 }
 
 export const followStore = <StoreState>(
@@ -692,3 +696,37 @@ export const followStore = <StoreState>(
 
 	return Component;
 };
+
+export interface IUseStoreProps<T> {
+	eventType?: StoreEventType | StoreEventType[];
+	store: Store<T>;
+	keys?: [keyof T] | keyof T;
+}
+
+export function useStore<T = {}>(options: IUseStoreProps<T>) {
+	function pickKeys (state: T) {
+		if (options.keys) {
+			let pickedState = {};
+			const keys = [].concat(options.keys);
+			for (let i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				pickedState[key] = state[key];
+			}
+			return pickedState;
+		}
+		return state;
+	}
+	
+	const [state, setState] = React.useState(pickKeys(options.store.state));
+
+	React.useEffect(() => {
+		const storeEvent = options.store.on(options.eventType || 'update', (storeState: T) => {
+			setState(pickKeys(storeState));
+		});
+
+		return () => {
+			storeEvent.remove();
+		};
+	}, []);
+	return state;
+}

@@ -1,6 +1,7 @@
-import { StoreEventType, StoreEvent, Store } from '../src/store';
+import { StoreEventType, StoreEvent, Store, useStore, IUseStoreProps } from '../src/store';
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
+import { act, cleanup, renderHook } from 'react-hooks-testing-library';
 
 const initialState: StoreState = Object.freeze({
 	nullObj: null,
@@ -412,6 +413,8 @@ describe('testStoreState', () => {
 			counter: 5,
 		});
 
+		event.remove();
+
 		expect(prev).toEqual('0');
 		done();
 	});
@@ -429,6 +432,8 @@ describe('testStoreState', () => {
 			counter: 100,
 		});
 
+		event.remove();
+
 		expect(eventType).toEqual('update');
 		done();
 	});
@@ -441,6 +446,8 @@ describe('testStoreState', () => {
 		const event: StoreEvent<StoreState> = store.on('init', (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
 			eventType = type;
 		});
+
+		event.remove();
 
 		expect(eventType).toEqual('init');
 		done();
@@ -458,6 +465,8 @@ describe('testStoreState', () => {
 		store.setState({
 			counter: 100,
 		});
+		
+		event.remove();
 
 		expect(eventCount).toEqual(3);
 		done();
@@ -486,6 +495,8 @@ describe('testStoreState', () => {
 			counter: 0,
 		});
 
+		event.remove();
+
 		expect(eventCount).toEqual(1);
 		done();
 	});
@@ -508,6 +519,8 @@ describe('testStoreState', () => {
 		store.setState({
 			numericArray: [1, 2, 3],
 		});
+
+		event.remove();
 
 		expect(eventCount).toEqual(1);
 		done();
@@ -577,4 +590,68 @@ describe('testStoreState', () => {
 
 		done();
 	});
+});
+
+describe('useStore hook', () => {
+	afterEach(() => {
+		act(() => {store.resetState();})
+		cleanup();
+	});
+
+	it('Should render initial value', () => {
+		const { result } = render({
+			store,
+		});
+
+		expect(result.current.counter).toEqual(initialState.counter);
+	});
+
+	it('Should change state after store update', () => {
+		const { result } = render();
+
+		const NEXT_COUNTER_VALUE = 2;
+		act(() => {
+			store.setState({
+				counter: NEXT_COUNTER_VALUE,
+			})
+		})
+
+		expect(result.current.counter).toEqual(NEXT_COUNTER_VALUE);
+	});
+
+	it('Should affect on right StoreEventType', () => {
+		const { result } = render({
+			store,
+			eventType: 'init'
+		});
+
+		const NEXT_COUNTER_VALUE = 2;
+		act(() => {
+			store.setState({
+				counter: NEXT_COUNTER_VALUE,
+			})
+		})
+
+		expect(result.current.counter).toEqual(initialState.counter);
+	});
+
+	it('Should filter state by a key', () => {
+		const { result } = render({
+			store,
+			keys: ['foo'],
+		});
+
+		expect(result.current.counter).toBe(undefined);
+		expect(result.current.foo).toBe(initialState.foo);
+	});
+
+	function render(
+		initialProps: IUseStoreProps<StoreState> = {
+			store,
+		},
+	) {
+		return renderHook<IUseStoreProps<StoreState>, StoreState | Partial<StoreState>>(useStore, {
+			initialProps,
+		});
+	}
 });
