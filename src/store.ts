@@ -211,6 +211,9 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
 	}
 }
 
+/**
+ * @deprecated since 2.x
+ */
 export abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
 	public stores: Partial<StoreState> = {};
 	private isStoreMounted: boolean = false;
@@ -574,7 +577,7 @@ class StoreEventManager<StoreState> {
 	}
 }
 
-export const followStore = <StoreState>(store: Store<StoreState>, followStates?: string[]) => (
+export const followStore = <StoreState>(store: Store<StoreState>) => (
 	WrappedComponent: React.ComponentClass<any, any>,
 ): any => {
 	class Component extends React.Component {

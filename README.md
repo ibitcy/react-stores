@@ -86,7 +86,7 @@ export class App extends StoreComponent<Props, State, StoresState> {
         return (
             <div>
                 <p>Component name: {this.props.name}</p>
-	            <p>Common counter value: {this.stores.common.state.counter.toString()}</p>
+	            	<p>Common counter value: {this.stores.common.state.counter.toString()}</p>
                 <p>Local counter value: {this.state.counter.toString()}</p>
 
                 <button onClick={this.increaseCommon.bind(this)}>Increase common counter value</button>
@@ -144,8 +144,8 @@ export class App extends React.Component<Props, State> {
 
 v1.3.0 Decorator for make React Component React Sores driven. You can use multiple
 ```typescript jsx
-@followStore(CommonStore.store, ['counter']) // follow for only "counter" store state
-@followStore(SomeOtherStore.store) // follow for all store's states 
+@followStore(CommonStore.store)
+@followStore(SomeOtherStore.store)
 export class CounterDecorator extends React.Component<Props, State> {
 	public render() {
 		return (
