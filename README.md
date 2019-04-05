@@ -17,7 +17,7 @@ npm i react-stores --save
 
 [Online demo](https://ibitcy.github.io/react-stores/)
 
-For local demo clone this repo and run the script below inside the dir, then go to http://localhost:9000 in your browser
+For local demo clone this repo and run the script below inside the dir, then go to [http://localhost:9000](http://localhost:9000) in your browser
 
 ```bash
 npm i && npm run demo
