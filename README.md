@@ -9,29 +9,29 @@ Shared states for React.
 
 ## How to install
 
-```bash
-$ npm i react-stores --save
+```shell
+npm i react-stores --save
 ```
 
 ## Demo
 
 [Online demo](https://ibitcy.github.io/react-stores/)
 
+For local demo clone this repo and run the script below inside the dir, then go to http://localhost:9000 in your browser
+
 ```bash
-# Clone this repo
-$ npm i && npm run demo
-# Then http://localhost:9000 in your browser
+npm i && npm run demo
 ```
 
 ## Tests
 
 ```bash
-$ npm run test
+npm run test
 ```
 
 ## How to use
 
-### 1. Create a Store
+### Create a Store
 
 ```typescript
 // myStore.ts
@@ -46,43 +46,7 @@ export const myStore = new Store<IMyStoreState>({
 });
 ```
 
-### 2. Create a StoreComponent (deprecated)
-
-```typescript jsx
-// MyStoreComponent.tsx
-import * as React from 'react';
-import {Store, StoreComponent} from 'react-stores';
-import {myStore, IMyStoreState} from './myStore';
-
-interface IStoresState {
-  myStore: Store<IMyStoreState>;
-}
-
-export class MyStoreComponent extends StoreComponent<any, any, IStoresState> {
-  constructor(props: any) {
-    super(props, {
-      myStore,
-    });
-  }
-
-  private increase = () => {
-    this.stores.myStore.setState({
-      counter: this.stores.myStore.state.counter + 1,
-    });
-  };
-
-  render() {
-    return (
-      <>
-        <p>Counter: {this.stores.myStore.state.counter.toString()}</p>
-        <button onClick={this.increase}>Increase counter</button>
-      </>
-    );
-  }
-}
-```
-
-### 3. Event-driven component
+### Event-driven component
 
 ```typescript jsx
 // EventDrivenComponent.tsx
@@ -121,7 +85,7 @@ export class EventDrivenComponent extends React.Component<any, State> {
 }
 ```
 
-### 4. Component with followStore decorator
+### Component with followStore decorator
 
 ```typescript jsx
 // FollowStoreComponent.tsx
@@ -140,7 +104,7 @@ export class CounterDecorator extends React.Component {
 }
 ```
 
-### 5. Component Hooks
+### Component Hooks
 
 ```typescript
 import * as React from 'react';
@@ -183,7 +147,7 @@ export const MyHookComponent: React.FunctionComponent<IProps> = (props: IProps) 
 };
 ```
 
-### 6. Mutating store state
+### Mutating store state
 
 ```typescript
 import {myStore} from './myStore';
@@ -193,7 +157,7 @@ myStore.setState({
 });
 ```
 
-### 7. Read store state value
+### Read store state value
 
 ```typescript
 import {myStore} from './myStore';
@@ -202,21 +166,6 @@ console.log(myStore.state.counter); // 9999
 ```
 
 ## API
-
-### StoreComponent lyfecycle proxy methods (deprecated)
-
-These methods are proxies for React.Component lifecycle methods, if you considered using StroeComponent you should use them instead of original ones.
-
-```typescript
-storeComponentDidMount(): void
-storeComponentWillUnmount(): void
-storeComponentWillReceiveProps(nextProps:Props): void
-storeComponentWillUpdate(nextProps:Props, nextState:State): void
-storeComponentDidUpdate(prevProps:Props, prevState:State): void
-shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean
-storeComponentStoreWillUpdate(): void
-storeComponentStoreDidUpdate(): void
-```
 
 ### Store
 
@@ -246,14 +195,19 @@ Any object corresponding to StoreState interface.
 
 #### Store methods
 
-| Method name        | Arguments                                                                                                                                       | Returns                  | Description                                          |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ---------------------------------------------------- |
-| `setState`         | `newState: Partial<StoreState>`                                                                                                                 | `void`                   | Set store's state to provided new one can be partial |
-| `resetState`       | No                                                                                                                                              | `void`                   | Reset srote to it's `initialState`                   |
-| `resetPersistence` | No                                                                                                                                              | `void`                   | Reset persistent data                                |
-| `update`           | No                                                                                                                                              | `void`                   | Force update all bound components                    |
-| `on`               | `eventType: StoreEventType | StoreEventType[]`<br><br>`callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void` | `StoreEvent<StoreState>` | Subscribe to store state event listener              |
-| `resetPersistence` | No                                                                                                                                              | `void`                   | Reset persistent data                                |
+| Method name        | Arguments                                                                                                                                       | Returns                  | Description                                                                                |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------ |
+| `setState`         | `newState: Partial<StoreState>`                                                                                                                 | `void`                   | Set store's state to provided new one can be partial                                       |
+| `resetState`       | No                                                                                                                                              | `void`                   | Reset srote to it's `initialState`                                                         |
+| `update`           | No                                                                                                                                              | `void`                   | Force update all bound components and emit events                                          |
+| `on`               | `eventType: StoreEventType | StoreEventType[]`<br><br>`callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void` | `StoreEvent<StoreState>` | Subscribe to store state event listener                                                    |
+| `resetPersistence` | No                                                                                                                                              | `void`                   | Reset persistent state                                                                     |
+| `resetDumpHistory` | No                                                                                                                                              | `void`                   | Reset all persistent history states                                                        |
+| `saveDump`         | No                                                                                                                                              | `number`                 | Save state dump and get its ID which is represented in number of current time milliseconds |
+| `removeDump`       | `timestamp: number`                                                                                                                             | `void`                   | Remove state dump by ID                                                                    |
+| `restoreDump`      | `timestamp: number`                                                                                                                             | `void`                   | Replace current state to one from history by ID                                            |
+| `getDumpHistory`   | No                                                                                                                                              | `number[]`               | Get dump history IDs                                                                       |
+| `getDumpHistory`   | No                                                                                                                                              | `number[]`               | Get dump history IDs                                                                       |
 
 ### StoreEvent
 
@@ -274,24 +228,65 @@ Any object corresponding to StoreState interface.
 
 ## Persistence
 
-A store instance can be persistent from session to session in case you've provided `StorePersistantDriver` to it. React-stores includes built-in `StorePersistentLocalSrorageDriver`.
+A store instance can be persistent from session to session in case you've provided `StorePersistentDriver` to it. React-stores includes built-in `StorePersistentLocalSrorageDriver`.
 
 ```typescript
 const myStore = new Store<IMyStoreState>(initialState, new StorePersistentLocalSrorageDriver('myStore'));
 ```
 
-Also you can implement your own persistance driver.
+Also, you can implement your own persistence driver by implementing `StorePersistentDriver` abstract class.
 
-```typescript
-abstract class StorePersistantDriver<StoreState> {
-  constructor(readonly name: string) {}
+## Deprecated entities
 
-  public abstract write(state: StoreState): void;
-  public abstract read(): StoreState;
+### Create a StoreComponent (deprecated)
+
+```typescript jsx
+import * as React from 'react';
+import {Store, StoreComponent} from 'react-stores';
+import {myStore, IMyStoreState} from './myStore';
+
+interface IStoresState {
+  myStore: Store<IMyStoreState>;
+}
+
+export class MyStoreComponent extends StoreComponent<any, any, IStoresState> {
+  constructor(props: any) {
+    super(props, {
+      myStore,
+    });
+  }
+
+  private increase = () => {
+    this.stores.myStore.setState({
+      counter: this.stores.myStore.state.counter + 1,
+    });
+  };
+
+  render() {
+    return (
+      <>
+        <p>Counter: {this.stores.myStore.state.counter.toString()}</p>
+        <button onClick={this.increase}>Increase counter</button>
+      </>
+    );
+  }
 }
 ```
 
-###
+### StoreComponent's lyfecycle proxy methods (deprecated)
+
+These methods are proxies for React.Component lifecycle methods, if you considered using StroeComponent you should use them instead of original ones.
+
+```typescript
+storeComponentDidMount(): void
+storeComponentWillUnmount(): void
+storeComponentWillReceiveProps(nextProps:Props): void
+storeComponentWillUpdate(nextProps:Props, nextState:State): void
+storeComponentDidUpdate(prevProps:Props, prevState:State): void
+shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean
+storeComponentStoreWillUpdate(): void
+storeComponentStoreDidUpdate(): void
+```
 
 ## License
 

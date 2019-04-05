@@ -394,9 +394,11 @@ export class Store<StoreState> {
     this.eventManager.fire(StoreEventType.DumpUpdate, this.frozenState.get().state, this.frozenState.get().state);
   }
 
-  public saveDump(): void {
-    this.persistenceDriver.saveDump(this.persistenceDriver.pack(this.frozenState.get().state));
+  public saveDump(): number {
+    const timestamp = this.persistenceDriver.saveDump(this.persistenceDriver.pack(this.frozenState.get().state));
     this.eventManager.fire(StoreEventType.DumpUpdate, this.frozenState.get().state, this.frozenState.get().state);
+
+    return timestamp;
   }
 
   public removeDump(timestamp: number): void {

@@ -8,8 +8,3 @@ export interface IMyStoreState {
 export const myStore = new Store<IMyStoreState>({
   counter: 0, // initial state values
 });
-
-// MyStoreComponent.tsx
-interface IStoresState {
-  myStore: Store<IMyStoreState>;
-}
