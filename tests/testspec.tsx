@@ -449,7 +449,7 @@ describe('testStoreState', () => {
 
     event.remove();
 
-    expect(eventType).toEqual('update');
+    expect(eventType).toEqual(StoreEventType.Update);
     done();
   });
 
@@ -467,7 +467,7 @@ describe('testStoreState', () => {
 
     event.remove();
 
-    expect(eventType).toEqual('init');
+    expect(eventType).toEqual(StoreEventType.Init);
     done();
   });
 
