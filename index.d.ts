@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 export interface StorePersistentDump<StoreState> {
     dumpHistory: StorePersistentPacket<StoreState>[];
 }
@@ -39,6 +39,9 @@ export declare class StorePersistentLocalStorageDriver<StoreState> extends Store
     getDumpHistory(): number[];
     resetHistory(): void;
 }
+/**
+ * @deprecated since 2.x
+ */
 export declare abstract class StoreComponent<Props, State, StoreState> extends React.Component<Props, State> {
     stores: Partial<StoreState>;
     private isStoreMounted;
@@ -79,7 +82,7 @@ export declare class Store<StoreState> {
     private generateStoreName;
     resetPersistence(): void;
     resetDumpHistory(): void;
-    saveDump(): void;
+    saveDump(): number;
     removeDump(timestamp: number): void;
     restoreDump(timestamp: number): void;
     getDumpHistory(): number[];
@@ -89,7 +92,12 @@ export declare class Store<StoreState> {
     getInitialState(): StoreState;
     on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void): StoreEvent<StoreState>;
 }
-export declare type StoreEventType = "all" | "init" | "update" | "dumpUpdate";
+export declare enum StoreEventType {
+    All = 0,
+    Init = 1,
+    Update = 2,
+    DumpUpdate = 3
+}
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];
@@ -99,7 +107,7 @@ export declare class StoreEvent<StoreState> {
     constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
     remove(): void;
 }
-export declare const followStore: <StoreState>(store: Store<StoreState>, followStates?: string[]) => (WrappedComponent: React.ComponentClass<{}, any>) => any;
+export declare const followStore: <StoreState>(store: Store<StoreState>) => (WrappedComponent: React.ComponentClass<any, any>) => any;
 export interface IUseStoreProps<T> {
     eventType?: StoreEventType | StoreEventType[];
     store: Store<T>;
