@@ -1,0 +1,15 @@
+// myStore.ts
+import {Store} from '../src/store';
+
+export interface IMyStoreState {
+  counter: number;
+}
+
+export const myStore = new Store<IMyStoreState>({
+  counter: 0, // initial state values
+});
+
+// MyStoreComponent.tsx
+interface IStoresState {
+  myStore: Store<IMyStoreState>;
+}
