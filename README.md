@@ -2,8 +2,9 @@
 
 ![react-stores](https://ibitcy.github.io/react-stores/react-stores.svg)
 
-[![build status](https://badgen.net/travis/ibitcy/react-stores?icon=travis)](https://travis-ci.org/ibitcy/react-stores)
-[![npm downloads](https://badgen.net/npm/dt/react-stores?icon=npm&color=green)](https://www.npmjs.com/package/react-stores)
+[![build status](https://flat.badgen.net/travis/ibitcy/react-stores?icon=travis)](https://travis-ci.org/ibitcy/react-stores)
+[![npm downloads](https://flat.badgen.net/npm/dt/react-stores?icon=npm&color=green)](https://www.npmjs.com/package/react-stores)
+[![npm version](https://flat.badgen.net/npm/v/react-stores?icon=npm&color=blue)](https://www.npmjs.com/package/react-stores)
 
 Shared states for React.
 
