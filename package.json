@@ -16,11 +16,19 @@
   "main": "lib",
   "scripts": {
     "build": "tsc src/store.ts --jsx 'react' --target es5 --lib es6,dom -d --outDir './' && mkdir -p ./lib && mv ./store.d.ts ./index.d.ts && mv ./store.js ./lib/index.js",
+    "check-size": "size-limit",
     "test": "npx jest",
     "demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
     "release:demo": "webpack --config ./demo/webpack.prod.config.js",
-    "prepare": "npm run build && npm run test"
+    "prepare": "npm run build && npm run check-size && npm run test"
   },
+  "size-limit": [
+    {
+      "path": "lib/index.js",
+      "limit": "4kb",
+      "webpack": false
+    }
+  ],
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
@@ -56,6 +64,7 @@
     "react-testing-library": "^6.0.4",
     "react-tools": "^0.13.3",
     "should": "^13.2.3",
+    "size-limit": "^1.0.0",
     "source-map-loader": "^0.2.1",
     "ts-jest": "^24.0.1",
     "ts-loader": "^5.3.3",
