@@ -67,6 +67,6 @@
   },
   "repository": "https://github.com/ibitcy/react-store.git",
   "peerDependencies": {
-    "react": "^16.8.4"
+    "react": "^16.8.6"
   }
 }
