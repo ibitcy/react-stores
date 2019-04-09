@@ -68,7 +68,7 @@ export class EventDrivenComponent extends React.Component<any, State> {
 
   comonentDidMount() {
     // Add store state event binder
-    this.storeEvent = myStore.on(StoreEventType.All, (storeState: IMyStoreState, prevState: IMyStoreState) => {
+    this.storeEvent = myStore.on(StoreEventType.All, (storeState: IMyStoreState, prevState: IMyStoreState, type: StoreEventType) => {
       this.setState({
         myStoreState: storeState,
       });
