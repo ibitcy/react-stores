@@ -629,7 +629,7 @@ describe('useStore hook', () => {
 
   it('Should render initial value', () => {
     let counter: number;
-    hookTester(() => ({counter} = useStore<StoreState, StoreState>({store}, storeState => storeState)));
+    hookTester(() => ({counter} = useStore<StoreState, StoreState>(store)));
 
     expect(counter).toEqual(initialState.counter);
   });
@@ -638,7 +638,7 @@ describe('useStore hook', () => {
     const NEXT_COUNTER_VALUE = 2;
 
     let counter: number;
-    hookTester(() => ({counter} = useStore<StoreState, StoreState>({store}, storeState => storeState)));
+    hookTester(() => ({counter} = useStore<StoreState, StoreState>(store)));
     act(() => {
       store.setState({
         counter: NEXT_COUNTER_VALUE,
@@ -652,8 +652,10 @@ describe('useStore hook', () => {
     hookTester(
       () =>
         ({counter} = useStore<StoreState, StoreState>(
-          {store, eventType: StoreEventType.Init},
-          storeState => storeState,
+          store, {
+            eventType: StoreEventType.Init,
+            mapper: storeState => storeState,
+          },
         )),
     );
 
@@ -671,10 +673,10 @@ describe('useStore hook', () => {
     let foo: string;
     hookTester(
       () =>
-        ({foo} = useStore<{foo: string}, StoreState>({store}, storeState => {
-          return {
+        ({foo} = useStore<StoreState, {foo: string}>(store, {
+          mapper: storeState => ({
             foo: storeState.foo,
-          };
+          })
         })),
     );
 
@@ -685,10 +687,12 @@ describe('useStore hook', () => {
     let foo: string;
     hookTester(
       () =>
-        ({foo} = useStore<{foo: string}, StoreState>({store}, storeState => {
-          return {
-            foo: storeState.foo,
-          };
+        ({foo} = useStore<StoreState, {foo: string}>(store, {
+          mapper: storeState => {
+            return {
+              foo: storeState.foo,
+            };
+          }
         })),
     );
 

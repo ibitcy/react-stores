@@ -108,8 +108,8 @@ export declare class StoreEvent<StoreState> {
     remove(): void;
 }
 export declare const followStore: <StoreState>(store: Store<StoreState>) => (WrappedComponent: React.ComponentClass<any, any>) => any;
-export interface IUseStoreProps<T> {
+export interface IUseStoreProps<StoreState, MappedState> {
     eventType?: StoreEventType | StoreEventType[];
-    store: Store<T>;
+    mapper?: (storeState: StoreState) => MappedState;
 }
-export declare function useStore<MappedState = {}, Store = {}>(options: IUseStoreProps<Store>, callback: (storeState: Store) => MappedState): MappedState;
+export declare function useStore<StoreState = {}, MappedState = StoreState>(store: Store<StoreState>, options?: IUseStoreProps<StoreState, MappedState>): StoreState | MappedState;
