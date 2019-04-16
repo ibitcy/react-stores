@@ -1,3 +1,4 @@
+import {terser} from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
 export default [
@@ -14,13 +15,16 @@ export default [
       },
     ],
     external: ['react'],
-    plugins: [typescript({
-      tsconfigOverride: {
-        compilerOptions: {
-          declaration: true,
+    plugins: [
+      typescript({
+        tsconfigOverride: {
+          compilerOptions: {
+            declaration: true,
+          },
+          include: ['./src'],
         },
-        include: ['./src'],
-      },
-    })],
+      }),
+      terser(),
+    ],
   },
 ];
