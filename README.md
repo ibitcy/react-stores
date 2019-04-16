@@ -137,10 +137,8 @@ export const MyHookComponent: React.FunctionComponent<IProps> = (props: IProps) 
   );
 
   // Get your state form store
-  const {counter} = useStore<IMappedState, IMyStoreState>(
-    {
-      store: myStore,
-    },
+  const {counter} = useStore<IMyStoreState, IMappedState>(
+    myStore,
     mapState,
   );
 
