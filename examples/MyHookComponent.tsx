@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useStore} from '../src/store';
+import {useStore} from '../src';
 import {myStore, IMyStoreState} from './myStore';
 
 interface IMappedState {
@@ -27,11 +27,11 @@ export const MyHookComponent: React.FunctionComponent<IProps> = ({index}) => {
   );
 
   // Get your state form store
-  const {counter} = useStore<IMappedState, IMyStoreState>(
+  const {counter} = useStore<IMyStoreState, IMappedState>(
+    myStore,
     {
-      store: myStore,
+      mapState,
     },
-    mapState,
   );
 
   return <p>Counter: {counter}</p>;

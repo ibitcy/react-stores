@@ -13,9 +13,11 @@
     "registry": "https://registry.npmjs.org/"
   },
   "description": "React stores",
-  "main": "lib",
+  "main": "lib/index.js",
+  "module": "lib/index.es.js",
+  "types": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc src/store.ts --jsx 'react' --target es5 --lib es6,dom -d --outDir './' && mkdir -p ./lib && mv ./store.d.ts ./index.d.ts && mv ./store.js ./lib/index.js",
+    "build": "rm -rf lib && rollup --config ./rollup.config.js && npm run check-size --scripts-prepend-node-path",
     "check-size": "size-limit",
     "test": "npx jest",
     "demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
@@ -63,6 +65,8 @@
     "react-hooks-testing-library": "^0.4.0",
     "react-testing-library": "^6.0.4",
     "react-tools": "^0.13.3",
+    "rollup": "^1.10.0",
+    "rollup-plugin-typescript2": "^0.20.1",
     "should": "^13.2.3",
     "size-limit": "^1.0.0",
     "source-map-loader": "^0.2.1",
