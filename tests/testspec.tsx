@@ -1,9 +1,11 @@
-import {StoreEventType, StoreEvent, Store, useStore, IUseStoreProps} from '../src/store';
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
-import {act, cleanup, renderHook} from 'react-hooks-testing-library';
-import React = require('react');
-import {render} from 'react-testing-library';
+import * as React from 'react';
+import { act, cleanup } from 'react-hooks-testing-library';
+import { render } from 'react-testing-library';
+
+import { useStore } from '../src';
+import { Store, StoreEvent, StoreEventType } from '../src/store';
 
 const initialState: StoreState = Object.freeze({
   nullObj: null,
@@ -629,7 +631,7 @@ describe('useStore hook', () => {
 
   it('Should render initial value', () => {
     let counter: number;
-    hookTester(() => ({counter} = useStore<StoreState, StoreState>({store}, storeState => storeState)));
+    hookTester(() => ({counter} = useStore<StoreState, StoreState>(store)));
 
     expect(counter).toEqual(initialState.counter);
   });
@@ -638,7 +640,7 @@ describe('useStore hook', () => {
     const NEXT_COUNTER_VALUE = 2;
 
     let counter: number;
-    hookTester(() => ({counter} = useStore<StoreState, StoreState>({store}, storeState => storeState)));
+    hookTester(() => ({counter} = useStore<StoreState, StoreState>(store)));
     act(() => {
       store.setState({
         counter: NEXT_COUNTER_VALUE,
@@ -652,8 +654,10 @@ describe('useStore hook', () => {
     hookTester(
       () =>
         ({counter} = useStore<StoreState, StoreState>(
-          {store, eventType: StoreEventType.Init},
-          storeState => storeState,
+          store, {
+            eventType: StoreEventType.Init,
+            mapState: storeState => storeState,
+          },
         )),
     );
 
@@ -671,10 +675,10 @@ describe('useStore hook', () => {
     let foo: string;
     hookTester(
       () =>
-        ({foo} = useStore<{foo: string}, StoreState>({store}, storeState => {
-          return {
+        ({foo} = useStore<StoreState, {foo: string}>(store, {
+          mapState: storeState => ({
             foo: storeState.foo,
-          };
+          })
         })),
     );
 
@@ -685,10 +689,12 @@ describe('useStore hook', () => {
     let foo: string;
     hookTester(
       () =>
-        ({foo} = useStore<{foo: string}, StoreState>({store}, storeState => {
-          return {
-            foo: storeState.foo,
-          };
+        ({foo} = useStore<StoreState, {foo: string}>(store, {
+          mapState: storeState => {
+            return {
+              foo: storeState.foo,
+            };
+          }
         })),
     );
 

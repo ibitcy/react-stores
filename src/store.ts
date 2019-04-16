@@ -620,26 +620,3 @@ export const followStore = <StoreState>(store: Store<StoreState>) => (
 
   return Component;
 };
-
-export interface IUseStoreProps<T> {
-  eventType?: StoreEventType | StoreEventType[];
-  store: Store<T>;
-}
-
-export function useStore<MappedState = {}, Store = {}>(
-  options: IUseStoreProps<Store>,
-  callback: (storeState: Store) => MappedState,
-) {
-  const [state, setState] = React.useState(callback(options.store.state));
-
-  React.useEffect(() => {
-    const storeEvent = options.store.on(options.eventType || StoreEventType.Update, storeState => {
-      setState(callback(storeState));
-    });
-
-    return () => {
-      storeEvent.remove();
-    };
-  }, []);
-  return state;
-}
