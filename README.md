@@ -94,7 +94,7 @@ import * as React from 'react';
 import {followStore} from 'react-stores';
 import {myStore} from './myStore';
 
-// you can use multiple follows
+// You can use multiple follows
 // @followStore(myStore)
 // @followStore(myOtherStore)
 @followStore(myStore)
@@ -279,7 +279,7 @@ export class MyStoreComponent extends StoreComponent<any, any, IStoresState> {
 }
 ```
 
-### StoreComponent's lyfecycle proxy methods (deprecated)
+### StoreComponent's lifecycle proxy methods (deprecated)
 
 These methods are proxies for React.Component lifecycle methods, if you considered using StroeComponent you should use them instead of original ones.
 
