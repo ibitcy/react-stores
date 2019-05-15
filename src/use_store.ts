@@ -12,7 +12,7 @@ export function useStore<StoreState = {}, MappedState = StoreState>(
   store: Store<StoreState>,
   options: IUseStoreOptions<StoreState, MappedState> = {},
 ): MappedState {
-  const deps = option.deps || []; 
+  const deps = options.deps || []; 
   const mapState = React.useCallback(
     (stateStore: StoreState): MappedState => (options.mapState ? options.mapState(stateStore) : (stateStore as any)),
     deps,
