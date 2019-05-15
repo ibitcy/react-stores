@@ -5,7 +5,6 @@ import { Store, StoreEventType } from './store';
 export interface IUseStoreOptions<StoreState, MappedState> {
   eventType?: StoreEventType | StoreEventType[];
   mapState?: (storeState: StoreState) => MappedState;
-  deps?: any[];
 }
 
 export function useStore<StoreState = {}, MappedState = StoreState>(
