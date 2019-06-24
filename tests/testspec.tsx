@@ -1,11 +1,11 @@
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
 import * as React from 'react';
-import { act, cleanup } from 'react-hooks-testing-library';
-import { render } from 'react-testing-library';
+import {renderHook, act} from '@testing-library/react-hooks';
+import {render, cleanup} from '@testing-library/react';
 
-import { useStore } from '../src';
-import { Store, StoreEvent, StoreEventType } from '../src/store';
+import {useStore} from '../src';
+import {Store, StoreEvent, StoreEventType} from '../src/store';
 
 const initialState: StoreState = Object.freeze({
   nullObj: null,
@@ -653,12 +653,10 @@ describe('useStore hook', () => {
     let counter: number;
     hookTester(
       () =>
-        ({counter} = useStore<StoreState, StoreState>(
-          store, {
-            eventType: StoreEventType.Init,
-            mapState: storeState => storeState,
-          },
-        )),
+        ({counter} = useStore<StoreState, StoreState>(store, {
+          eventType: StoreEventType.Init,
+          mapState: storeState => storeState,
+        })),
     );
 
     const NEXT_COUNTER_VALUE = 2;
@@ -678,7 +676,7 @@ describe('useStore hook', () => {
         ({foo} = useStore<StoreState, {foo: string}>(store, {
           mapState: storeState => ({
             foo: storeState.foo,
-          })
+          }),
         })),
     );
 
@@ -687,6 +685,7 @@ describe('useStore hook', () => {
 
   it('Should change maped state', () => {
     let foo: string;
+
     hookTester(
       () =>
         ({foo} = useStore<StoreState, {foo: string}>(store, {
@@ -694,7 +693,7 @@ describe('useStore hook', () => {
             return {
               foo: storeState.foo,
             };
-          }
+          },
         })),
     );
 
@@ -713,6 +712,8 @@ describe('useStore hook', () => {
   }
 
   const hookTester = callback => {
-    render(<HookTester callback={callback} />);
+    act(() => {
+      render(<HookTester callback={callback} />);
+    });
   };
 });
