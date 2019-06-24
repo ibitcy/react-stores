@@ -1,8 +1,7 @@
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
 import * as React from 'react';
-import {renderHook, act} from '@testing-library/react-hooks';
-import {render, cleanup} from '@testing-library/react';
+import {render, cleanup, act} from '@testing-library/react';
 
 import {useStore} from '../src';
 import {Store, StoreEvent, StoreEventType} from '../src/store';
