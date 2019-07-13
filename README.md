@@ -3,7 +3,7 @@
 ![react-stores](https://ibitcy.github.io/react-stores/react-stores.svg)
 
 [![build status](https://flat.badgen.net/travis/ibitcy/react-stores?icon=travis)](https://travis-ci.org/ibitcy/react-stores)
-[![npm bundlephobia gzip](https://flat.badgen.net/bundlephobia/minzip/react-stores)
+[![npm bundlephobia gzip](https://flat.badgen.net/bundlephobia/minzip/react-stores)](https://travis-ci.org/ibitcy/react-stores)
 [![npm version](https://flat.badgen.net/npm/v/react-stores?icon=npm&color=blue)](https://www.npmjs.com/package/react-stores)
 
 https://badgen.net/bundlephobia/minzip/react-stores
