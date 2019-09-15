@@ -1,5 +1,5 @@
 // myStore.ts
-import {Store} from '../src/store';
+import {Store} from '../lib';
 
 export interface IMyStoreState {
   counter: number;
