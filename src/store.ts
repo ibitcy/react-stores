@@ -1,5 +1,5 @@
 import * as Freezer from 'freezer-js';
-import {StorePersistentPacket, StorePersistentDriver} from './StorePersistentDriver';
+import {StorePersistentDriver} from './StorePersistentDriver';
 import {StorePersistentLocalStorageDriver} from './StorePersistentLocalStorageDriver';
 import {StoreEventManager} from './StoreEventManager';
 import {StoreEventType, StoreEvent} from './StoreEvent';
@@ -15,7 +15,7 @@ export interface StoreOptions {
 export class Store<StoreState> {
   public components = [];
   public readonly id: string;
-  private eventManager: StoreEventManager<StoreState> = null;
+  private eventManager: StoreEventManager<StoreState> | null = null;
   private readonly frozenState = null;
   private readonly initialState = null;
 
@@ -115,7 +115,7 @@ export class Store<StoreState> {
   }
 
   public restoreDump(timestamp: number): void {
-    const pack: StorePersistentPacket<StoreState> = this.persistenceDriver.readDump(timestamp);
+    const pack = this.persistenceDriver.readDump(timestamp);
 
     if (pack) {
       this.setState(pack.data);
@@ -170,7 +170,7 @@ export class Store<StoreState> {
       eventType && eventType.constructor === Array
         ? (eventType as StoreEventType[])
         : ([eventType] as StoreEventType[]);
-    const event: StoreEvent<StoreState> = this.eventManager.add(eventTypes, callback);
+    const event = this.eventManager.add(eventTypes, callback);
 
     this.eventManager.fire(StoreEventType.Init, this.frozenState.get().state, this.frozenState.get().state, event);
     this.eventManager.fire(
