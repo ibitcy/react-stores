@@ -7,9 +7,9 @@ export declare enum StoreEventType {
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];
-    readonly onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void;
+    readonly onFire: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void;
     readonly onRemove: (id: string) => void;
     timeout: any;
-    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevState?: StoreState, type?: StoreEventType) => void, onRemove: (id: string) => void);
+    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void, onRemove: (id: string) => void);
     remove(): void;
 }
