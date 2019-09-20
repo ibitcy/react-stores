@@ -1,9 +1,9 @@
-import { terser } from 'rollup-plugin-terser';
+import {terser} from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
 export default [
   {
-    input: './src/index.ts',
+    input: ['./src/index.ts'],
     output: [
       {
         file: './lib/index.js',
@@ -21,7 +21,7 @@ export default [
           compilerOptions: {
             declaration: true,
           },
-          include: ['./src'],
+          include: ['./src/*.ts'],
         },
       }),
       terser(),
