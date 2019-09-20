@@ -6,7 +6,7 @@ import {StoreEventType} from './StoreEvent';
 export interface IUseStoreOptions<StoreState, MappedState> {
   eventType?: StoreEventType | StoreEventType[];
   mapState?: (storeState: StoreState) => MappedState;
-  deps?: any[];
+  deps?: Array<keyof StoreState>;
 }
 
 export function useStore<StoreState = {}, MappedState = StoreState>(
