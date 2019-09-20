@@ -1,4 +1,4 @@
-import {Store, StorePersistentLocalStorageDriver} from '../../src/store';
+import {Store, StorePersistentLocalStorageDriver} from '../../lib';
 
 export interface StoreState {
   counter: number;

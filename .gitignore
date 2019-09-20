@@ -7,3 +7,4 @@ dist
 .idea/react-stores.iml
 .idea/vcs.xml
 .rpt2_cache
+.history

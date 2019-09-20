@@ -1,6 +1,6 @@
 // MyStoreComponent.tsx
 import * as React from 'react';
-import {Store, StoreComponent} from '../src/store';
+import {Store, StoreComponent} from '../lib';
 import {myStore, IMyStoreState} from './myStore';
 
 interface IStoresState {

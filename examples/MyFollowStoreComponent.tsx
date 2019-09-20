@@ -1,6 +1,6 @@
 // MyFollowStoreComponent.tsx
 import * as React from 'react';
-import {followStore} from '../src/store';
+import {followStore} from '../lib';
 import {myStore} from './myStore';
 
 // You can use multiple follows

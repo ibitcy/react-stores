@@ -2,9 +2,7 @@ import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
 import * as React from 'react';
 import {render, cleanup, act} from '@testing-library/react';
-
-import {useStore} from '../src';
-import {Store, StoreEvent, StoreEventType} from '../src/store';
+import {Store, StoreEventType, useStore} from '../lib';
 
 const initialState: StoreState = Object.freeze({
   nullObj: null,
@@ -289,12 +287,9 @@ describe('testStoreState', () => {
 
     let counter: string = null;
 
-    const event: StoreEvent<StoreState> = store.on(
-      StoreEventType.Update,
-      (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
-        counter = storeState.counter.toString();
-      },
-    );
+    const event = store.on(StoreEventType.Update, storeState => {
+      counter = storeState.counter.toString();
+    });
 
     for (let i = 0; i < 4; i++) {
       Actions.increaseCounter();
@@ -398,7 +393,7 @@ describe('testStoreState', () => {
 
     let updated: string = 'false';
 
-    store.on(StoreEventType.Update, (storeState: StoreState) => {
+    store.on(StoreEventType.Update, storeState => {
       updated = 'true';
     });
 
@@ -415,12 +410,9 @@ describe('testStoreState', () => {
 
     let prev = '0';
 
-    const event: StoreEvent<StoreState> = store.on(
-      StoreEventType.Update,
-      (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
-        prev = prevState.counter.toString();
-      },
-    );
+    const event = store.on(StoreEventType.Update, (storeState, prevState, type) => {
+      prev = prevState.counter.toString();
+    });
 
     store.setState({
       counter: 5,
@@ -437,12 +429,9 @@ describe('testStoreState', () => {
 
     let eventType = null;
 
-    const event: StoreEvent<StoreState> = store.on(
-      StoreEventType.Update,
-      (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
-        eventType = type;
-      },
-    );
+    const event = store.on(StoreEventType.Update, (storeState, prevState, type) => {
+      eventType = type;
+    });
 
     store.setState({
       counter: 100,
@@ -459,12 +448,9 @@ describe('testStoreState', () => {
 
     let eventType = null;
 
-    const event: StoreEvent<StoreState> = store.on(
-      StoreEventType.Init,
-      (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
-        eventType = type;
-      },
-    );
+    const event = store.on(StoreEventType.Init, (storeState, prevState, type) => {
+      eventType = type;
+    });
 
     event.remove();
 
@@ -477,12 +463,9 @@ describe('testStoreState', () => {
 
     let eventCount = 0;
 
-    const event: StoreEvent<StoreState> = store.on(
-      StoreEventType.All,
-      (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
-        eventCount++;
-      },
-    );
+    const event = store.on(StoreEventType.All, (storeState, prevState, type) => {
+      eventCount++;
+    });
 
     store.setState({
       counter: 100,
@@ -499,7 +482,7 @@ describe('testStoreState', () => {
 
     let eventCount = 0;
 
-    const event: StoreEvent<StoreState> = store.on(
+    const event = store.on(
       StoreEventType.All,
       (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
         if (type !== StoreEventType.DumpUpdate) {
@@ -531,12 +514,9 @@ describe('testStoreState', () => {
 
     let eventCount = 0;
 
-    const event: StoreEvent<StoreState> = store.on(
-      StoreEventType.Update,
-      (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
-        eventCount++;
-      },
-    );
+    const event = store.on(StoreEventType.Update, (storeState, prevState, type) => {
+      eventCount++;
+    });
 
     store.setState({
       nullObj: null,
@@ -630,7 +610,7 @@ describe('useStore hook', () => {
 
   it('Should render initial value', () => {
     let counter: number;
-    hookTester(() => ({counter} = useStore<StoreState, StoreState>(store)));
+    hookTester(() => ({counter} = useStore(store)));
 
     expect(counter).toEqual(initialState.counter);
   });
@@ -639,7 +619,7 @@ describe('useStore hook', () => {
     const NEXT_COUNTER_VALUE = 2;
 
     let counter: number;
-    hookTester(() => ({counter} = useStore<StoreState, StoreState>(store)));
+    hookTester(() => ({counter} = useStore(store)));
     act(() => {
       store.setState({
         counter: NEXT_COUNTER_VALUE,
@@ -652,7 +632,7 @@ describe('useStore hook', () => {
     let counter: number;
     hookTester(
       () =>
-        ({counter} = useStore<StoreState, StoreState>(store, {
+        ({counter} = useStore(store, {
           eventType: StoreEventType.Init,
           mapState: storeState => storeState,
         })),
