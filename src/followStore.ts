@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {StoreEventType, StoreEvent} from './StoreEvent';
-import {Store} from './Store111';
+import {Store} from './Store';
 
 export const followStore = <StoreState>(store: Store<StoreState>) => (
   WrappedComponent: React.ComponentClass<any, any>,
