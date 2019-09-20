@@ -1,4 +1,4 @@
-import { Store } from './Store';
+import { Store } from './Store111';
 import { StoreEventType } from './StoreEvent';
 export interface IUseStoreOptions<StoreState, MappedState> {
     eventType?: StoreEventType | StoreEventType[];

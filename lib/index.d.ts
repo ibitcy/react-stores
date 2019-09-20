@@ -1,5 +1,5 @@
 export * from './followStore';
-export * from './Store';
+export * from './Store111';
 export * from './StoreComponent';
 export * from './StorePersistentLocalStorageDriver';
 export * from './use_store';

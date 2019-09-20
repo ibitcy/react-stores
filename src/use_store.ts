@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Store} from './Store';
+import {Store} from './Store111';
 import {StoreEventType} from './StoreEvent';
 
 export interface IUseStoreOptions<StoreState, MappedState> {
