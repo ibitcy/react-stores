@@ -1,8 +1,8 @@
 import * as expect from 'expect';
 import expectJsx from 'expect-jsx';
 import * as React from 'react';
-import {render, cleanup, act} from '@testing-library/react';
-import {Store, StoreEventType, useStore} from '../lib';
+import { render, cleanup, act } from '@testing-library/react';
+import { Store, StoreEventType, useStore } from '../src';
 
 const initialState: StoreState = Object.freeze({
   nullObj: null,
@@ -22,7 +22,7 @@ const initialState: StoreState = Object.freeze({
         a: 1,
         b: [1, 2, 3],
       },
-      d: [{id: 1, name: 'test 1', enabled: true}, {id: 2, name: 'test 2', enabled: false}],
+      d: [{ id: 1, name: 'test 1', enabled: true }, { id: 2, name: 'test 2', enabled: false }],
     },
   ],
   settings: {
@@ -331,7 +331,7 @@ describe('testStoreState', () => {
             a: 1,
             b: [1, 2, 3],
           },
-          d: [{id: 1, name: 'test 1', enabled: true}, {id: 2, name: 'test 2', enabled: false}],
+          d: [{ id: 1, name: 'test 1', enabled: true }, { id: 2, name: 'test 2', enabled: false }],
         },
       ],
       settings: {
@@ -373,7 +373,7 @@ describe('testStoreState', () => {
             a: 1,
             b: [1, 2, 3],
           },
-          d: [{id: 1, name: 'test 1', enabled: true}, {id: 2, name: 'test 2', enabled: false}],
+          d: [{ id: 1, name: 'test 1', enabled: true }, { id: 2, name: 'test 2', enabled: false }],
         },
       ],
       settings: {
@@ -610,7 +610,7 @@ describe('useStore hook', () => {
 
   it('Should render initial value', () => {
     let counter: number;
-    hookTester(() => ({counter} = useStore(store)));
+    hookTester(() => ({ counter } = useStore(store)));
 
     expect(counter).toEqual(initialState.counter);
   });
@@ -619,7 +619,7 @@ describe('useStore hook', () => {
     const NEXT_COUNTER_VALUE = 2;
 
     let counter: number;
-    hookTester(() => ({counter} = useStore(store)));
+    hookTester(() => ({ counter } = useStore(store)));
     act(() => {
       store.setState({
         counter: NEXT_COUNTER_VALUE,
@@ -632,7 +632,7 @@ describe('useStore hook', () => {
     let counter: number;
     hookTester(
       () =>
-        ({counter} = useStore(store, {
+        ({ counter } = useStore(store, {
           eventType: StoreEventType.Init,
           mapState: storeState => storeState,
         })),
@@ -652,7 +652,7 @@ describe('useStore hook', () => {
     let foo: string;
     hookTester(
       () =>
-        ({foo} = useStore<StoreState, {foo: string}>(store, {
+        ({ foo } = useStore<StoreState, { foo: string }>(store, {
           mapState: storeState => ({
             foo: storeState.foo,
           }),
@@ -667,7 +667,7 @@ describe('useStore hook', () => {
 
     hookTester(
       () =>
-        ({foo} = useStore<StoreState, {foo: string}>(store, {
+        ({ foo } = useStore<StoreState, { foo: string }>(store, {
           mapState: storeState => {
             return {
               foo: storeState.foo,
@@ -685,7 +685,7 @@ describe('useStore hook', () => {
     expect(foo).toBe(NEXT_FOO_VALUE);
   });
 
-  function HookTester({callback}) {
+  function HookTester({ callback }) {
     callback();
     return null;
   }

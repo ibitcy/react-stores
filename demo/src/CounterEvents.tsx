@@ -1,6 +1,5 @@
 import * as React from 'react';
-
-import { StoreEvent, StoreEventType } from '../../lib';
+import { StoreEvent, StoreEventType } from '../../src';
 import { stores, StoreState } from './stores';
 
 interface Props {}

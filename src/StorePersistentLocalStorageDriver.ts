@@ -1,7 +1,7 @@
 import { StorePersistentDriver, StorePersistentPacket, StorePersistentDump } from './StorePersistentDriver';
 
 export class StorePersistentLocalStorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
-  private storage = null;
+  readonly storage = null;
   public type: string = 'localStorage';
 
   constructor(readonly name: string, readonly lifetime: number = Infinity) {
@@ -131,7 +131,10 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
     if (this.storage && this.persistence) {
       try {
         const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHistoryName));
-        history = dumpHistory.dumpHistory.map((pack: StorePersistentPacket<StoreState>) => pack.timestamp);
+
+        if (dumpHistory && dumpHistory.dumpHistory) {
+          history = dumpHistory.dumpHistory.map((pack: StorePersistentPacket<StoreState>) => pack.timestamp);
+        }
       } catch (e) {
         console.error(e);
         history = [];

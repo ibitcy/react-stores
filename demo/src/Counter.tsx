@@ -1,6 +1,5 @@
 import * as React from 'react';
-
-import { Store, StoreComponent } from '../../lib';
+import { Store, StoreComponent } from '../../src';
 import { stores, StoreState } from './stores';
 
 interface Props {

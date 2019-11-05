@@ -34,9 +34,7 @@ export class Store<StoreState> {
   ) {
     let currentState = null;
 
-    this.id = this.generateStoreName(initialState);
-
-    console.log(this.id);
+    this.id = this.generateStoreId(initialState);
 
     if (options) {
       this.opts.persistence = options.persistence === true;
@@ -87,7 +85,7 @@ export class Store<StoreState> {
     return h.toString(16);
   }
 
-  private generateStoreName(state: StoreState): string {
+  private generateStoreId(state: StoreState): string {
     let flatKeys: string = '';
 
     for (let key in state) {

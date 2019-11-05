@@ -5,7 +5,7 @@ import { CounterEvents } from './CounterEvents';
 import { CounterDecorator } from './CounterDecorator';
 import { Persistent } from './persistent';
 import { stores, storePersistent, storeHistory } from './stores';
-import { followStore, Store, StorePersistentLocalStorageDriver } from '../../lib';
+import { followStore, Store, StorePersistentLocalStorageDriver } from '../../src';
 import { History } from './history';
 
 interface Props {}

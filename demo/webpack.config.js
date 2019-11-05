@@ -2,7 +2,10 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+  mode: 'development',
+
   entry: './demo/src/app.tsx',
+
   output: {
     filename: 'bundle.js',
     path: path.join(__dirname, 'dist'),
@@ -20,7 +23,7 @@ module.exports = {
     port: 9000,
   },
 
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
 
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
@@ -31,11 +34,6 @@ module.exports = {
       {
         test: /\.tsx?$/,
         loader: 'ts-loader',
-      },
-      {
-        enforce: 'pre',
-        test: /\.js$/,
-        loader: 'source-map-loader',
       },
       {
         test: /\.html$/,
