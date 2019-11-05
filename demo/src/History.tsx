@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { storeHistory, StoreState } from './stores';
+import React from 'react';
+import { historyStore, StoreState } from './store';
 import { StoreEvent, StoreEventType } from '../../src';
 
 interface Props {}
@@ -20,15 +20,15 @@ export class History extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.event = storeHistory.on(StoreEventType.All, storeState => {
+    this.event = historyStore.on(StoreEventType.All, storeState => {
       this.setState({
         commonStoreState: storeState,
       });
     });
 
-    this.event = storeHistory.on(StoreEventType.DumpUpdate, storeState => {
+    this.event = historyStore.on(StoreEventType.DumpUpdate, storeState => {
       this.setState({
-        dumpHistory: storeHistory.getDumpHistory(),
+        dumpHistory: historyStore.getDumpHistory(),
       });
     });
   }
@@ -47,11 +47,11 @@ export class History extends React.Component<Props, State> {
             Local state counter: <strong>{this.state.counter.toString()}</strong>
           </p>
           <p>
-            Shared state counter: <strong>{storeHistory.state.counter.toString()}</strong>
+            Shared state counter: <strong>{historyStore.state.counter.toString()}</strong>
           </p>
 
           <p>
-            Foo state is: <strong>{storeHistory.state.foo}</strong>
+            Foo state is: <strong>{historyStore.state.foo}</strong>
           </p>
 
           <button
@@ -65,8 +65,8 @@ export class History extends React.Component<Props, State> {
 
           <button
             onClick={() => {
-              storeHistory.setState({
-                counter: storeHistory.state.counter + 1,
+              historyStore.setState({
+                counter: historyStore.state.counter + 1,
               });
             }}>
             Store +1
@@ -74,8 +74,8 @@ export class History extends React.Component<Props, State> {
 
           <button
             onClick={() => {
-              storeHistory.setState({
-                foo: storeHistory.state.foo === 'foo' ? 'bar' : 'foo',
+              historyStore.setState({
+                foo: historyStore.state.foo === 'foo' ? 'bar' : 'foo',
               });
             }}>
             Store foobar toggle
@@ -128,11 +128,11 @@ export class History extends React.Component<Props, State> {
 
   private restore(id, e): void {
     e.preventDefault();
-    storeHistory.restoreDump(id);
+    historyStore.restoreDump(id);
   }
 
   private delete(id, e): void {
     e.preventDefault();
-    storeHistory.removeDump(id);
+    historyStore.removeDump(id);
   }
 }

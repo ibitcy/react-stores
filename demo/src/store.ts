@@ -10,11 +10,11 @@ const initialState: StoreState = {
   foo: 'foo',
 };
 
-export const stores: Store<StoreState> = new Store<StoreState>(initialState, {
+export const store = new Store<StoreState>(initialState, {
   live: true,
 });
 
-export const storePersistent: Store<StoreState> = new Store<StoreState>(
+export const persistentStore = new Store<StoreState>(
   initialState,
   {
     live: true,
@@ -23,7 +23,7 @@ export const storePersistent: Store<StoreState> = new Store<StoreState>(
   new StorePersistentLocalStorageDriver('demo'),
 );
 
-export const storeHistory: Store<StoreState> = new Store<StoreState>(
+export const historyStore = new Store<StoreState>(
   initialState,
   {
     live: true,

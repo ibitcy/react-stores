@@ -1,6 +1,6 @@
-import * as expect from 'expect';
+import expect from 'expect';
 import expectJsx from 'expect-jsx';
-import * as React from 'react';
+import React from 'react';
 import { render, cleanup, act } from '@testing-library/react';
 import { Store, StoreEventType, useStore } from '../src';
 

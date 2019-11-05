@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Complex } from './complex';
 import { Counter } from './Counter';
 import { CounterEvents } from './CounterEvents';
 import { CounterDecorator } from './CounterDecorator';
 import { Persistent } from './persistent';
-import { stores, storePersistent, storeHistory } from './stores';
+import { store, persistentStore, historyStore } from './store';
 import { followStore, Store, StorePersistentLocalStorageDriver } from '../../src';
 import { History } from './history';
 
@@ -49,12 +49,12 @@ export class Container extends React.Component<Props, State> {
           {pageStore.state.page === 0 && (
             <>
               <h1>Components demo</h1>
-              <button onClick={() => stores.resetState()}>Reset store</button>
+              <button onClick={() => store.resetState()}>Reset store</button>
               <button onClick={e => this.iterateStateValue(e)}>
                 Iterate parent state value <span className='label'>{this.state.items.length}</span>
               </button>
               <Complex />
-              <Counter items={this.state.items} />
+              <Counter />
               <CounterEvents />
               <CounterDecorator />
             </>
@@ -64,9 +64,9 @@ export class Container extends React.Component<Props, State> {
             <>
               <h1>Persistent store demo</h1>
 
-              <button onClick={() => storePersistent.resetPersistence()}>Reset persistence</button>
+              <button onClick={() => persistentStore.resetPersistence()}>Reset persistence</button>
 
-              <button onClick={() => storePersistent.resetState()}>Reset store</button>
+              <button onClick={() => persistentStore.resetState()}>Reset store</button>
 
               <Persistent />
             </>
@@ -76,13 +76,13 @@ export class Container extends React.Component<Props, State> {
             <>
               <h1>Snapshots demo</h1>
 
-              <button onClick={() => storeHistory.resetPersistence()}>Reset persistence</button>
+              <button onClick={() => historyStore.resetPersistence()}>Reset persistence</button>
 
-              <button onClick={() => storeHistory.resetState()}>Reset store</button>
+              <button onClick={() => historyStore.resetState()}>Reset store</button>
 
-              <button onClick={() => storeHistory.resetDumpHistory()}>Reset history</button>
+              <button onClick={() => historyStore.resetDumpHistory()}>Reset history</button>
 
-              <button onClick={() => storeHistory.saveDump()}>Save dump</button>
+              <button onClick={() => historyStore.saveDump()}>Save dump</button>
 
               <History />
             </>

@@ -8,5 +8,6 @@
     "outDir": "dist",
     "target": "es5",
     "traceResolution": true,
+    "esModuleInterop": true
   }
 }

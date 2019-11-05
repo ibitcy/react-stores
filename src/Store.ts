@@ -1,4 +1,4 @@
-import * as Freezer from 'freezer-js';
+import Freezer from 'freezer-js';
 import { StorePersistentDriver } from './StorePersistentDriver';
 import { StorePersistentLocalStorageDriver } from './StorePersistentLocalStorageDriver';
 import { StoreEventManager } from './StoreEventManager';

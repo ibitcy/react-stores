@@ -1,7 +1,6 @@
-import * as React from 'react';
-
+import React from 'react';
 import { followStore } from '../../src';
-import { stores } from './stores';
+import { store } from './store';
 
 interface Props {}
 
@@ -9,7 +8,7 @@ interface State {
   counter: number;
 }
 
-@followStore(stores)
+@followStore(store)
 export class Complex extends React.Component<Props, State> {
   state: State = {
     counter: 0,
@@ -30,18 +29,18 @@ export class Complex extends React.Component<Props, State> {
           Local state counter: <strong>{this.state.counter.toString()}</strong>
         </p>
         <p>
-          Shared state counter: <strong>{stores.state.counter.toString()}</strong>
+          Shared state counter: <strong>{store.state.counter.toString()}</strong>
         </p>
         <p>
-          Foo state is: <strong>{stores.state.foo}</strong>
+          Foo state is: <strong>{store.state.foo}</strong>
         </p>
 
         <button onClick={this.plusOne.bind(this)}>Local +1</button>
 
         <button
           onClick={() => {
-            stores.setState({
-              counter: stores.state.counter + 1,
+            store.setState({
+              counter: store.state.counter + 1,
             });
           }}>
           Store +1
@@ -49,8 +48,8 @@ export class Complex extends React.Component<Props, State> {
 
         <button
           onClick={() => {
-            stores.setState({
-              foo: stores.state.foo === 'foo' ? 'bar' : 'foo',
+            store.setState({
+              foo: store.state.foo === 'foo' ? 'bar' : 'foo',
             });
           }}>
           Store foobar toggle
