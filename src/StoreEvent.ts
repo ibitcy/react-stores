@@ -15,7 +15,7 @@ export class StoreEvent<StoreState> {
     readonly onRemove: (id: string) => void,
   ) {}
 
-  public remove(): void {
+  public remove() {
     if (this.timeout) {
       clearTimeout(this.timeout);
     }

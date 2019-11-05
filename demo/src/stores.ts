@@ -1,4 +1,4 @@
-import {Store, StorePersistentLocalStorageDriver} from '../../lib';
+import { Store, StorePersistentLocalStorageDriver } from '../../lib';
 
 export interface StoreState {
   counter: number;
@@ -10,7 +10,7 @@ const initialState: StoreState = {
   foo: 'foo',
 };
 
-export const store: Store<StoreState> = new Store<StoreState>(initialState, {
+export const stores: Store<StoreState> = new Store<StoreState>(initialState, {
   live: true,
 });
 

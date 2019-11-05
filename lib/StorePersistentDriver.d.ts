@@ -12,13 +12,13 @@ export declare abstract class StorePersistentDriver<StoreState> {
     constructor(name: string, lifetime?: number);
     initialState: StoreState;
     abstract type: string;
-    abstract write(pack: StorePersistentPacket<StoreState>): void;
+    abstract write(pack: StorePersistentPacket<StoreState>): any;
     abstract read(): StorePersistentPacket<StoreState>;
     abstract saveDump(pack: StorePersistentPacket<StoreState>): number;
     abstract readDump(id: number): StorePersistentPacket<StoreState>;
-    abstract resetHistory(): void;
+    abstract resetHistory(): any;
     abstract getDumpHistory(): number[];
-    abstract removeDump(timestamp: number): void;
+    abstract removeDump(timestamp: number): any;
     pack(data: StoreState): StorePersistentPacket<StoreState>;
     reset(): StorePersistentPacket<StoreState>;
     readonly storeName: string;

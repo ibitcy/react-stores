@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import {StoreEvent, StoreEventType} from '../../lib';
-import {store, StoreState} from './store';
+import { StoreEvent, StoreEventType } from '../../lib';
+import { stores, StoreState } from './stores';
 
 interface Props {}
 
@@ -17,7 +17,7 @@ export class CounterEvents extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.event = store.on(StoreEventType.All, (storeState: StoreState) => {
+    this.event = stores.on(StoreEventType.All, (storeState: StoreState) => {
       this.setState({
         commonStoreState: storeState,
       });
@@ -31,7 +31,7 @@ export class CounterEvents extends React.Component<Props, State> {
   public render() {
     if (this.state.commonStoreState) {
       return (
-        <div className="component">
+        <div className='component'>
           <h2>Linked component with event driven states</h2>
 
           <p>
@@ -44,11 +44,10 @@ export class CounterEvents extends React.Component<Props, State> {
 
           <button
             onClick={() => {
-              store.setState({
-                counter: store.state.counter + 1,
+              stores.setState({
+                counter: stores.state.counter + 1,
               });
-            }}
-          >
+            }}>
             Store +1
           </button>
         </div>

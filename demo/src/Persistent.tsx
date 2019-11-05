@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import {followStore} from '../../lib';
-import {storePersistent} from './store';
+import { followStore } from '../../lib';
+import { storePersistent } from './stores';
 
 interface Props {}
 
@@ -23,7 +23,7 @@ export class Persistent extends React.Component<Props, State> {
 
   public render() {
     return (
-      <div className="component">
+      <div className='component'>
         <h2>Persistent store component</h2>
 
         <p>
@@ -43,8 +43,7 @@ export class Persistent extends React.Component<Props, State> {
             storePersistent.setState({
               counter: storePersistent.state.counter + 1,
             });
-          }}
-        >
+          }}>
           Store +1
         </button>
 
@@ -53,8 +52,7 @@ export class Persistent extends React.Component<Props, State> {
             storePersistent.setState({
               foo: storePersistent.state.foo === 'foo' ? 'bar' : 'foo',
             });
-          }}
-        >
+          }}>
           Store foobar toggle
         </button>
       </div>

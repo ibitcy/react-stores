@@ -1,8 +1,8 @@
 import * as Freezer from 'freezer-js';
-import {StorePersistentDriver} from './StorePersistentDriver';
-import {StorePersistentLocalStorageDriver} from './StorePersistentLocalStorageDriver';
-import {StoreEventManager} from './StoreEventManager';
-import {StoreEventType, StoreEvent} from './StoreEvent';
+import { StorePersistentDriver } from './StorePersistentDriver';
+import { StorePersistentLocalStorageDriver } from './StorePersistentLocalStorageDriver';
+import { StoreEventManager } from './StoreEventManager';
+import { StoreEventType, StoreEvent } from './StoreEvent';
 
 export interface StoreOptions {
   live?: boolean;
@@ -36,6 +36,8 @@ export class Store<StoreState> {
 
     this.id = this.generateStoreName(initialState);
 
+    console.log(this.id);
+
     if (options) {
       this.opts.persistence = options.persistence === true;
       this.opts.live = options.live === true;
@@ -52,10 +54,10 @@ export class Store<StoreState> {
     this.persistenceDriver.persistence = this.opts.persistence;
     this.persistenceDriver.initialState = initialState;
 
-    const persistantState = this.persistenceDriver.read().data;
+    const persistentState = this.persistenceDriver.read().data;
 
-    if (persistantState) {
-      currentState = persistantState;
+    if (persistentState) {
+      currentState = persistentState;
     }
 
     if (currentState === null) {
@@ -63,8 +65,8 @@ export class Store<StoreState> {
     }
 
     this.eventManager = new StoreEventManager(this.opts.setStateTimeout);
-    this.initialState = new Freezer({state: initialState});
-    this.frozenState = new Freezer({state: currentState}, this.opts);
+    this.initialState = new Freezer({ state: initialState });
+    this.frozenState = new Freezer({ state: currentState }, this.opts);
     this.frozenState.on('update', (currentState, prevState) => {
       this.update(currentState.state, prevState.state);
       this.persistenceDriver.write(this.persistenceDriver.pack(currentState.state));
@@ -76,7 +78,9 @@ export class Store<StoreState> {
   }
 
   private hashCode(str: string): string {
-    for (var i = 0, h = 0; i < str.length; i++) {
+    let h = 0;
+
+    for (let i = 0; i < str.length; i++) {
       h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
     }
 
@@ -93,11 +97,11 @@ export class Store<StoreState> {
     return this.hashCode(flatKeys);
   }
 
-  public resetPersistence(): void {
+  public resetPersistence() {
     this.persistenceDriver.reset();
   }
 
-  public resetDumpHistory(): void {
+  public resetDumpHistory() {
     this.persistenceDriver.resetHistory();
     this.eventManager.fire(StoreEventType.DumpUpdate, this.frozenState.get().state, this.frozenState.get().state);
   }
@@ -109,12 +113,12 @@ export class Store<StoreState> {
     return timestamp;
   }
 
-  public removeDump(timestamp: number): void {
+  public removeDump(timestamp: number) {
     this.persistenceDriver.removeDump(timestamp);
     this.eventManager.fire(StoreEventType.DumpUpdate, this.frozenState.get().state, this.frozenState.get().state);
   }
 
-  public restoreDump(timestamp: number): void {
+  public restoreDump(timestamp: number) {
     const pack = this.persistenceDriver.readDump(timestamp);
 
     if (pack) {
@@ -127,33 +131,41 @@ export class Store<StoreState> {
     return this.persistenceDriver.getDumpHistory();
   }
 
-  public setState(newState: Partial<StoreState>): void {
+  public setState(newState: Partial<StoreState>) {
     const newFrozenState = new Freezer(newState);
-    const mergedState = {...this.frozenState.get().state};
+    const mergedState = { ...this.frozenState.get().state };
 
-    for (const prop in newState) {
-      const newFrozenProp = newFrozenState.get()[prop];
+    for (const key in newState) {
+      const newFrozenProp = newFrozenState.get()[key];
 
-      if (newFrozenProp !== mergedState[prop]) {
-        mergedState[prop] = newFrozenProp;
+      if (newFrozenProp !== mergedState[key]) {
+        mergedState[key] = newFrozenProp;
       }
     }
 
     this.frozenState.get().state.set(mergedState);
   }
 
-  public resetState(): void {
+  public resetState() {
     this.setState(this.initialState.get().state);
   }
 
-  public update(currentState: StoreState, prevState: StoreState): void {
-    this.components.forEach(component => {
-      if (component.isStoreMounted) {
-        component.storeComponentStoreWillUpdate();
-        component.forceUpdate();
-        component.storeComponentStoreDidUpdate();
+  public update(currentState: StoreState, prevState: StoreState) {
+    for (const key in this.components) {
+      if (this.components[key].isStoreMounted) {
+        this.components[key].storeComponentStoreWillUpdate();
+        this.components[key].forceUpdate();
+        this.components[key].storeComponentStoreDidUpdate();
       }
-    });
+    }
+
+    for (const key in this.components) {
+      if (this.components[key].isStoreMounted) {
+        this.components[key].storeComponentStoreWillUpdate();
+        this.components[key].forceUpdate();
+        this.components[key].storeComponentStoreDidUpdate();
+      }
+    }
 
     this.eventManager.fire(StoreEventType.Update, currentState, prevState);
   }

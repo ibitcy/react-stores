@@ -1,4 +1,4 @@
-import {StoreEvent, StoreEventType} from './StoreEvent';
+import { StoreEvent, StoreEventType } from './StoreEvent';
 
 export class StoreEventManager<StoreState> {
   private events: StoreEvent<StoreState>[] = [];
@@ -11,12 +11,7 @@ export class StoreEventManager<StoreState> {
     return `${++this.eventCounter}${Date.now()}${Math.random()}`;
   }
 
-  public fire(
-    type: StoreEventType,
-    storeState: StoreState,
-    prevState: StoreState,
-    event?: StoreEvent<StoreState>,
-  ): void {
+  public fire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event?: StoreEvent<StoreState>) {
     if (event) {
       if (this.fireTimeout && this.fireTimeout !== 0) {
         if (event.timeout) {
@@ -36,25 +31,25 @@ export class StoreEventManager<StoreState> {
         }
 
         this.timeout = setTimeout(() => {
-          this.events.forEach((event: StoreEvent<StoreState>) => {
-            this.doFire(type, storeState, prevState, event);
-          });
+          for (const key in this.events) {
+            this.doFire(type, storeState, prevState, this.events[key]);
+          }
         }, this.fireTimeout);
       } else {
-        this.events.forEach((event: StoreEvent<StoreState>) => {
-          this.doFire(type, storeState, prevState, event);
-        });
+        for (const key in this.events) {
+          this.doFire(type, storeState, prevState, this.events[key]);
+        }
       }
     }
   }
 
-  public remove(id: string): void {
+  public remove(id: string) {
     if (this.fireTimeout && this.fireTimeout !== 0) {
-      this.events.forEach((event: StoreEvent<StoreState>) => {
-        if (event.timeout) {
+      for (const key in this.events) {
+        if (this.events[key].timeout) {
           clearTimeout(this.timeout);
         }
-      });
+      }
     }
 
     this.events = this.events.filter((event: StoreEvent<StoreState>) => {
@@ -66,14 +61,9 @@ export class StoreEventManager<StoreState> {
     eventTypes: StoreEventType[],
     callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void,
   ): StoreEvent<StoreState> {
-    const event: StoreEvent<StoreState> = new StoreEvent<StoreState>(
-      this.generateEventId(),
-      eventTypes,
-      callback,
-      (id: string) => {
-        this.remove(id);
-      },
-    );
+    const event = new StoreEvent<StoreState>(this.generateEventId(), eventTypes, callback, id => {
+      this.remove(id);
+    });
 
     this.events.push(event);
 

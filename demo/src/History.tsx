@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {storeHistory, StoreState} from './store';
-import {StoreEvent, StoreEventType} from '../../lib';
+import { storeHistory, StoreState } from './stores';
+import { StoreEvent, StoreEventType } from '../../lib';
 
 interface Props {}
 
@@ -20,13 +20,13 @@ export class History extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.event = storeHistory.on(StoreEventType.All, (storeState: StoreState) => {
+    this.event = storeHistory.on(StoreEventType.All, storeState => {
       this.setState({
         commonStoreState: storeState,
       });
     });
 
-    this.event = storeHistory.on(StoreEventType.DumpUpdate, (storeState: StoreState) => {
+    this.event = storeHistory.on(StoreEventType.DumpUpdate, storeState => {
       this.setState({
         dumpHistory: storeHistory.getDumpHistory(),
       });
@@ -37,20 +37,10 @@ export class History extends React.Component<Props, State> {
     this.event.remove();
   }
 
-  private restore(id, e): void {
-    e.preventDefault();
-    storeHistory.restoreDump(id);
-  }
-
-  private delete(id, e): void {
-    e.preventDefault();
-    storeHistory.removeDump(id);
-  }
-
   public render() {
     return (
       <>
-        <div className="component">
+        <div className='component'>
           <h2>History component</h2>
 
           <p>
@@ -69,8 +59,7 @@ export class History extends React.Component<Props, State> {
               this.setState({
                 counter: this.state.counter + 1,
               });
-            }}
-          >
+            }}>
             Local +1
           </button>
 
@@ -79,8 +68,7 @@ export class History extends React.Component<Props, State> {
               storeHistory.setState({
                 counter: storeHistory.state.counter + 1,
               });
-            }}
-          >
+            }}>
             Store +1
           </button>
 
@@ -89,41 +77,40 @@ export class History extends React.Component<Props, State> {
               storeHistory.setState({
                 foo: storeHistory.state.foo === 'foo' ? 'bar' : 'foo',
               });
-            }}
-          >
+            }}>
             Store foobar toggle
           </button>
         </div>
 
-        <div className="component">
+        <div className='component'>
           <h2>Dump history</h2>
 
           {this.state.dumpHistory.length > 0 ? (
-            <div className="history">
-              <div className="header">
-                <div className="col">ID</div>
+            <div className='history'>
+              <div className='header'>
+                <div className='col'>ID</div>
 
-                <div className="col">Date</div>
+                <div className='col'>Date</div>
               </div>
               {this.state.dumpHistory.map((item, i) => {
                 return (
-                  <div className="row" key={i}>
-                    <div className="col" style={{width: '20%'}}>
+                  <div className='row' key={i}>
+                    <div className='col' style={{ width: '20%' }}>
                       {item.toString()}
                     </div>
 
-                    <div className="col" style={{width: '70%'}}>
+                    <div className='col' style={{ width: '70%' }}>
                       {new Date(item).toLocaleString()}
                     </div>
 
-                    <div className="col" style={{width: '5%'}}>
-                      <a className="restore" href="#" onClick={this.restore.bind(this, item)}>
+                    <div className='col' style={{ width: '5%' }}>
+                      <a className='restore' href='#' onClick={this.restore.bind(this, item)}>
                         Restore
                       </a>
                     </div>
 
-                    <div className="col" style={{width: '5%'}}>
-                      <a className="delete" href="#" onClick={this.delete.bind(this, item)}>
+                    <div className='col' style={{ width: '5%' }}>
+                      <a className='delete' href='#' onClick={this.delete.bind(this, item)}>
                         Delete
                       </a>
                     </div>
@@ -132,10 +119,20 @@ export class History extends React.Component<Props, State> {
               })}
             </div>
           ) : (
-            <div className="empty">History is empty</div>
+            <div className='empty'>History is empty</div>
           )}
         </div>
       </>
     );
+  }
+
+  private restore(id, e): void {
+    e.preventDefault();
+    storeHistory.restoreDump(id);
+  }
+
+  private delete(id, e): void {
+    e.preventDefault();
+    storeHistory.removeDump(id);
   }
 }

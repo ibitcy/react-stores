@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import {Store, StoreComponent} from '../../lib';
-import {store, StoreState} from './store';
+import { Store, StoreComponent } from '../../lib';
+import { stores, StoreState } from './stores';
 
 interface Props {
-  items: {value: number}[];
+  items: { value: number }[];
 }
 
 interface State {
@@ -22,7 +22,7 @@ export class Counter extends StoreComponent<Props, State, StoresState> {
 
   constructor(props: Props) {
     super(props, {
-      common: store,
+      common: stores,
     });
   }
 
@@ -34,7 +34,7 @@ export class Counter extends StoreComponent<Props, State, StoresState> {
 
   public render() {
     return (
-      <div className="component">
+      <div className='component'>
         <h2>Linked comonent</h2>
         <p>
           Shared state counter: <strong>{this.stores.common.state.counter.toString()}</strong>
@@ -48,11 +48,10 @@ export class Counter extends StoreComponent<Props, State, StoresState> {
         <p />
         <button
           onClick={() => {
-            store.setState({
-              counter: store.state.counter + 1,
+            stores.setState({
+              counter: stores.state.counter + 1,
             });
-          }}
-        >
+          }}>
           Store +1
         </button>
       </div>

@@ -1,4 +1,4 @@
-import {StorePersistentDriver, StorePersistentPacket, StorePersistentDump} from './StorePersistentDriver';
+import { StorePersistentDriver, StorePersistentPacket, StorePersistentDump } from './StorePersistentDriver';
 
 export class StorePersistentLocalStorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
   private storage = null;
@@ -12,7 +12,7 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
     }
   }
 
-  public write(pack: StorePersistentPacket<StoreState>): void {
+  public write(pack: StorePersistentPacket<StoreState>) {
     if (this.storage && this.persistence) {
       try {
         this.storage.setItem(this.storeName, JSON.stringify(pack));
@@ -82,7 +82,7 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
     return timestamp;
   }
 
-  public removeDump(timestamp: number): void {
+  public removeDump(timestamp: number) {
     if (this.storage && this.persistence) {
       try {
         const dumpHistory: StorePersistentDump<StoreState> = JSON.parse(this.storage.getItem(this.dumpHistoryName));
@@ -141,7 +141,7 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
     return history;
   }
 
-  public resetHistory(): void {
+  public resetHistory() {
     if (this.storage && this.persistence) {
       try {
         this.storage.setItem(

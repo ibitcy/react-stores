@@ -1,20 +1,20 @@
 import * as React from 'react';
-import {Complex} from './complex';
-import {Counter} from './counter';
-import {CounterEvents} from './counter-events';
-import {CounterDecorator} from './counter-decorator';
-import {Persistent} from './persistent';
-import {store, storePersistent, storeHistory} from './store';
-import {followStore, Store, StorePersistentLocalStorageDriver} from '../../lib';
-import {History} from './history';
+import { Complex } from './complex';
+import { Counter } from './Counter';
+import { CounterEvents } from './CounterEvents';
+import { CounterDecorator } from './CounterDecorator';
+import { Persistent } from './persistent';
+import { stores, storePersistent, storeHistory } from './stores';
+import { followStore, Store, StorePersistentLocalStorageDriver } from '../../lib';
+import { History } from './history';
 
 interface Props {}
 
 interface State {
-  items: {value: number}[];
+  items: { value: number }[];
 }
 
-const pageStore: Store<{page: number}> = new Store<{page: number}>(
+const pageStore: Store<{ page: number }> = new Store<{ page: number }>(
   {
     page: 0,
   },
@@ -33,25 +33,25 @@ export class Container extends React.Component<Props, State> {
   public render() {
     return (
       <>
-        <nav className="main-nav">
-          <a className={pageStore.state.page === 0 ? 'active' : ''} href="#" onClick={this.handleClick.bind(this, 0)}>
+        <nav className='main-nav'>
+          <a className={pageStore.state.page === 0 ? 'active' : ''} href='#' onClick={this.handleClick.bind(this, 0)}>
             Components
           </a>
-          <a className={pageStore.state.page === 1 ? 'active' : ''} href="#" onClick={this.handleClick.bind(this, 1)}>
+          <a className={pageStore.state.page === 1 ? 'active' : ''} href='#' onClick={this.handleClick.bind(this, 1)}>
             Persistent
           </a>
-          <a className={pageStore.state.page === 2 ? 'active' : ''} href="#" onClick={this.handleClick.bind(this, 2)}>
+          <a className={pageStore.state.page === 2 ? 'active' : ''} href='#' onClick={this.handleClick.bind(this, 2)}>
             Snapshots
           </a>
         </nav>
 
-        <div className="inner">
+        <div className='inner'>
           {pageStore.state.page === 0 && (
             <>
               <h1>Components demo</h1>
-              <button onClick={() => store.resetState()}>Reset store</button>
+              <button onClick={() => stores.resetState()}>Reset store</button>
               <button onClick={e => this.iterateStateValue(e)}>
-                Iterate parent state value <span className="label">{this.state.items.length}</span>
+                Iterate parent state value <span className='label'>{this.state.items.length}</span>
               </button>
               <Complex />
               <Counter items={this.state.items} />
@@ -95,7 +95,7 @@ export class Container extends React.Component<Props, State> {
   private iterateStateValue(e) {
     e.preventDefault();
     this.setState({
-      items: this.state.items.concat({value: Math.random()}),
+      items: this.state.items.concat({ value: Math.random() }),
     });
   }
 
