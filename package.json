@@ -1,6 +1,7 @@
 {
   "name": "react-stores",
   "version": "3.0.0",
+  "sideEffects": false,
   "keywords": [
     "react",
     "stores",
