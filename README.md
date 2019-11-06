@@ -47,11 +47,34 @@ export const myStore = new Store<IMyStoreState>({
 });
 ```
 
+### React useHooks
+
+```typescript
+import React, { FC } from 'react';
+import { useStore } from 'react-stores';
+import { myStore } from './myStore';
+
+export const Component: FC = () => {
+  const myStoreState = useStore(myStore);
+
+  return (
+    <div>
+      {myStoreState.counter}
+    <div/>
+  );
+}
+
+// Invoke this code somewhere outside Component and it will be re-rendered
+myStore.setState({
+  counter: 2,
+});
+```
+
 ### Event-driven component
 
 ```typescript jsx
 // EventDrivenComponent.tsx
-import * as React from 'react';
+import React from 'react';
 import { StoreEvent, StoreEventType } from 'react-stores';
 import { myStore, IMyStoreState } from './myStore';
 
@@ -93,7 +116,7 @@ export class EventDrivenComponent extends React.Component<any, State> {
 
 ```typescript jsx
 // FollowStoreComponent.tsx
-import * as React from 'react';
+import React from 'react';
 import { followStore } from 'react-stores';
 import { myStore } from './myStore';
 
@@ -108,10 +131,10 @@ export class CounterDecorator extends React.Component {
 }
 ```
 
-### Component Hooks
+### Advanced Component Hooks
 
 ```typescript
-import * as React from 'react';
+import React from 'react';
 import { useStore } from 'react-stores';
 import { myStore, IMyStoreState } from './myStore';
 
@@ -130,7 +153,7 @@ function recursiveFibonacci(num: number) {
   return recursiveFibonacci(num - 1) + recursiveFibonacci(num - 2);
 }
 
-export const MyHookComponent: React.FunctionComponent<IProps> = (props: IProps) => {
+export const MyHookComponent: React.FC<IProps> = (props: IProps) => {
   // Memoize your mapState function
   const mapState = React.useCallback(
     (state: IMyStoreState): IMappedState => ({
