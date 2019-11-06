@@ -197,18 +197,22 @@ export const Performance: React.FC = () => {
     event.remove();
   }, []);
 
-  const handleStart = useCallback(() => {
-    setUpdateCount(0);
-    setUpdatedObjectsCount(0);
-    setInProgress(true);
+  const handleStart = useCallback(
+    e => {
+      e.preventDefault();
+      setUpdateCount(0);
+      setUpdatedObjectsCount(0);
+      setInProgress(true);
 
-    setTimeout(() => {
-      fillUpStore(true, passCount);
-      fillUpStore(false, passCount);
-      setInProgress(false);
-      setResults(true);
-    }, 100);
-  }, [passCount]);
+      setTimeout(() => {
+        fillUpStore(true, passCount);
+        fillUpStore(false, passCount);
+        setInProgress(false);
+        setResults(true);
+      }, 100);
+    },
+    [passCount],
+  );
 
   return (
     <React.Fragment>

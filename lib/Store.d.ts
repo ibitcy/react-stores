@@ -2,14 +2,14 @@ import { StorePersistentDriver } from './StorePersistentDriver';
 import { StoreEventType, StoreEvent } from './StoreEvent';
 export interface StoreOptions {
     /**
-     * @deprecated since 3.x
+     * @deprecated since 3.x: use immutable flag instead
      */
     live?: boolean;
     /**
-     * @deprecated since 3.x
+     * @deprecated since 3.x: use immutable flag instead
      */
     freezeInstances?: boolean;
-    mutable?: boolean;
+    immutable?: boolean;
     persistence?: boolean;
     setStateTimeout?: number;
 }
