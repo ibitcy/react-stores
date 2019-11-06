@@ -553,9 +553,11 @@ describe('testStoreState', () => {
     storeMutable.state.objectsArray[0] = 123456;
 
     expect(JSON.stringify(storeMutable.state.objectsArray[0])).toEqual('123456');
+
+    done();
   });
 
-  it('deep objects instance mutations', done => {
+  it('deep objects instance mutations immutable', done => {
     store.resetState();
 
     const newObjArr1 = store.state.objectsArray.concat();
@@ -573,18 +575,60 @@ describe('testStoreState', () => {
     expect(store.state.objectsArray[0]['a']).toEqual(1);
 
     const newObjArr2 = store.state.objectsArray.concat();
-    newObjArr2[0]['a'] = 2;
+
+    expect(() => {
+      newObjArr2[0]['a'] = 2;
+    }).toThrow();
+
     store.setState({
       objectsArray: newObjArr2,
     });
-    expect(store.state.objectsArray[0]['a']).toEqual(2);
+    expect(store.state.objectsArray[0]['a']).toEqual(1);
 
     const newObjArr3 = store.state.objectsArray.concat();
-    newObjArr3[0]['setA'](3);
+
+    expect(() => {
+      newObjArr3[0]['setA'](3);
+    });
+
     store.setState({
       objectsArray: newObjArr3,
     });
-    expect(store.state.objectsArray[0]['a']).toEqual(3);
+    expect(store.state.objectsArray[0]['a']).toEqual(1);
+
+    done();
+  });
+
+  it('deep objects instance mutations mutable', done => {
+    storeMutable.resetState();
+
+    const newObjArr1 = storeMutable.state.objectsArray.concat();
+    const TheClass = function(a) {
+      this.a = a;
+      this.setA = function(a) {
+        this.a = a;
+      };
+    };
+
+    newObjArr1[0] = new TheClass(1);
+    storeMutable.setState({
+      objectsArray: newObjArr1,
+    });
+    expect(storeMutable.state.objectsArray[0]['a']).toEqual(1);
+
+    const newObjArr2 = storeMutable.state.objectsArray.concat();
+    newObjArr2[0]['a'] = 2;
+    storeMutable.setState({
+      objectsArray: newObjArr2,
+    });
+    expect(storeMutable.state.objectsArray[0]['a']).toEqual(2);
+
+    const newObjArr3 = storeMutable.state.objectsArray.concat();
+    newObjArr3[0]['setA'](3);
+    storeMutable.setState({
+      objectsArray: newObjArr3,
+    });
+    expect(storeMutable.state.objectsArray[0]['a']).toEqual(3);
 
     done();
   });

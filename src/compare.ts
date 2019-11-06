@@ -4,10 +4,13 @@ function isPrimitive(object: any) {
     case 'boolean':
     case 'number':
     case 'string':
-    case 'symbol':
+    case 'symbol': {
       return true;
-    default:
+    }
+
+    default: {
       return false;
+    }
   }
 }
 
@@ -65,6 +68,7 @@ export function areSimilar(a: any, b: any, ...exceptionList: Array<string>): boo
       return false;
     }
   }
+
   for (let i = keysA.length - 1; i >= 0; i--) {
     const key = keysA[i];
     // just compare if not in the exception list.
