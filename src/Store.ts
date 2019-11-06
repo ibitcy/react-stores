@@ -5,14 +5,14 @@ import { StoreEventType, StoreEvent } from './StoreEvent';
 
 export interface StoreOptions {
   /**
-   * @deprecated since 3.x
+   * @deprecated since 3.x: use immutable flag instead
    */
   live?: boolean;
   /**
-   * @deprecated since 3.x
+   * @deprecated since 3.x: use immutable flag instead
    */
   freezeInstances?: boolean;
-  mutable?: boolean;
+  immutable?: boolean;
   persistence?: boolean;
   setStateTimeout?: number;
 }
@@ -25,15 +25,9 @@ export class Store<StoreState> {
   private frozenState: StoreState = null;
 
   private opts: StoreOptions = {
-    /**
-     * @deprecated since 3.x
-     */
     live: false,
-    /**
-     * @deprecated since 3.x
-     */
     freezeInstances: false,
-    mutable: false,
+    immutable: false,
     persistence: false,
     setStateTimeout: 0,
   };
@@ -52,8 +46,7 @@ export class Store<StoreState> {
     this.id = this.generateStoreId(initialState);
 
     if (options) {
-      this.opts.freezeInstances = options.freezeInstances === true;
-      this.opts.mutable = options.mutable === true;
+      this.opts.immutable = options.immutable === true;
       this.opts.persistence = options.persistence === true;
       this.opts.setStateTimeout = options.setStateTimeout;
     }
@@ -82,9 +75,7 @@ export class Store<StoreState> {
   }
 
   deepFreeze(obj: any): any {
-    if (this.opts.mutable) {
-      return obj;
-    } else {
+    if (this.opts.immutable) {
       const propNames = Object.getOwnPropertyNames(obj);
 
       for (const key in propNames) {
@@ -96,6 +87,8 @@ export class Store<StoreState> {
       }
 
       return Object.freeze(obj);
+    } else {
+      return obj;
     }
   }
 

@@ -129,12 +129,12 @@ const generateComplexItems = (passCount: number, nestedPassNumber: number) => {
 
 const performanceStoreImmutable = new Store<StoreState>(initialStoreState, {
   persistence: false,
-  mutable: false,
+  immutable: true,
 });
 
 const performanceStoreMutable = new Store<StoreState>(initialStoreState, {
   persistence: false,
-  mutable: true,
+  immutable: false,
 });
 
 const PASS_COUNT = 100;
@@ -201,10 +201,13 @@ export const Performance: React.FC = () => {
     setUpdateCount(0);
     setUpdatedObjectsCount(0);
     setInProgress(true);
-    fillUpStore(true, passCount);
-    fillUpStore(false, passCount);
-    setInProgress(false);
-    setResults(true);
+
+    setTimeout(() => {
+      fillUpStore(true, passCount);
+      fillUpStore(false, passCount);
+      setInProgress(false);
+      setResults(true);
+    }, 100);
   }, [passCount]);
 
   return (
@@ -240,45 +243,59 @@ export const Performance: React.FC = () => {
         </span>
       </form>
 
-      {inProgress && <div>Progress...</div>}
-
       {results && (
         <div className='row'>
           <div className='component'>
             <h2>Mutable results</h2>
-            <p>
-              Store updates count: <strong>{updateCount}</strong>
-            </p>
-            <p>
-              Store objects updated: <strong>{updatedObjectsCount}</strong>
-            </p>
-            <p>
-              Time:{' '}
-              <strong>
-                {performanceStoreMutableState.endDate.getTime() - performanceStoreMutableState.startDate.getTime()}ms
-              </strong>
-            </p>
-            Pass count: <strong>{performanceStoreMutableState.passCount}</strong>
+
+            {inProgress ? (
+              <div>Progress...</div>
+            ) : (
+              <div>
+                <p>
+                  Store updates count: <strong>{updateCount}</strong>
+                </p>
+                <p>
+                  Store objects updated: <strong>{updatedObjectsCount}</strong>
+                </p>
+                <p>
+                  Time:{' '}
+                  <strong>
+                    {performanceStoreMutableState.endDate.getTime() - performanceStoreMutableState.startDate.getTime()}
+                    ms
+                  </strong>
+                </p>
+                Pass count: <strong>{performanceStoreMutableState.passCount}</strong>
+              </div>
+            )}
           </div>
 
           <div className='col-separator' />
 
           <div className='component'>
             <h2>Immutable results</h2>
-            <p>
-              Store updates count: <strong>{updateCount}</strong>
-            </p>
-            <p>
-              Store objects updated: <strong>{updatedObjectsCount}</strong>
-            </p>
-            <p>
-              Time:{' '}
-              <strong>
-                {performanceStoreImmutableState.endDate.getTime() - performanceStoreImmutableState.startDate.getTime()}
-                ms
-              </strong>
-            </p>
-            Pass count: <strong>{performanceStoreImmutableState.passCount}</strong>
+
+            {inProgress ? (
+              <div>Progress...</div>
+            ) : (
+              <div>
+                <p>
+                  Store updates count: <strong>{updateCount}</strong>
+                </p>
+                <p>
+                  Store objects updated: <strong>{updatedObjectsCount}</strong>
+                </p>
+                <p>
+                  Time:{' '}
+                  <strong>
+                    {performanceStoreImmutableState.endDate.getTime() -
+                      performanceStoreImmutableState.startDate.getTime()}
+                    ms
+                  </strong>
+                </p>
+                Pass count: <strong>{performanceStoreImmutableState.passCount}</strong>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -44,7 +44,6 @@ export const pageStore = new Store<{ page: EPage }>(
     page: EPage.Components,
   },
   {
-    persistence: true,
+    persistence: false,
   },
-  new StorePersistentLocalStorageDriver('page'),
 );

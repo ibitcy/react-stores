@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Complex } from './complex';
 import { Counter } from './Counter';
 import { CounterEvents } from './CounterEvents';
@@ -29,15 +29,20 @@ const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
 export const Container: React.FC = () => {
   const pageStoreState = useStore(pageStore);
   const [items, setItems] = useState([]);
+  const setPage = useCallback(() => {
+    const hashPage = EPage[location.hash.replace('#', '')];
+
+    pageStore.setState({
+      page: hashPage ? hashPage : EPage.Components,
+    });
+  }, []);
 
   useEffect(() => {
     window.onhashchange = () => {
-      const hashPage = EPage[location.hash.replace('#', '')];
-
-      pageStore.setState({
-        page: hashPage ? hashPage : EPage.Components,
-      });
+      setPage();
     };
+
+    setPage();
   }, []);
 
   const handleIterateStateValue = e => {
