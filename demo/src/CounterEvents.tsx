@@ -1,6 +1,6 @@
 import React from 'react';
 import { StoreEvent, StoreEventType } from '../../src';
-import { store, StoreState } from './store';
+import { stores, StoreState } from './stores';
 
 interface Props {}
 
@@ -16,7 +16,7 @@ export class CounterEvents extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.event = store.on(StoreEventType.All, (storeState: StoreState) => {
+    this.event = stores.on(StoreEventType.All, (storeState: StoreState) => {
       this.setState({
         commonStoreState: storeState,
       });
@@ -43,8 +43,8 @@ export class CounterEvents extends React.Component<Props, State> {
 
           <button
             onClick={() => {
-              store.setState({
-                counter: store.state.counter + 1,
+              stores.setState({
+                counter: stores.state.counter + 1,
               });
             }}>
             Store +1

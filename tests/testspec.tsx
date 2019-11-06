@@ -4,38 +4,10 @@ import React from 'react';
 import { render, cleanup, act } from '@testing-library/react';
 import { Store, StoreEventType, useStore } from '../src';
 
-const initialState: StoreState = Object.freeze({
-  nullObj: null,
-  counter: 0,
-  foo: 'foo',
-  numericArray: [1, 2, 3],
-  objectsArray: [
-    {
-      a: 1,
-      b: 2,
-      c: 3,
-    },
-    {
-      a: 3,
-      b: 2,
-      c: {
-        a: 1,
-        b: [1, 2, 3],
-      },
-      d: [{ id: 1, name: 'test 1', enabled: true }, { id: 2, name: 'test 2', enabled: false }],
-    },
-  ],
-  settings: {
-    foo: {
-      bar: 1,
-    },
-    baz: 2,
-  },
-});
+const initialState = `{"nullObj":null,"counter":0,"foo":"foo","numericArray":[1,2,3],"objectsArray":[{"a":1,"b":2,"c":3},{"a":3,"b":2,"c":{"a":1,"b":[1,2,3]},"d":[{"id":1,"name":"test 1","enabled":true},{"id":2,"name":"test 2","enabled":false}]}],"settings":{"foo":{"bar":1},"baz":2}}`;
 
-const store: Store<StoreState> = new Store<StoreState>(initialState, {
-  live: true,
-});
+const store = new Store<StoreState>(JSON.parse(initialState), { mutable: false });
+const storeMutable = new Store<StoreState>(JSON.parse(initialState), { mutable: true });
 
 class Actions {
   public static increaseCounter(): void {
@@ -143,7 +115,7 @@ describe('testStoreState', () => {
     done();
   });
 
-  it('bar should be setted to 100', done => {
+  it('bar should be set to 100', done => {
     store.resetState();
     Actions.setSettings(100, 200);
 
@@ -151,7 +123,7 @@ describe('testStoreState', () => {
     done();
   });
 
-  it('baz should be setted to 200', done => {
+  it('baz should be set to 200', done => {
     store.resetState();
     Actions.setSettings(100, 200);
 
@@ -159,7 +131,7 @@ describe('testStoreState', () => {
     done();
   });
 
-  it('bar should be resetted to 1', done => {
+  it('bar should be reset to 1', done => {
     store.resetState();
     Actions.setSettings(100, 200);
     store.resetState();
@@ -184,7 +156,7 @@ describe('testStoreState', () => {
     store.resetState();
 
     const result: string = JSON.stringify(store.state);
-    const etalon: string = JSON.stringify(initialState);
+    const etalon: string = JSON.stringify(JSON.parse(initialState));
 
     expect(result).toEqual(etalon);
     done();
@@ -272,7 +244,7 @@ describe('testStoreState', () => {
     objectsArray[1] = [];
 
     store.setState({
-      objectsArray: objectsArray,
+      objectsArray,
     });
 
     const result: string = JSON.stringify([]);
@@ -401,7 +373,7 @@ describe('testStoreState', () => {
       counter: 0,
     });
 
-    expect(updated).toEqual('false');
+    expect(updated).toEqual('true');
     done();
   });
 
@@ -477,19 +449,16 @@ describe('testStoreState', () => {
     done();
   });
 
-  it('unnecessary updates', done => {
+  it('update counter', done => {
     store.resetState();
 
     let eventCount = 0;
 
-    const event = store.on(
-      StoreEventType.All,
-      (storeState: StoreState, prevState: StoreState, type: StoreEventType) => {
-        if (type !== StoreEventType.DumpUpdate) {
-          eventCount++;
-        }
-      },
-    );
+    const event = store.on(StoreEventType.Update, (storeState, prevState, type) => {
+      if (type !== StoreEventType.DumpUpdate) {
+        eventCount++;
+      }
+    });
 
     store.setState({
       counter: 0,
@@ -505,16 +474,16 @@ describe('testStoreState', () => {
 
     event.remove();
 
-    expect(eventCount).toEqual(1);
+    expect(eventCount).toEqual(3);
     done();
   });
 
-  it('bulk update', done => {
+  it('bulk update count', done => {
     store.resetState();
 
     let eventCount = 0;
 
-    const event = store.on(StoreEventType.Update, (storeState, prevState, type) => {
+    const event = store.on(StoreEventType.Update, () => {
       eventCount++;
     });
 
@@ -522,9 +491,6 @@ describe('testStoreState', () => {
       nullObj: null,
       counter: 0,
       foo: 'foo',
-    });
-
-    store.setState({
       numericArray: [1, 2, 3],
     });
 
@@ -551,18 +517,42 @@ describe('testStoreState', () => {
     done();
   });
 
-  it('deep objects direct assign throws', done => {
+  it('objects direct assign throw', done => {
     store.resetState();
 
-    const newObjArr = store.state.objectsArray;
-
     expect(() => {
-      newObjArr[0] = {
-        test: 1,
-      };
+      store.state.objectsArray = null;
     }).toThrow();
 
     done();
+  });
+
+  it('objects direct assign throw', done => {
+    store.resetState();
+
+    expect(() => {
+      store.state.objectsArray = null;
+    }).toThrow();
+
+    done();
+  });
+
+  it('deep objects direct assign throw', done => {
+    store.resetState();
+
+    expect(() => {
+      store.state.objectsArray[0] = 123;
+    }).toThrow();
+
+    done();
+  });
+
+  it('deep object direct assign mutable', done => {
+    storeMutable.resetState();
+
+    storeMutable.state.objectsArray[0] = 123456;
+
+    expect(JSON.stringify(storeMutable.state.objectsArray[0])).toEqual('123456');
   });
 
   it('deep objects instance mutations', done => {
@@ -612,7 +602,7 @@ describe('useStore hook', () => {
     let counter: number;
     hookTester(() => ({ counter } = useStore(store)));
 
-    expect(counter).toEqual(initialState.counter);
+    expect(counter).toEqual(JSON.parse(initialState).counter);
   });
 
   it('Should change state after store update', () => {
@@ -645,7 +635,7 @@ describe('useStore hook', () => {
       });
     });
 
-    expect(counter).toEqual(initialState.counter);
+    expect(counter).toEqual(JSON.parse(initialState).counter);
   });
 
   it('Should map state', () => {
@@ -659,7 +649,7 @@ describe('useStore hook', () => {
         })),
     );
 
-    expect(foo).toBe(initialState.foo);
+    expect(foo).toBe(JSON.parse(initialState).foo);
   });
 
   it('Should change maped state', () => {

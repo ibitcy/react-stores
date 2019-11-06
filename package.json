@@ -1,6 +1,6 @@
 {
   "name": "react-stores",
-  "version": "2.12.2",
+  "version": "3.0.0",
   "keywords": [
     "react",
     "stores",
@@ -50,9 +50,7 @@
   },
   "author": "IBIT LTD.",
   "license": "MIT",
-  "dependencies": {
-    "freezer-js": "^0.14.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@size-limit/preset-small-lib": "^2.1.6",
     "@testing-library/react": "^9.3.2",

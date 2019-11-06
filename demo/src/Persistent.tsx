@@ -1,6 +1,6 @@
 import React from 'react';
 import { followStore } from '../../src';
-import { persistentStore } from './store';
+import { persistentStore } from './stores';
 
 interface Props {}
 

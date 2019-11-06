@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { store } from './store';
+import { stores } from './stores';
 import { useStore } from '../../src';
 
 export const Counter: React.FC = () => {
-  const storeState = useStore(store);
+  const storeState = useStore(stores);
   const [storeUpdatesCounter, setStoreUpdatesCounter] = useState(0);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export const Counter: React.FC = () => {
       <p />
       <button
         onClick={() => {
-          store.setState({
+          stores.setState({
             counter: storeState.counter + 1,
           });
         }}>

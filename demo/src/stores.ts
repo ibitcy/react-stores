@@ -5,17 +5,24 @@ export interface StoreState {
   foo: string;
 }
 
-const initialState: StoreState = {
+export enum EPage {
+  Components = 'Components',
+  Persistent = 'Persistent',
+  Snapshots = 'Snapshots',
+  Performance = 'Performance',
+}
+
+const initialStoreState: StoreState = {
   counter: 0,
   foo: 'foo',
 };
 
-export const store = new Store<StoreState>(initialState, {
+export const stores = new Store<StoreState>(initialStoreState, {
   live: true,
 });
 
 export const persistentStore = new Store<StoreState>(
-  initialState,
+  initialStoreState,
   {
     live: true,
     persistence: true,
@@ -24,10 +31,20 @@ export const persistentStore = new Store<StoreState>(
 );
 
 export const historyStore = new Store<StoreState>(
-  initialState,
+  initialStoreState,
   {
     live: true,
     persistence: true,
   },
   new StorePersistentLocalStorageDriver('demoHistory'),
+);
+
+export const pageStore = new Store<{ page: EPage }>(
+  {
+    page: EPage.Components,
+  },
+  {
+    persistence: true,
+  },
+  new StorePersistentLocalStorageDriver('page'),
 );
