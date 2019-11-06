@@ -188,7 +188,7 @@ Any object corresponding to StoreState interface.
 
 | Property          | Type      | Default | Optional | Description                                                                                                                                                                    |
 | ----------------- | --------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `mutable`         | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, bud increased performance (see https://ibitcy.github.io/react-stores/?#Performance) |
+| `immutable`       | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, bud increased performance (see https://ibitcy.github.io/react-stores/?#Performance) |
 | `persistence`     | `boolean` | `false` | Yes      | Enables persistent mode using LocalStorage persistence of custom StorePersistentDriver                                                                                         |
 | `setStateTimeout` | `number`  | `0`     | Yes      | Store state updates with timeout                                                                                                                                               |
 
