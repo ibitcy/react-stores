@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Complex } from './complex';
 import { Counter } from './Counter';
 import { CounterEvents } from './CounterEvents';
@@ -8,7 +8,7 @@ import { EPage, historyStore, pageStore, persistentStore, stores } from './store
 import { History } from './history';
 import { useStore } from '../../src';
 import { Performance } from './Performance';
-import packageJson from '../../package.json';
+import * as packageJson from '../../package.json';
 
 const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
   const pageStoreState = useStore(pageStore);
@@ -16,9 +16,7 @@ const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
 
   const handleClick = (e, id) => {
     e.preventDefault();
-    pageStore.setState({
-      page: id,
-    });
+    location.hash = `#${pageId}`;
   };
 
   return (
@@ -31,6 +29,16 @@ const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
 export const Container: React.FC = () => {
   const pageStoreState = useStore(pageStore);
   const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    window.onhashchange = () => {
+      const hashPage = EPage[location.hash.replace('#', '')];
+
+      pageStore.setState({
+        page: hashPage ? hashPage : EPage.Components,
+      });
+    };
+  }, []);
 
   const handleIterateStateValue = e => {
     e.preventDefault();

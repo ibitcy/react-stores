@@ -137,15 +137,15 @@ const performanceStoreMutable = new Store<StoreState>(initialStoreState, {
   mutable: true,
 });
 
-const PASS_NUMBER = 1;
-const CRITICAL_MASS = 1000;
+const PASS_COUNT = 100;
+const PASS_COUNT_CRITICAL_MASS = 650;
 
 export const Performance: React.FC = () => {
   const performanceStoreMutableState = useStore(performanceStoreMutable);
   const performanceStoreImmutableState = useStore(performanceStoreImmutable);
   const [inProgress, setInProgress] = useState(false);
   const [results, setResults] = useState(false);
-  const [passCount, setPassNumber] = useState(PASS_NUMBER);
+  const [passCount, setPassNumber] = useState(PASS_COUNT);
   const [updateCount, setUpdateCount] = useState(0);
   const [updatedObjectsCount, setUpdatedObjectsCount] = useState(0);
 
@@ -230,7 +230,7 @@ export const Performance: React.FC = () => {
             }}
           />
           <button type='submit'>Start test</button>
-          {passCount >= CRITICAL_MASS && (
+          {passCount >= PASS_COUNT_CRITICAL_MASS && (
             <div className='warning'>
               <span>
                 <strong>Warning!</strong>&nbsp;Such count of mutations may result in your browser to hang on forever
