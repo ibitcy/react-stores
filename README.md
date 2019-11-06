@@ -36,7 +36,7 @@ npm run test
 
 ```typescript
 // myStore.ts
-import {Store} from 'react-stores';
+import { Store } from 'react-stores';
 
 export interface IMyStoreState {
   counter: number;
@@ -52,8 +52,8 @@ export const myStore = new Store<IMyStoreState>({
 ```typescript jsx
 // EventDrivenComponent.tsx
 import * as React from 'react';
-import {StoreEvent, StoreEventType} from 'react-stores';
-import {myStore, IMyStoreState} from './myStore';
+import { StoreEvent, StoreEventType } from 'react-stores';
+import { myStore, IMyStoreState } from './myStore';
 
 interface State {
   myStoreState: IMyStoreState;
@@ -68,11 +68,14 @@ export class EventDrivenComponent extends React.Component<any, State> {
 
   comonentDidMount() {
     // Add store state event binder
-    this.storeEvent = myStore.on(StoreEventType.All, (storeState: IMyStoreState, prevState: IMyStoreState, type: StoreEventType) => {
-      this.setState({
-        myStoreState: storeState,
-      });
-    });
+    this.storeEvent = myStore.on(
+      StoreEventType.All,
+      (storeState: IMyStoreState, prevState: IMyStoreState, type: StoreEventType) => {
+        this.setState({
+          myStoreState: storeState,
+        });
+      },
+    );
   }
 
   componentDidUnmount() {
@@ -91,8 +94,8 @@ export class EventDrivenComponent extends React.Component<any, State> {
 ```typescript jsx
 // FollowStoreComponent.tsx
 import * as React from 'react';
-import {followStore} from 'react-stores';
-import {myStore} from './myStore';
+import { followStore } from 'react-stores';
+import { myStore } from './myStore';
 
 // You can use multiple follows
 // @followStore(myStore)
@@ -109,8 +112,8 @@ export class CounterDecorator extends React.Component {
 
 ```typescript
 import * as React from 'react';
-import {useStore} from 'react-stores';
-import {myStore, IMyStoreState} from './myStore';
+import { useStore } from 'react-stores';
+import { myStore, IMyStoreState } from './myStore';
 
 interface IMappedState {
   counter: string;
@@ -137,10 +140,7 @@ export const MyHookComponent: React.FunctionComponent<IProps> = (props: IProps) 
   );
 
   // Get your state form store
-  const {counter} = useStore<IMyStoreState, IMappedState>(
-    myStore,
-    mapState,
-  );
+  const { counter } = useStore<IMyStoreState, IMappedState>(myStore, mapState);
 
   return <p>Counter: {counter}</p>;
 };
@@ -149,7 +149,7 @@ export const MyHookComponent: React.FunctionComponent<IProps> = (props: IProps) 
 ### Mutating store state
 
 ```typescript
-import {myStore} from './myStore';
+import { myStore } from './myStore';
 
 myStore.setState({
   counter: 9999,
@@ -159,7 +159,7 @@ myStore.setState({
 ### Read store state value
 
 ```typescript
-import {myStore} from './myStore';
+import { myStore } from './myStore';
 
 console.log(myStore.state.counter); // 9999
 ```
@@ -186,11 +186,11 @@ Any object corresponding to StoreState interface.
 
 #### StoreOptions
 
-| Property          | Type      | Default | Optional | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ----------------- | --------- | ------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `live`            | `boolean` | `false` | Yes      | With live mode on, freezer emits the update events just when the changes happen, instead of batching all the changes and emiting the event on the next tick. This is useful if you want freezer to store input field values.                                                                                                                                                                                                                                                                                                                             |
-| `freezeInstances` | `boolean` | `false` | Yes      | It's possible to store class instances in freezer. They are handled like strings or numbers, added to the state like non-frozen leaves. Keep in mind that if their internal state changes, freezer won't emit any update event. If you want freezer to handle them as freezer nodes, set 'freezerInstances: true'. They will be frozen and you will be able to update their attributes using freezer methods, but remember that any instance method that update its internal state may fail (the instance is frozen) and wouldn't emit any update event. |
-| `mutable`         | `boolean` | `false` | Yes      | Once you get used to freezer, you can see that immutability is not necessary if you learn that you shouldn't update the data directly. In that case, disable immutability in the case that you need a small performance boost.                                                                                                                                                                                                                                                                                                                           |
+| Property          | Type      | Default | Optional | Description                                                                                                                                                                    |
+| ----------------- | --------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `mutable`         | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, bud increased performance (see https://ibitcy.github.io/react-stores/?#Performance) |
+| `persistence`     | `boolean` | `false` | Yes      | Enables persistent mode using LocalStorage persistence of custom StorePersistentDriver                                                                                         |
+| `setStateTimeout` | `number`  | `0`     | Yes      | Store state updates with timeout                                                                                                                                               |
 
 #### Store methods
 
@@ -241,58 +241,6 @@ const myStore = new Store<IMyStoreState>(initialState, new StorePersistentLocalS
 ```
 
 Also, you can implement your own persistence driver by implementing `StorePersistentDriver` abstract class.
-
-## Deprecated entities
-
-### Create a StoreComponent (deprecated)
-
-```typescript jsx
-import * as React from 'react';
-import {Store, StoreComponent} from 'react-stores';
-import {myStore, IMyStoreState} from './myStore';
-
-interface IStoresState {
-  myStore: Store<IMyStoreState>;
-}
-
-export class MyStoreComponent extends StoreComponent<any, any, IStoresState> {
-  constructor(props: any) {
-    super(props, {
-      myStore,
-    });
-  }
-
-  private increase = () => {
-    this.stores.myStore.setState({
-      counter: this.stores.myStore.state.counter + 1,
-    });
-  };
-
-  render() {
-    return (
-      <>
-        <p>Counter: {this.stores.myStore.state.counter.toString()}</p>
-        <button onClick={this.increase}>Increase counter</button>
-      </>
-    );
-  }
-}
-```
-
-### StoreComponent's lifecycle proxy methods (deprecated)
-
-These methods are proxies for React.Component lifecycle methods, if you considered using StroeComponent you should use them instead of original ones.
-
-```typescript
-storeComponentDidMount(): void
-storeComponentWillUnmount(): void
-storeComponentWillReceiveProps(nextProps:Props): void
-storeComponentWillUpdate(nextProps:Props, nextState:State): void
-storeComponentDidUpdate(prevProps:Props, prevState:State): void
-shouldStoreComponentUpdate(nextProps:Props, nextState:State): boolean
-storeComponentStoreWillUpdate(): void
-storeComponentStoreDidUpdate(): void
-```
 
 ## License
 
