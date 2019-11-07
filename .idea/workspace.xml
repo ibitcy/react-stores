@@ -119,9 +119,9 @@
       <list>
         <item itemvalue="npm.release:demo" />
         <item itemvalue="npm.demo" />
-        <item itemvalue="Jest.testspec.tsx" />
         <item itemvalue="Jest.testStoreState.deep objects instance mutations mutable" />
         <item itemvalue="Jest.testStoreState.deep objects instance mutations" />
+        <item itemvalue="Jest.testspec.tsx" />
       </list>
     </recent_temporary>
   </component>
