@@ -5,3 +5,4 @@ dist
 .rpt2_cache
 .history
 .idea
+yarn-error.log

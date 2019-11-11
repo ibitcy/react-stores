@@ -1,10 +1,16 @@
 import { StorePersistentDriver } from './StorePersistentDriver';
 import { StoreEventType, StoreEvent } from './StoreEvent';
 export interface StoreOptions {
+    /**
+     * @deprecated since 3.x: use immutable flag instead
+     */
     live?: boolean;
-    persistence?: boolean;
+    /**
+     * @deprecated since 3.x: use immutable flag instead
+     */
     freezeInstances?: boolean;
-    mutable?: boolean;
+    immutable?: boolean;
+    persistence?: boolean;
     setStateTimeout?: number;
 }
 export declare class Store<StoreState> {
@@ -12,13 +18,14 @@ export declare class Store<StoreState> {
     components: any[];
     readonly id: string;
     private eventManager;
-    private readonly frozenState;
     private readonly initialState;
+    private frozenState;
     private opts;
+    get state(): StoreState;
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState>);
-    readonly state: StoreState;
+    deepFreeze(obj: any): any;
     private hashCode;
-    private generateStoreName;
+    private generateStoreId;
     resetPersistence(): void;
     resetDumpHistory(): void;
     saveDump(): number;

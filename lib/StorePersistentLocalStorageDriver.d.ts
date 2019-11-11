@@ -2,7 +2,7 @@ import { StorePersistentDriver, StorePersistentPacket } from './StorePersistentD
 export declare class StorePersistentLocalStorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
     readonly name: string;
     readonly lifetime: number;
-    private storage;
+    readonly storage: any;
     type: string;
     constructor(name: string, lifetime?: number);
     write(pack: StorePersistentPacket<StoreState>): void;

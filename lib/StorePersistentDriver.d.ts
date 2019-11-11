@@ -21,6 +21,6 @@ export declare abstract class StorePersistentDriver<StoreState> {
     abstract removeDump(timestamp: number): any;
     pack(data: StoreState): StorePersistentPacket<StoreState>;
     reset(): StorePersistentPacket<StoreState>;
-    readonly storeName: string;
-    readonly dumpHistoryName: string;
+    get storeName(): string;
+    get dumpHistoryName(): string;
 }

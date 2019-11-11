@@ -1,6 +1,6 @@
-import * as React from 'react';
-import {useStore} from '../lib';
-import {myStore, IMyStoreState} from './myStore';
+import React from 'react';
+import { useStore } from '../lib';
+import { myStore, IMyStoreState } from './myStore';
 
 interface IMappedState {
   counter: string;
@@ -17,7 +17,7 @@ function recursiveFibonacci(num: number) {
   return recursiveFibonacci(num - 1) + recursiveFibonacci(num - 2);
 }
 
-export const MyHookComponent: React.FunctionComponent<IProps> = ({index}) => {
+export const MyHookComponent: React.FunctionComponent<IProps> = ({ index }) => {
   // Memoize you mapState function
   const mapState = React.useCallback(
     (state: IMyStoreState): IMappedState => ({
@@ -27,7 +27,7 @@ export const MyHookComponent: React.FunctionComponent<IProps> = ({index}) => {
   );
 
   // Get your state form store
-  const {counter} = useStore<IMyStoreState, IMappedState>(myStore, {
+  const { counter } = useStore<IMyStoreState, IMappedState>(myStore, {
     mapState,
   });
 

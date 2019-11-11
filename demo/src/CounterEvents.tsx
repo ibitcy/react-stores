@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { StoreEvent, StoreEventType } from '../../src';
 import { stores, StoreState } from './stores';
 

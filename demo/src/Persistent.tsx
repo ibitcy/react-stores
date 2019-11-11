@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { followStore } from '../../src';
-import { storePersistent } from './stores';
+import { persistentStore } from './stores';
 
 interface Props {}
 
@@ -8,7 +8,7 @@ interface State {
   counter: number;
 }
 
-@followStore(storePersistent)
+@followStore(persistentStore)
 export class Persistent extends React.Component<Props, State> {
   state: State = {
     counter: 0,
@@ -29,18 +29,18 @@ export class Persistent extends React.Component<Props, State> {
           Local state counter: <strong>{this.state.counter.toString()}</strong>
         </p>
         <p>
-          Shared persistent counter: <strong>{storePersistent.state.counter.toString()}</strong>
+          Shared persistent counter: <strong>{persistentStore.state.counter.toString()}</strong>
         </p>
         <p>
-          Shared persistent foo: <strong>{storePersistent.state.foo}</strong>
+          Shared persistent foo: <strong>{persistentStore.state.foo}</strong>
         </p>
 
         <button onClick={this.plusOne.bind(this)}>Local +1</button>
 
         <button
           onClick={() => {
-            storePersistent.setState({
-              counter: storePersistent.state.counter + 1,
+            persistentStore.setState({
+              counter: persistentStore.state.counter + 1,
             });
           }}>
           Store +1
@@ -48,8 +48,8 @@ export class Persistent extends React.Component<Props, State> {
 
         <button
           onClick={() => {
-            storePersistent.setState({
-              foo: storePersistent.state.foo === 'foo' ? 'bar' : 'foo',
+            persistentStore.setState({
+              foo: persistentStore.state.foo === 'foo' ? 'bar' : 'foo',
             });
           }}>
           Store foobar toggle

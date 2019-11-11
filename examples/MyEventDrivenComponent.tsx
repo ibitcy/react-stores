@@ -1,7 +1,7 @@
 // MyEventDrivenComponent.tsx
-import * as React from 'react';
-import {StoreEvent, StoreEventType} from '../lib';
-import {myStore, IMyStoreState} from './myStore';
+import React from 'react';
+import { StoreEvent, StoreEventType } from '../lib';
+import { myStore, IMyStoreState } from './myStore';
 
 interface State {
   myStoreState: IMyStoreState;

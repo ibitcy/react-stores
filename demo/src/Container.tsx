@@ -1,108 +1,110 @@
-import * as React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Complex } from './complex';
 import { Counter } from './Counter';
 import { CounterEvents } from './CounterEvents';
 import { CounterDecorator } from './CounterDecorator';
 import { Persistent } from './persistent';
-import { stores, storePersistent, storeHistory } from './stores';
-import { followStore, Store, StorePersistentLocalStorageDriver } from '../../src';
+import { EPage, historyStore, pageStore, persistentStore, stores } from './stores';
 import { History } from './history';
+import { useStore } from '../../src';
+import { Performance } from './Performance';
+import * as packageJson from '../../package.json';
 
-interface Props {}
+const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
+  const pageStoreState = useStore(pageStore);
+  const className = pageId === pageStoreState.page ? 'active' : '';
 
-interface State {
-  items: { value: number }[];
-}
-
-const pageStore: Store<{ page: number }> = new Store<{ page: number }>(
-  {
-    page: 0,
-  },
-  {
-    live: true,
-  },
-  new StorePersistentLocalStorageDriver('page'),
-);
-
-@followStore(pageStore)
-export class Container extends React.Component<Props, State> {
-  state = {
-    items: [],
+  const handleClick = (e, id) => {
+    e.preventDefault();
+    location.hash = `#${pageId}`;
   };
 
-  public render() {
-    return (
-      <>
-        <nav className='main-nav'>
-          <a className={pageStore.state.page === 0 ? 'active' : ''} href='#' onClick={this.handleClick.bind(this, 0)}>
-            Components
-          </a>
-          <a className={pageStore.state.page === 1 ? 'active' : ''} href='#' onClick={this.handleClick.bind(this, 1)}>
-            Persistent
-          </a>
-          <a className={pageStore.state.page === 2 ? 'active' : ''} href='#' onClick={this.handleClick.bind(this, 2)}>
-            Snapshots
-          </a>
-        </nav>
+  return (
+    <a className={className} href='#' onClick={e => handleClick(e, pageId)}>
+      {pageId}
+    </a>
+  );
+};
 
-        <div className='inner'>
-          {pageStore.state.page === 0 && (
-            <>
-              <h1>Components demo</h1>
-              <button onClick={() => stores.resetState()}>Reset store</button>
-              <button onClick={e => this.iterateStateValue(e)}>
-                Iterate parent state value <span className='label'>{this.state.items.length}</span>
-              </button>
-              <Complex />
-              <Counter items={this.state.items} />
-              <CounterEvents />
-              <CounterDecorator />
-            </>
-          )}
+export const Container: React.FC = () => {
+  const pageStoreState = useStore(pageStore);
+  const [items, setItems] = useState([]);
+  const setPage = useCallback(() => {
+    const hashPage = EPage[location.hash.replace('#', '')];
 
-          {pageStore.state.page === 1 && (
-            <>
-              <h1>Persistent store demo</h1>
-
-              <button onClick={() => storePersistent.resetPersistence()}>Reset persistence</button>
-
-              <button onClick={() => storePersistent.resetState()}>Reset store</button>
-
-              <Persistent />
-            </>
-          )}
-
-          {pageStore.state.page === 2 && (
-            <>
-              <h1>Snapshots demo</h1>
-
-              <button onClick={() => storeHistory.resetPersistence()}>Reset persistence</button>
-
-              <button onClick={() => storeHistory.resetState()}>Reset store</button>
-
-              <button onClick={() => storeHistory.resetDumpHistory()}>Reset history</button>
-
-              <button onClick={() => storeHistory.saveDump()}>Save dump</button>
-
-              <History />
-            </>
-          )}
-        </div>
-      </>
-    );
-  }
-
-  private iterateStateValue(e) {
-    e.preventDefault();
-    this.setState({
-      items: this.state.items.concat({ value: Math.random() }),
-    });
-  }
-
-  private handleClick(id, e) {
-    e.preventDefault();
     pageStore.setState({
-      page: id,
+      page: hashPage ? hashPage : EPage.Components,
     });
-  }
-}
+  }, []);
+
+  useEffect(() => {
+    window.onhashchange = () => {
+      setPage();
+    };
+
+    setPage();
+  }, []);
+
+  const handleIterateStateValue = e => {
+    e.preventDefault();
+    setItems(items.concat(Math.random()));
+  };
+
+  return (
+    <React.Fragment>
+      <nav className='main-nav'>
+        <NavItem pageId={EPage.Components} />
+        <NavItem pageId={EPage.Persistent} />
+        <NavItem pageId={EPage.Snapshots} />
+        <NavItem pageId={EPage.Performance} />
+      </nav>
+
+      <div className='inner'>
+        {pageStoreState.page === EPage.Components && (
+          <React.Fragment>
+            <h1>Components demo</h1>
+            <button onClick={() => stores.resetState()}>Reset store</button>
+            <button onClick={handleIterateStateValue}>
+              Iterate parent state value <span className='label'>{items.length}</span>
+            </button>
+            <Complex />
+            <Counter />
+            <CounterEvents />
+            <CounterDecorator />
+          </React.Fragment>
+        )}
+        {pageStoreState.page === EPage.Persistent && (
+          <React.Fragment>
+            <h1>Persistent store demo</h1>
+
+            <button onClick={() => persistentStore.resetPersistence()}>Reset persistence</button>
+            <button onClick={() => persistentStore.resetState()}>Reset store</button>
+
+            <Persistent />
+          </React.Fragment>
+        )}
+        {pageStoreState.page === EPage.Snapshots && (
+          <React.Fragment>
+            <h1>Snapshots demo</h1>
+
+            <button onClick={() => historyStore.resetPersistence()}>Reset persistence</button>
+            <button onClick={() => historyStore.resetState()}>Reset store</button>
+            <button onClick={() => historyStore.resetDumpHistory()}>Reset history</button>
+            <button onClick={() => historyStore.saveDump()}>Save dump</button>
+
+            <History />
+          </React.Fragment>
+        )}
+        {pageStoreState.page === EPage.Performance && (
+          <React.Fragment>
+            <h1>Performance test</h1>
+
+            <Performance />
+          </React.Fragment>
+        )}
+
+        <div className='version'>React Stores Version: {packageJson.version}</div>
+      </div>
+    </React.Fragment>
+  );
+};
