@@ -1,5 +1,5 @@
 import { StorePersistentDriver } from './StorePersistentDriver';
-import { StoreEventType, StoreEvent } from './StoreEvent';
+import { StoreEventType, StoreEvent, TOnFire, TOnFirePartial, StoreEventSpecificKeys } from './StoreEvent';
 export interface StoreOptions {
     /**
      * @deprecated since 3.x: use immutable flag instead
@@ -36,5 +36,6 @@ export declare class Store<StoreState> {
     resetState(): void;
     update(currentState: StoreState, prevState: StoreState): void;
     getInitialState(): StoreState;
-    on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void): StoreEvent<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFirePartial<StoreState>): StoreEvent<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEventSpecificKeys<StoreState>;
 }

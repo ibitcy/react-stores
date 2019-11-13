@@ -1,7 +1,9 @@
-import { StoreEvent, StoreEventType } from './StoreEvent';
+import { areSimilar } from './compare';
+import { omit } from './omit';
+import { StoreEvent, StoreEventSpecificKeys, StoreEventType, TOnFire, TOnFirePartial, TStoreEvent } from './StoreEvent';
 
 export class StoreEventManager<StoreState> {
-  private events: StoreEvent<StoreState>[] = [];
+  private events: Array<TStoreEvent<StoreState>> = [];
   private eventCounter: number = 0;
   private timeout: any = null;
 
@@ -11,7 +13,7 @@ export class StoreEventManager<StoreState> {
     return `${++this.eventCounter}${Date.now()}${Math.random()}`;
   }
 
-  public fire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event?: StoreEvent<StoreState>) {
+  public fire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event?: TStoreEvent<StoreState>) {
     if (event) {
       if (this.fireTimeout && this.fireTimeout !== 0) {
         if (event.timeout) {
@@ -52,26 +54,60 @@ export class StoreEventManager<StoreState> {
       }
     }
 
-    this.events = this.events.filter((event: StoreEvent<StoreState>) => {
+    this.events = this.events.filter((event: TStoreEvent<StoreState>) => {
       return event.id !== id;
     });
   }
 
+  // add overloads
+  public add(eventTypes: StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;
   public add(
     eventTypes: StoreEventType[],
-    callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void,
-  ): StoreEvent<StoreState> {
-    const event = new StoreEvent<StoreState>(this.generateEventId(), eventTypes, callback, id => {
-      this.remove(id);
-    });
+    callback: TOnFirePartial<StoreState>,
+    includeKeys: Array<keyof StoreState>,
+  ): StoreEventSpecificKeys<StoreState>;
+  public add(
+    eventTypes: StoreEventType[],
+    callback: TOnFire<StoreState> | TOnFirePartial<StoreState>,
+    includeKeys?: Array<keyof StoreState>,
+  ): TStoreEvent<StoreState> {
+    let event: TStoreEvent<StoreState>;
+
+    if (includeKeys) {
+      event = new StoreEventSpecificKeys<StoreState>(
+        this.generateEventId(),
+        eventTypes,
+        callback as TOnFirePartial<StoreState>,
+        id => {
+          this.remove(id);
+        },
+        includeKeys,
+      );
+    } else {
+      event = new StoreEvent<StoreState>(this.generateEventId(), eventTypes, callback as TOnFire<StoreState>, id => {
+        this.remove(id);
+      });
+    }
 
     this.events.push(event);
 
     return event;
   }
 
-  private doFire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event: StoreEvent<StoreState>) {
+  private doFire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event: TStoreEvent<StoreState>) {
     if (event.types.indexOf(type) >= 0 || event.types.indexOf(StoreEventType.All) >= 0) {
+      if (event instanceof StoreEventSpecificKeys) {
+        const excludedKeys = Object.keys(storeState).filter(
+          key => !event.includeKeys.includes(key as keyof StoreState),
+        );
+        if (!areSimilar(storeState, prevState, ...excludedKeys)) {
+          const omitedStoreState = omit(storeState, ...event.includeKeys);
+          const omitedPrevStoreState = omit(prevState, ...event.includeKeys);
+          event.onFire(omitedStoreState, omitedPrevStoreState, event.includeKeys, type);
+        }
+        return;
+      }
+
       event.onFire(storeState, prevState, type);
     }
   }

@@ -1,7 +1,7 @@
 import { StorePersistentDriver } from './StorePersistentDriver';
 import { StorePersistentLocalStorageDriver } from './StorePersistentLocalStorageDriver';
 import { StoreEventManager } from './StoreEventManager';
-import { StoreEventType, StoreEvent } from './StoreEvent';
+import { StoreEventType, StoreEvent, TOnFire, TOnFirePartial, StoreEventSpecificKeys, TStoreEvent } from './StoreEvent';
 
 export interface StoreOptions {
   /**
@@ -151,9 +151,9 @@ export class Store<StoreState> {
     const prevState = this.deepFreeze(this.frozenState);
     const updatedState = this.deepFreeze({ ...prevState, ...newState });
 
-    this.update(updatedState, prevState);
     this.persistenceDriver.write(this.persistenceDriver.pack(updatedState));
     this.frozenState = updatedState;
+    this.update(updatedState, prevState);
   }
 
   public resetState() {
@@ -184,15 +184,33 @@ export class Store<StoreState> {
     return this.initialState;
   }
 
+  // on overloads
   public on(
     eventType: StoreEventType | StoreEventType[],
-    callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void,
-  ): StoreEvent<StoreState> {
+    includeKeys: Array<keyof StoreState>,
+    callback: TOnFirePartial<StoreState>,
+  ): StoreEvent<StoreState>;
+  public on(
+    eventType: StoreEventType | StoreEventType[],
+    callback: TOnFire<StoreState>,
+  ): StoreEventSpecificKeys<StoreState>;
+  public on(
+    eventType: StoreEventType | StoreEventType[],
+    secondArg: TOnFire<StoreState> | Array<keyof StoreState>,
+    thirdArg?: TOnFirePartial<StoreState>,
+  ): TStoreEvent<StoreState> {
     const eventTypes: StoreEventType[] =
       eventType && eventType.constructor === Array
         ? (eventType as StoreEventType[])
         : ([eventType] as StoreEventType[]);
-    const event = this.eventManager.add(eventTypes, callback);
+
+    let event: StoreEvent<StoreState> | StoreEventSpecificKeys<StoreState>;
+
+    if (Array.isArray(secondArg)) {
+      event = this.eventManager.add(eventTypes, thirdArg, secondArg);
+    } else {
+      event = this.eventManager.add(eventTypes, secondArg);
+    }
 
     this.eventManager.fire(StoreEventType.Init, this.frozenState, this.frozenState, event);
     this.eventManager.fire(StoreEventType.DumpUpdate, this.frozenState, this.frozenState, event);

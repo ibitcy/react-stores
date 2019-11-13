@@ -4,12 +4,25 @@ export declare enum StoreEventType {
     Update = 2,
     DumpUpdate = 3
 }
+export declare type TOnFire<T> = (storeState: T, prevState: T, type?: StoreEventType) => void;
+export declare type TOnFirePartial<T> = (storeState: Partial<T>, prevState: Partial<T>, includeKeys: Array<keyof T>, type?: StoreEventType) => void;
+export declare type TStoreEvent<T> = StoreEvent<T> | StoreEventSpecificKeys<T>;
 export declare class StoreEvent<StoreState> {
     readonly id: string;
     readonly types: StoreEventType[];
-    readonly onFire: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void;
+    readonly onFire: TOnFire<StoreState>;
     readonly onRemove: (id: string) => void;
     timeout: any;
-    constructor(id: string, types: StoreEventType[], onFire: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void, onRemove: (id: string) => void);
+    constructor(id: string, types: StoreEventType[], onFire: TOnFire<StoreState>, onRemove: (id: string) => void);
+    remove(): void;
+}
+export declare class StoreEventSpecificKeys<StoreState> {
+    readonly id: string;
+    readonly types: StoreEventType[];
+    readonly onFire: TOnFirePartial<StoreState>;
+    readonly onRemove: (id: string) => void;
+    readonly includeKeys: Array<keyof StoreState>;
+    timeout: any;
+    constructor(id: string, types: StoreEventType[], onFire: TOnFirePartial<StoreState>, onRemove: (id: string) => void, includeKeys?: Array<keyof StoreState>);
     remove(): void;
 }

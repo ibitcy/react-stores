@@ -9,6 +9,10 @@ const initialState = `{"nullObj":null,"counter":0,"foo":"foo","numericArray":[1,
 const storeImmutable = new Store<StoreState>(JSON.parse(initialState), { immutable: true });
 const storeMutable = new Store<StoreState>(JSON.parse(initialState), { immutable: false });
 
+function callTimes(callback: () => any, times: number): void {
+  new Array(times).fill(1).forEach(callback);
+}
+
 class Actions {
   public static increaseCounter(): void {
     storeImmutable.setState({
@@ -63,9 +67,11 @@ interface StoreState {
 expect.extend(expectJsx);
 
 describe('testStoreState', () => {
-  it('check store id', done => {
+  beforeEach(() => {
     storeImmutable.resetState();
+  });
 
+  it('check store id', done => {
     for (let i = 0; i < 4; i++) {
       Actions.increaseCounter();
     }
@@ -75,8 +81,6 @@ describe('testStoreState', () => {
   });
 
   it('counter should be 4', done => {
-    storeImmutable.resetState();
-
     for (let i = 0; i < 4; i++) {
       Actions.increaseCounter();
     }
@@ -86,7 +90,6 @@ describe('testStoreState', () => {
   });
 
   it('foo should be bar', done => {
-    storeImmutable.resetState();
     Actions.toggleFooBar();
 
     expect(storeImmutable.state.foo).toEqual('bar');
@@ -94,7 +97,6 @@ describe('testStoreState', () => {
   });
 
   it('foo should be resetted to foo', done => {
-    storeImmutable.resetState();
     Actions.toggleFooBar();
     storeImmutable.resetState();
 
@@ -103,8 +105,6 @@ describe('testStoreState', () => {
   });
 
   it('counter should be resetted to 0', done => {
-    storeImmutable.resetState();
-
     for (let i = 0; i < 4; i++) {
       Actions.increaseCounter();
     }
@@ -116,7 +116,6 @@ describe('testStoreState', () => {
   });
 
   it('bar should be set to 100', done => {
-    storeImmutable.resetState();
     Actions.setSettings(100, 200);
 
     expect(storeImmutable.state.settings.foo.bar).toEqual(100);
@@ -124,7 +123,6 @@ describe('testStoreState', () => {
   });
 
   it('baz should be set to 200', done => {
-    storeImmutable.resetState();
     Actions.setSettings(100, 200);
 
     expect(storeImmutable.state.settings.baz).toEqual(200);
@@ -132,7 +130,6 @@ describe('testStoreState', () => {
   });
 
   it('bar should be reset to 1', done => {
-    storeImmutable.resetState();
     Actions.setSettings(100, 200);
     storeImmutable.resetState();
 
@@ -153,8 +150,6 @@ describe('testStoreState', () => {
   });
 
   it('store init test', done => {
-    storeImmutable.resetState();
-
     const result: string = JSON.stringify(storeImmutable.state);
     const etalon: string = JSON.stringify(JSON.parse(initialState));
 
@@ -163,8 +158,6 @@ describe('testStoreState', () => {
   });
 
   it('update numeric collection', done => {
-    storeImmutable.resetState();
-
     const newNumericArray = [3, 2];
 
     storeImmutable.setState({
@@ -179,8 +172,6 @@ describe('testStoreState', () => {
   });
 
   it('update objects collection', done => {
-    storeImmutable.resetState();
-
     const newObjectsArray: Object[] = [
       {
         x: 1,
@@ -209,8 +200,6 @@ describe('testStoreState', () => {
   });
 
   it('mutable test', done => {
-    storeImmutable.resetState();
-
     let objectsArrayFromStore: Object[] = storeImmutable.state.objectsArray;
 
     objectsArrayFromStore = [
@@ -237,8 +226,6 @@ describe('testStoreState', () => {
   });
 
   it('deep array object', done => {
-    storeImmutable.resetState();
-
     const objectsArray: Object[] = storeImmutable.state.objectsArray.concat();
 
     objectsArray[1] = [];
@@ -255,8 +242,6 @@ describe('testStoreState', () => {
   });
 
   it('event driven', done => {
-    storeImmutable.resetState();
-
     let counter: string = null;
 
     const event = storeImmutable.on(StoreEventType.Update, storeState => {
@@ -275,8 +260,6 @@ describe('testStoreState', () => {
   });
 
   it('store state replace', done => {
-    storeImmutable.resetState();
-
     for (let i = 0; i < 4; i++) {
       Actions.increaseCounter();
     }
@@ -303,7 +286,10 @@ describe('testStoreState', () => {
             a: 1,
             b: [1, 2, 3],
           },
-          d: [{ id: 1, name: 'test 1', enabled: true }, { id: 2, name: 'test 2', enabled: false }],
+          d: [
+            { id: 1, name: 'test 1', enabled: true },
+            { id: 2, name: 'test 2', enabled: false },
+          ],
         },
       ],
       settings: {
@@ -345,7 +331,10 @@ describe('testStoreState', () => {
             a: 1,
             b: [1, 2, 3],
           },
-          d: [{ id: 1, name: 'test 1', enabled: true }, { id: 2, name: 'test 2', enabled: false }],
+          d: [
+            { id: 1, name: 'test 1', enabled: true },
+            { id: 2, name: 'test 2', enabled: false },
+          ],
         },
       ],
       settings: {
@@ -361,8 +350,6 @@ describe('testStoreState', () => {
   });
 
   it('update trigger', done => {
-    storeImmutable.resetState();
-
     let updated: string = 'false';
 
     storeImmutable.on(StoreEventType.Update, storeState => {
@@ -378,8 +365,6 @@ describe('testStoreState', () => {
   });
 
   it('previous state', done => {
-    storeImmutable.resetState();
-
     let prev = '0';
 
     const event = storeImmutable.on(StoreEventType.Update, (storeState, prevState, type) => {
@@ -397,8 +382,6 @@ describe('testStoreState', () => {
   });
 
   it('update event trigger', done => {
-    storeImmutable.resetState();
-
     let eventType = null;
 
     const event = storeImmutable.on(StoreEventType.Update, (storeState, prevState, type) => {
@@ -416,8 +399,6 @@ describe('testStoreState', () => {
   });
 
   it('init event trigger', done => {
-    storeImmutable.resetState();
-
     let eventType = null;
 
     const event = storeImmutable.on(StoreEventType.Init, (storeState, prevState, type) => {
@@ -431,8 +412,6 @@ describe('testStoreState', () => {
   });
 
   it('all event trigger', done => {
-    storeImmutable.resetState();
-
     let eventCount = 0;
 
     const event = storeImmutable.on(StoreEventType.All, (storeState, prevState, type) => {
@@ -450,8 +429,6 @@ describe('testStoreState', () => {
   });
 
   it('update counter', done => {
-    storeImmutable.resetState();
-
     let eventCount = 0;
 
     const event = storeImmutable.on(StoreEventType.Update, (storeState, prevState, type) => {
@@ -479,8 +456,6 @@ describe('testStoreState', () => {
   });
 
   it('bulk update count', done => {
-    storeImmutable.resetState();
-
     let eventCount = 0;
 
     const event = storeImmutable.on(StoreEventType.Update, () => {
@@ -501,8 +476,6 @@ describe('testStoreState', () => {
   });
 
   it('deep objects mutation', done => {
-    storeImmutable.resetState();
-
     const newObjArr = storeImmutable.state.objectsArray.concat();
 
     newObjArr[0] = {
@@ -518,8 +491,6 @@ describe('testStoreState', () => {
   });
 
   it('objects direct assign throw', done => {
-    storeImmutable.resetState();
-
     expect(() => {
       storeImmutable.state.objectsArray = null;
     }).toThrow();
@@ -528,8 +499,6 @@ describe('testStoreState', () => {
   });
 
   it('objects direct assign throw', done => {
-    storeImmutable.resetState();
-
     expect(() => {
       storeImmutable.state.objectsArray = null;
     }).toThrow();
@@ -538,8 +507,6 @@ describe('testStoreState', () => {
   });
 
   it('deep objects direct assign throw', done => {
-    storeImmutable.resetState();
-
     expect(() => {
       storeImmutable.state.objectsArray[0] = 123;
     }).toThrow();
@@ -558,8 +525,6 @@ describe('testStoreState', () => {
   });
 
   it('deep objects instance mutations immutable', done => {
-    storeImmutable.resetState();
-
     const newObjArr1 = storeImmutable.state.objectsArray.concat();
     const TheClass = function(a) {
       this.a = a;
@@ -634,8 +599,45 @@ describe('testStoreState', () => {
   });
 });
 
+describe('inlcude keys', () => {
+  beforeEach(() => {
+    storeImmutable.resetState();
+  });
+
+  it('call event only if keys changed', done => {
+    let eventCount = 0;
+
+    const event = storeImmutable.on(StoreEventType.Update, ['counter'], (storeState, prevState, type) => {
+      eventCount++;
+    });
+
+    Actions.toggleFooBar();
+
+    event.remove();
+
+    expect(eventCount).toEqual(0);
+    done();
+  });
+
+  it('call event for watched keys', done => {
+    const COUNT = 3;
+    let eventCount = 0;
+
+    const event = storeImmutable.on(StoreEventType.Update, ['counter'], (storeState, prevState) => {
+g      eventCount++;
+    });
+
+    callTimes(Actions.increaseCounter, COUNT);
+
+    event.remove();
+
+    expect(eventCount).toEqual(COUNT);
+    done();
+  });
+});
+
 describe('useStore hook', () => {
-  afterEach(() => {
+  beforeEach(() => {
     act(() => {
       storeImmutable.resetState();
     });
