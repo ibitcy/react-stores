@@ -624,7 +624,7 @@ describe('inlcude keys', () => {
     let eventCount = 0;
 
     const event = storeImmutable.on(StoreEventType.Update, ['counter'], (storeState, prevState) => {
-g      eventCount++;
+      eventCount++;
     });
 
     callTimes(Actions.increaseCounter, COUNT);
