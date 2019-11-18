@@ -36,6 +36,6 @@ export declare class Store<StoreState> {
     resetState(): void;
     update(currentState: StoreState, prevState: StoreState): void;
     getInitialState(): StoreState;
-    on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFirePartial<StoreState>): StoreEvent<StoreState>;
-    on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEventSpecificKeys<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFirePartial<StoreState>): StoreEventSpecificKeys<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;
 }

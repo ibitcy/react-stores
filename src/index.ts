@@ -4,3 +4,4 @@ export * from './StorePersistentLocalStorageDriver';
 export * from './useStore';
 export { StoreEvent, StoreEventType } from './StoreEvent';
 export { StorePersistentDriver } from './StorePersistentDriver';
+export * from './compare';

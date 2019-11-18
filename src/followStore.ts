@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { StoreEventType, TStoreEvent } from './StoreEvent';
+import { StoreEventType, StoreEvent } from './StoreEvent';
 import { Store } from './Store';
 
 export const followStore = <StoreState>(store: Store<StoreState>) => (
   WrappedComponent: React.ComponentClass<any, any>,
 ): any => {
   class Component extends React.Component {
-    private storeEvent: TStoreEvent<StoreState> = null;
+    private storeEvent: StoreEvent<StoreState> = null;
 
     state = {
       storeState: null,

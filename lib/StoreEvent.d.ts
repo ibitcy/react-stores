@@ -5,7 +5,7 @@ export declare enum StoreEventType {
     DumpUpdate = 3
 }
 export declare type TOnFire<T> = (storeState: T, prevState: T, type?: StoreEventType) => void;
-export declare type TOnFirePartial<T> = (storeState: Partial<T>, prevState: Partial<T>, includeKeys: Array<keyof T>, type?: StoreEventType) => void;
+export declare type TOnFirePartial<T> = (storeState: T, prevState: T, includeKeys: Array<keyof T>, type?: StoreEventType) => void;
 export declare type TStoreEvent<T> = StoreEvent<T> | StoreEventSpecificKeys<T>;
 export declare class StoreEvent<StoreState> {
     readonly id: string;

@@ -189,11 +189,8 @@ export class Store<StoreState> {
     eventType: StoreEventType | StoreEventType[],
     includeKeys: Array<keyof StoreState>,
     callback: TOnFirePartial<StoreState>,
-  ): StoreEvent<StoreState>;
-  public on(
-    eventType: StoreEventType | StoreEventType[],
-    callback: TOnFire<StoreState>,
   ): StoreEventSpecificKeys<StoreState>;
+  public on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;
   public on(
     eventType: StoreEventType | StoreEventType[],
     secondArg: TOnFire<StoreState> | Array<keyof StoreState>,

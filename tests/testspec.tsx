@@ -2,7 +2,7 @@ import expect from 'expect';
 import expectJsx from 'expect-jsx';
 import React from 'react';
 import { render, cleanup, act } from '@testing-library/react';
-import { Store, StoreEventType, useStore } from '../src';
+import { Store, StoreEventType, useStore, areSimilar } from '../src';
 
 const initialState = `{"nullObj":null,"counter":0,"foo":"foo","numericArray":[1,2,3],"objectsArray":[{"a":1,"b":2,"c":3},{"a":3,"b":2,"c":{"a":1,"b":[1,2,3]},"d":[{"id":1,"name":"test 1","enabled":true},{"id":2,"name":"test 2","enabled":false}]}],"settings":{"foo":{"bar":1},"baz":2}}`;
 
@@ -756,14 +756,14 @@ describe('useStore hook', () => {
     cleanup();
   });
 
-  it('Should render initial value', () => {
+  it('render initial value', () => {
     let counter: number;
     hookTester(() => ({ counter } = useStore(storeImmutable)));
 
     expect(counter).toEqual(JSON.parse(initialState).counter);
   });
 
-  it('Should change state after store update', () => {
+  it('change state after store update', () => {
     const NEXT_COUNTER_VALUE = 2;
 
     let counter: number;
@@ -776,13 +776,12 @@ describe('useStore hook', () => {
     expect(counter).toEqual(NEXT_COUNTER_VALUE);
   });
 
-  it('Should affect on right StoreEventType', () => {
+  it('affect on right StoreEventType', () => {
     let counter: number;
     hookTester(
       () =>
         ({ counter } = useStore(storeImmutable, {
           eventType: StoreEventType.Init,
-          mapState: storeState => storeState,
         })),
     );
 
@@ -796,11 +795,25 @@ describe('useStore hook', () => {
     expect(counter).toEqual(JSON.parse(initialState).counter);
   });
 
-  it('Should map state', () => {
+  it('affect on right StoreEventType with overload function', () => {
+    let counter: number;
+    hookTester(() => ({ counter } = useStore(storeImmutable, StoreEventType.Init)));
+
+    const NEXT_COUNTER_VALUE = 2;
+    act(() => {
+      storeImmutable.setState({
+        counter: NEXT_COUNTER_VALUE,
+      });
+    });
+
+    expect(counter).toEqual(JSON.parse(initialState).counter);
+  });
+
+  it('mapState function map initial state', () => {
     let foo: string;
     hookTester(
       () =>
-        ({ foo } = useStore<StoreState, { foo: string }>(storeImmutable, {
+        ({ foo } = useStore(storeImmutable, {
           mapState: storeState => ({
             foo: storeState.foo,
           }),
@@ -810,17 +823,27 @@ describe('useStore hook', () => {
     expect(foo).toBe(JSON.parse(initialState).foo);
   });
 
-  it('Should change maped state', () => {
+  it('mapState function overload', () => {
+    let foo: string;
+    hookTester(
+      () =>
+        ({ foo } = useStore(storeImmutable, storeState => ({
+          foo: storeState.foo,
+        }))),
+    );
+
+    expect(foo).toBe(JSON.parse(initialState).foo);
+  });
+
+  it('change maped state', () => {
     let foo: string;
 
     hookTester(
       () =>
-        ({ foo } = useStore<StoreState, { foo: string }>(storeImmutable, {
-          mapState: storeState => {
-            return {
-              foo: storeState.foo,
-            };
-          },
+        ({ foo } = useStore(storeImmutable, {
+          mapState: storeState => ({
+            foo: storeState.foo,
+          }),
         })),
     );
 
@@ -833,14 +856,133 @@ describe('useStore hook', () => {
     expect(foo).toBe(NEXT_FOO_VALUE);
   });
 
-  function HookTester({ callback }) {
+  it('change maped simple state', () => {
+    let foo: string;
+
+    hookTester(
+      () =>
+        (foo = useStore(storeImmutable, {
+          mapState: storeState => storeState.foo,
+        })),
+    );
+
+    const NEXT_FOO_VALUE = 'bar';
+    act(() => {
+      storeImmutable.setState({
+        foo: NEXT_FOO_VALUE,
+      });
+    });
+    expect(foo).toBe(NEXT_FOO_VALUE);
+  });
+
+  it('mapState called even if param not changed', () => {
+    const rerender = jest.fn();
+
+    hookTester(() => useStore(storeImmutable, [StoreEventType.Update]), rerender);
+
+    act(() => {
+      storeImmutable.setState({
+        foo: JSON.parse(initialState).foo,
+      });
+    });
+
+    expect(rerender.mock.calls.length).toBe(1);
+  });
+
+  it('use compareFunction, update called once if mapped param not changed', () => {
+    const rerender = jest.fn();
+
+    hookTester(
+      () =>
+        useStore(
+          storeImmutable,
+          (state: StoreState) => ({ foo: state.foo }),
+          (a, b) => a.foo === b.foo,
+        ),
+      rerender,
+    );
+
+    act(() => {
+      storeImmutable.setState({
+        foo: JSON.parse(initialState).foo,
+      });
+    });
+
+    expect(rerender.mock.calls.length).toBe(0);
+  });
+
+  it('use compareFunction, update called once if mapped param not changed', () => {
+    const rerender = jest.fn();
+
+    hookTester(
+      () =>
+        useStore(
+          storeImmutable,
+          (state: StoreState) => ({ foo: state.foo }),
+          (a, b) => a.foo === b.foo,
+        ),
+      rerender,
+    );
+
+    act(() => {
+      storeImmutable.setState({
+        foo: JSON.parse(initialState).foo,
+      });
+    });
+
+    expect(rerender.mock.calls.length).toBe(0);
+  });
+
+  it('use areSimilar as compareFunction with mapping object', () => {
+    const rerender = jest.fn();
+
+    hookTester(
+      () => useStore(storeImmutable, (state: StoreState) => ({ settings: state.settings }), areSimilar),
+      rerender,
+    );
+
+    act(() => {
+      storeImmutable.setState({
+        foo: JSON.parse(initialState).foo,
+      });
+    });
+
+    expect(rerender.mock.calls.length).toBe(0);
+  });
+
+  it('use areSimilar as compareFunction with mapping deep object', () => {
+    const rerender = jest.fn();
+
+    hookTester(
+      () => useStore(storeImmutable, (state: StoreState) => ({ settings: state.settings }), areSimilar),
+      rerender,
+    );
+
+    act(() => {
+      Actions.setSettings(100, 200);
+    });
+
+    expect(rerender.mock.calls.length).toBe(1);
+  });
+
+  function HookTester({ callback, onRerender }) {
+    const isFirstRender = React.useRef(true);
     callback();
+
+    if (!isFirstRender.current) {
+      onRerender();
+    }
+
+    React.useEffect(() => {
+      isFirstRender.current = false;
+    }, []);
+
     return null;
   }
 
-  const hookTester = callback => {
+  const hookTester = (callback, onRerender = () => {}) => {
     act(() => {
-      render(<HookTester callback={callback} />);
+      render(<HookTester callback={callback} onRerender={onRerender} />);
     });
   };
 });
