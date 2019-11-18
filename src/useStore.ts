@@ -1,40 +1,51 @@
 import * as React from 'react';
 
 import { Store } from './Store';
-import { StoreEventType } from './StoreEvent';
+import { StoreEventType, TStoreEvent } from './StoreEvent';
 
 export interface IOptions<TS, TMs> {
   eventType?: StoreEventType | StoreEventType[];
   mapState?: (storeState: TS) => TMs;
   compareFunction?: (prevState: TMs, nextState: TMs) => boolean;
+  includeKeys?: Array<keyof TS>;
 }
 
 function getOption<TS, TMs>(rest: Array<any>): Required<IOptions<TS, TMs>> {
   const mapState = (store: TS) => store as TMs & TS;
   const compareFunction = null;
   const eventType = StoreEventType.All;
-
+  const includeKeys = [];
   if (
     rest[0] &&
     (Object.keys(StoreEventType).indexOf(rest[0].toString()) >= 0 ||
-      (Array.isArray(rest)[0] && Object.keys(StoreEventType).indexOf(rest[0][0].toString()) >= 0))
+      (Array.isArray(rest[0]) && Object.keys(StoreEventType).indexOf(rest[0][0].toString()) >= 0))
   ) {
     return {
       eventType: rest[0],
       mapState: rest[1] || mapState,
       compareFunction: rest[2] || compareFunction,
+      includeKeys,
+    };
+  } else if (rest[0] && Array.isArray(rest[0]) && typeof rest[0][0] === 'string') {
+    return {
+      eventType: rest[1] || eventType,
+      mapState,
+      compareFunction,
+      includeKeys: rest[0],
     };
   } else if (typeof rest[0] === 'function') {
     return {
       eventType,
       mapState: rest[0] || mapState,
       compareFunction: rest[1] || compareFunction,
+      includeKeys,
     };
   } else if (rest[0]) {
     return {
       eventType: rest[0].eventType || eventType,
       mapState: rest[0].mapState || mapState,
       compareFunction: rest[0].compareFunction || compareFunction,
+      includeKeys,
     };
   }
 
@@ -42,11 +53,23 @@ function getOption<TS, TMs>(rest: Array<any>): Required<IOptions<TS, TMs>> {
     mapState,
     compareFunction,
     eventType,
+    includeKeys,
   };
 }
 
-/** Connect full store with all eventTypes without performance */
+/** Connect full store with StoreEventType.All, without performance */
 export function useStore<TS = {}, TMs = TS>(store: Store<TS>): TMs;
+/**
+ * Connect to store with custom StoreEventType and with includeKeys.
+ * Event fires when one of depend keys was changed
+ * */
+export function useStore<TS = {}, TMs = TS>(
+  store: Store<TS>,
+  includeKeys?: Array<keyof TS>,
+  eventType?: StoreEventType | StoreEventType[],
+): TMs;
+
+export function useStore<TS = {}, TMs = TS>(store: Store<TS>, includeKeys: Array<keyof TS>): TMs;
 /** Connect to store with custom StoreEventType */
 export function useStore<TS = {}, TMs = TS>(
   store: Store<TS>,
@@ -79,13 +102,21 @@ export function useStore<TS = {}, TMs = TS>(store: Store<TS>, ...restParams: Arr
   const state = React.useRef<TMs>(initialRef);
 
   React.useEffect(() => {
-    const storeEvent = store.on(params.eventType, storeState => {
-      const nextState = params.mapState(storeState);
-      if (!params.compareFunction || !params.compareFunction(nextState, state.current)) {
+    let storeEvent: TStoreEvent<TS>;
+
+    if (params.includeKeys.length > 0) {
+      storeEvent = store.on(params.eventType, params.includeKeys, () => {
         recount[1](Date.now());
-        state.current = nextState;
-      }
-    });
+      });
+    } else {
+      storeEvent = store.on(params.eventType, storeState => {
+        const nextState = params.mapState(storeState);
+        if (!params.compareFunction || !params.compareFunction(nextState, state.current)) {
+          recount[1](Date.now());
+          state.current = nextState;
+        }
+      });
+    }
 
     return () => {
       storeEvent.remove();

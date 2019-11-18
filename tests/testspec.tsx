@@ -13,6 +13,27 @@ function callTimes(callback: () => any, times: number): void {
   new Array(times).fill(1).forEach(callback);
 }
 
+function HookTester({ callback, onRerender }) {
+  const isFirstRender = React.useRef(true);
+  callback();
+
+  if (!isFirstRender.current) {
+    onRerender();
+  }
+
+  React.useEffect(() => {
+    isFirstRender.current = false;
+  }, []);
+
+  return null;
+}
+
+const hookTester = (callback, onRerender = () => {}) => {
+  act(() => {
+    render(<HookTester callback={callback} onRerender={onRerender} />);
+  });
+};
+
 class Actions {
   public static increaseCounter(): void {
     storeImmutable.setState({
@@ -889,7 +910,7 @@ describe('useStore hook', () => {
     expect(rerender.mock.calls.length).toBe(1);
   });
 
-  it('use compareFunction, update called once if mapped param not changed', () => {
+  it('use compareFunction, update not called if mapped param not changed', () => {
     const rerender = jest.fn();
 
     hookTester(
@@ -907,11 +928,16 @@ describe('useStore hook', () => {
         foo: JSON.parse(initialState).foo,
       });
     });
+    act(() => {
+      storeImmutable.setState({
+        foo: 'bar',
+      });
+    });
 
-    expect(rerender.mock.calls.length).toBe(0);
+    expect(rerender.mock.calls.length).toBe(1);
   });
 
-  it('use compareFunction, update called once if mapped param not changed', () => {
+  it('use compareFunction, update called once if mapped param changed', () => {
     const rerender = jest.fn();
 
     hookTester(
@@ -926,11 +952,34 @@ describe('useStore hook', () => {
 
     act(() => {
       storeImmutable.setState({
-        foo: JSON.parse(initialState).foo,
+        foo: 'bar',
       });
     });
 
-    expect(rerender.mock.calls.length).toBe(0);
+    expect(rerender.mock.calls.length).toBe(1);
+  });
+
+  it('use compareFunction, update called once if both of mapped params changed', () => {
+    const rerender = jest.fn();
+
+    hookTester(
+      () =>
+        useStore(
+          storeImmutable,
+          (state: StoreState) => ({ foo: state.foo, counter: state.counter }),
+          (a, b) => a.foo === b.foo,
+        ),
+      rerender,
+    );
+
+    act(() => {
+      storeImmutable.setState({
+        foo: 'bar',
+        counter: 15,
+      });
+    });
+
+    expect(rerender.mock.calls.length).toBe(1);
   });
 
   it('use areSimilar as compareFunction with mapping object', () => {
@@ -961,28 +1010,96 @@ describe('useStore hook', () => {
     act(() => {
       Actions.setSettings(100, 200);
     });
+    act(() => {
+      Actions.setSettings(100, 200);
+    });
 
     expect(rerender.mock.calls.length).toBe(1);
   });
 
-  function HookTester({ callback, onRerender }) {
-    const isFirstRender = React.useRef(true);
-    callback();
+  it('use includeKeys, update not called if mapped param not changed', () => {
+    const rerender = jest.fn();
 
-    if (!isFirstRender.current) {
-      onRerender();
-    }
+    hookTester(() => useStore(storeImmutable, ['foo']), rerender);
 
-    React.useEffect(() => {
-      isFirstRender.current = false;
-    }, []);
-
-    return null;
-  }
-
-  const hookTester = (callback, onRerender = () => {}) => {
     act(() => {
-      render(<HookTester callback={callback} onRerender={onRerender} />);
+      storeImmutable.setState({
+        foo: JSON.parse(initialState).foo,
+      });
     });
-  };
+
+    expect(rerender.mock.calls.length).toBe(0);
+  });
+
+  it('use includeKeys and do not change include param, update dont called', () => {
+    const rerender = jest.fn();
+
+    hookTester(() => useStore(storeImmutable, ['foo']), rerender);
+
+    act(() => {
+      Actions.setSettings(100, 200);
+    });
+
+    expect(rerender.mock.calls.length).toBe(0);
+  });
+
+  it('use includeKeys and do not change include param, update dont called', () => {
+    const rerender = jest.fn();
+
+    hookTester(() => useStore(storeImmutable, ['foo', 'settings']), rerender);
+
+    act(() => {
+      Actions.setSettings(100, 200);
+    });
+
+    expect(rerender.mock.calls.length).toBe(1);
+  });
+
+  it('use includeKeys, update both included params', () => {
+    const rerender = jest.fn();
+
+    hookTester(() => useStore(storeImmutable, ['foo', 'settings']), rerender);
+
+    act(() => {
+      Actions.setSettings(100, 200);
+    });
+    act(() => {
+      storeImmutable.setState({
+        foo: 'bar',
+      });
+    });
+
+    expect(rerender.mock.calls.length).toBe(2);
+  });
+
+  it('use includeKeys, update neighbour object', () => {
+    const rerender = jest.fn();
+
+    hookTester(() => useStore(storeImmutable, ['foo', 'counter']), rerender);
+
+    act(() => {
+      Actions.setSettings(100, 200);
+    });
+
+    expect(rerender.mock.calls.length).toBe(0);
+  });
+
+  it('use includeKeys, deep update object', () => {
+    const rerender = jest.fn();
+
+    hookTester(() => useStore(storeImmutable, ['objectsArray']), rerender);
+
+    act(() => {
+      let newObjArr = [...storeImmutable.state.objectsArray];
+      newObjArr[0] = {
+        test: 1,
+      };
+
+      storeImmutable.setState({
+        objectsArray: newObjArr,
+      });
+    });
+
+    expect(rerender.mock.calls.length).toBe(1);
+  });
 });
