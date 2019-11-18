@@ -54,7 +54,7 @@ export class StoreEventManager<StoreState> {
       }
     }
 
-    this.events = this.events.filter((event: TStoreEvent<StoreState>) => {
+    this.events = this.events.filter((event: StoreEvent<StoreState>) => {
       return event.id !== id;
     });
   }
@@ -101,9 +101,7 @@ export class StoreEventManager<StoreState> {
           key => !event.includeKeys.includes(key as keyof StoreState),
         );
         if (!areSimilar(storeState, prevState, ...excludedKeys)) {
-          const omitedStoreState = omit(storeState, ...event.includeKeys);
-          const omitedPrevStoreState = omit(prevState, ...event.includeKeys);
-          event.onFire(omitedStoreState, omitedPrevStoreState, event.includeKeys, type);
+          event.onFire(storeState, prevState, event.includeKeys, type);
         }
         return;
       }

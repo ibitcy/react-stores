@@ -7,8 +7,8 @@ export enum StoreEventType {
 
 export type TOnFire<T> = (storeState: T, prevState: T, type?: StoreEventType) => void;
 export type TOnFirePartial<T> = (
-  storeState: Partial<T>,
-  prevState: Partial<T>,
+  storeState: T,
+  prevState: T,
   includeKeys: Array<keyof T>,
   type?: StoreEventType,
 ) => void;

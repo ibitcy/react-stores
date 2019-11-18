@@ -599,39 +599,151 @@ describe('testStoreState', () => {
   });
 });
 
-describe('inlcude keys', () => {
+describe('inlcude keys feature', () => {
   beforeEach(() => {
     storeImmutable.resetState();
   });
 
-  it('call event only if keys changed', done => {
-    let eventCount = 0;
+  it('do not call event for keys if change unwatcher neighbor strign', done => {
+    const eventListener = jest.fn();
 
-    const event = storeImmutable.on(StoreEventType.Update, ['counter'], (storeState, prevState, type) => {
-      eventCount++;
-    });
+    const event = storeImmutable.on(StoreEventType.Update, ['counter'], eventListener);
 
     Actions.toggleFooBar();
 
     event.remove();
 
-    expect(eventCount).toEqual(0);
+    expect(eventListener.mock.calls.length).toEqual(0);
     done();
   });
 
-  it('call event for watched keys', done => {
-    const COUNT = 3;
-    let eventCount = 0;
+  it('do not call event for keys if change unwatcher neighbor array', done => {
+    const eventListener = jest.fn();
 
-    const event = storeImmutable.on(StoreEventType.Update, ['counter'], (storeState, prevState) => {
-      eventCount++;
+    const event = storeImmutable.on(StoreEventType.Update, ['counter'], eventListener);
+
+    storeImmutable.setState({
+      numericArray: [3, 2],
     });
+    event.remove();
+
+    expect(eventListener.mock.calls.length).toEqual(0);
+    done();
+  });
+
+  it('do not call event for keys if change unwatcher neighbor object', done => {
+    const eventListener = jest.fn();
+
+    const event = storeImmutable.on(StoreEventType.Update, ['counter'], eventListener);
+
+    const newObjArr = storeImmutable.state.objectsArray.concat();
+
+    newObjArr[0] = {
+      test: 1,
+    };
+
+    storeImmutable.setState({
+      objectsArray: newObjArr,
+    });
+
+    event.remove();
+
+    expect(eventListener.mock.calls.length).toEqual(0);
+    done();
+  });
+
+  it('call event for watched key with type number', done => {
+    const COUNT = 3;
+    const eventListener = jest.fn();
+
+    const event = storeImmutable.on(StoreEventType.Update, ['counter'], eventListener);
 
     callTimes(Actions.increaseCounter, COUNT);
 
     event.remove();
 
-    expect(eventCount).toEqual(COUNT);
+    expect(eventListener.mock.calls.length).toEqual(COUNT);
+    done();
+  });
+
+  it('call event for watched key with deep object patch ', done => {
+    const eventListener = jest.fn();
+
+    const event = storeImmutable.on(StoreEventType.Update, ['objectsArray'], eventListener);
+    const newObjArr = storeImmutable.state.objectsArray.concat();
+
+    newObjArr[0] = {
+      test: 1,
+    };
+
+    storeImmutable.setState({
+      objectsArray: newObjArr,
+    });
+
+    event.remove();
+
+    expect(eventListener.mock.calls.length).toEqual(1);
+    done();
+  });
+
+  it('call events for each of watched keys', done => {
+    const COUNT = 3;
+    const eventListener = jest.fn();
+
+    const event = storeImmutable.on(StoreEventType.Update, ['counter', 'foo'], eventListener);
+    callTimes(Actions.increaseCounter, COUNT);
+    Actions.toggleFooBar();
+
+    event.remove();
+
+    expect(eventListener.mock.calls.length).toEqual(COUNT + 1);
+    done();
+  });
+
+  it('call event if one of watched keys was changed', done => {
+    const eventListener = jest.fn();
+
+    const event = storeImmutable.on(StoreEventType.Update, ['counter', 'foo'], eventListener);
+
+    Actions.toggleFooBar();
+
+    event.remove();
+
+    expect(eventListener.mock.calls.length).toEqual(1);
+    done();
+  });
+
+  it('call event once if both of watched keys was changed', done => {
+    const eventListener = jest.fn();
+
+    const event = storeImmutable.on(StoreEventType.Update, ['counter', 'foo'], eventListener);
+
+    storeImmutable.setState({
+      counter: 15,
+      foo: 'bar',
+    });
+
+    event.remove();
+
+    expect(eventListener.mock.calls.length).toEqual(1);
+    done();
+  });
+
+  it('call watched keys event with new state', done => {
+    const eventListener = jest.fn();
+    let nextState = {
+      counter: 15,
+      foo: 'bar',
+    };
+
+    const event = storeImmutable.on(StoreEventType.Update, ['counter', 'foo'], eventListener);
+
+    storeImmutable.setState(nextState);
+
+    event.remove();
+
+    expect(eventListener.mock.calls[0][0].counter).toEqual(nextState.counter);
+    expect(eventListener.mock.calls[0][0].foo).toEqual(nextState.foo);
     done();
   });
 });
