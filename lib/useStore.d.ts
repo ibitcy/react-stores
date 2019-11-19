@@ -7,13 +7,13 @@ export interface IOptions<TS, TMs> {
     includeKeys?: Array<keyof TS>;
 }
 /** Connect full store with StoreEventType.All, without performance */
-export declare function useStore<TS = {}, TMs = TS>(store: Store<TS>): TMs;
+export declare function useStore<TS = {}>(store: Store<TS>): TS;
 /**
  * Connect to store with custom StoreEventType and with includeKeys.
  * Event fires when one of depend keys was changed
  * */
-export declare function useStore<TS = {}, TMs = TS>(store: Store<TS>, includeKeys?: Array<keyof TS>, eventType?: StoreEventType | StoreEventType[]): TMs;
-export declare function useStore<TS = {}, TMs = TS>(store: Store<TS>, includeKeys: Array<keyof TS>): TMs;
+export declare function useStore<TS = {}>(store: Store<TS>, includeKeys?: Array<keyof TS>, eventType?: StoreEventType | StoreEventType[]): TS;
+export declare function useStore<TS = {}>(store: Store<TS>, includeKeys: Array<keyof TS>): TS;
 /** Connect to store with custom StoreEventType */
 export declare function useStore<TS = {}, TMs = TS>(store: Store<TS>, eventType: StoreEventType | StoreEventType[], mapState?: (storeState: TS) => TMs, compareFunction?: (prevState: TMs, nextState: TMs) => boolean): TMs;
 /**

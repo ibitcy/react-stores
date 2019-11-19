@@ -151,8 +151,8 @@ export class Store<StoreState> {
     const prevState = this.deepFreeze(this.frozenState);
     const updatedState = this.deepFreeze({ ...prevState, ...newState });
 
-    this.persistenceDriver.write(this.persistenceDriver.pack(updatedState));
     this.frozenState = updatedState;
+    this.persistenceDriver.write(this.persistenceDriver.pack(updatedState));
     this.update(updatedState, prevState);
   }
 

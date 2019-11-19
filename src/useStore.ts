@@ -58,18 +58,18 @@ function getOption<TS, TMs>(rest: Array<any>): Required<IOptions<TS, TMs>> {
 }
 
 /** Connect full store with StoreEventType.All, without performance */
-export function useStore<TS = {}, TMs = TS>(store: Store<TS>): TMs;
+export function useStore<TS = {}>(store: Store<TS>): TS;
 /**
  * Connect to store with custom StoreEventType and with includeKeys.
  * Event fires when one of depend keys was changed
  * */
-export function useStore<TS = {}, TMs = TS>(
+export function useStore<TS = {}>(
   store: Store<TS>,
   includeKeys?: Array<keyof TS>,
   eventType?: StoreEventType | StoreEventType[],
-): TMs;
+): TS;
 
-export function useStore<TS = {}, TMs = TS>(store: Store<TS>, includeKeys: Array<keyof TS>): TMs;
+export function useStore<TS = {}>(store: Store<TS>, includeKeys: Array<keyof TS>): TS;
 /** Connect to store with custom StoreEventType */
 export function useStore<TS = {}, TMs = TS>(
   store: Store<TS>,
@@ -105,15 +105,16 @@ export function useStore<TS = {}, TMs = TS>(store: Store<TS>, ...restParams: Arr
     let storeEvent: TStoreEvent<TS>;
 
     if (params.includeKeys.length > 0) {
-      storeEvent = store.on(params.eventType, params.includeKeys, () => {
+      storeEvent = store.on(params.eventType, params.includeKeys, storeState => {
+        state.current = params.mapState(storeState);
         recount[1](Date.now());
       });
     } else {
       storeEvent = store.on(params.eventType, storeState => {
         const nextState = params.mapState(storeState);
         if (!params.compareFunction || !params.compareFunction(nextState, state.current)) {
-          recount[1](Date.now());
           state.current = nextState;
+          recount[1](Date.now());
         }
       });
     }

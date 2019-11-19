@@ -9,6 +9,7 @@ import { History } from './history';
 import { useStore } from '../../src';
 import { Performance } from './Performance';
 import * as packageJson from '../../package.json';
+import { Optimisation } from './Optimisation';
 
 const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
   const pageStoreState = useStore(pageStore);
@@ -28,16 +29,16 @@ const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
 
 export const Container: React.FC = () => {
   const pageStoreState = useStore(pageStore);
+
   const [items, setItems] = useState([]);
-  const setPage = useCallback(() => {
-    const hashPage = EPage[location.hash.replace('#', '')];
-
-    pageStore.setState({
-      page: hashPage ? hashPage : EPage.Components,
-    });
-  }, []);
-
   useEffect(() => {
+    const setPage = () => {
+      const hashPage = EPage[location.hash.replace('#', '')];
+      pageStore.setState({
+        page: hashPage ? hashPage : EPage.Components,
+      });
+    };
+
     window.onhashchange = () => {
       setPage();
     };
@@ -57,6 +58,7 @@ export const Container: React.FC = () => {
         <NavItem pageId={EPage.Persistent} />
         <NavItem pageId={EPage.Snapshots} />
         <NavItem pageId={EPage.Performance} />
+        <NavItem pageId={EPage.Optimisation} />
       </nav>
 
       <div className='inner'>
@@ -100,6 +102,14 @@ export const Container: React.FC = () => {
             <h1>Performance test</h1>
 
             <Performance />
+          </React.Fragment>
+        )}
+
+        {pageStoreState.page === EPage.Optimisation && (
+          <React.Fragment>
+            <h1>Re-renders optimisation</h1>
+
+            <Optimisation />
           </React.Fragment>
         )}
 
