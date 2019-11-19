@@ -57,8 +57,11 @@ function getOption<TS, TMs>(rest: Array<any>): Required<IOptions<TS, TMs>> {
   };
 }
 
-/** Connect full store with StoreEventType.All, without performance */
-export function useStore<TS = {}>(store: Store<TS>): TS;
+/**
+ * Connect to store with includeKeys.
+ * Event fires when one of depend keys was changed
+ * */
+export function useStore<TS = {}>(store: Store<TS>, includeKeys: Array<keyof TS>): TS;
 /**
  * Connect to store with custom StoreEventType and with includeKeys.
  * Event fires when one of depend keys was changed
@@ -68,15 +71,6 @@ export function useStore<TS = {}>(
   includeKeys?: Array<keyof TS>,
   eventType?: StoreEventType | StoreEventType[],
 ): TS;
-
-export function useStore<TS = {}>(store: Store<TS>, includeKeys: Array<keyof TS>): TS;
-/** Connect to store with custom StoreEventType */
-export function useStore<TS = {}, TMs = TS>(
-  store: Store<TS>,
-  eventType: StoreEventType | StoreEventType[],
-  mapState?: (storeState: TS) => TMs,
-  compareFunction?: (prevState: TMs, nextState: TMs) => boolean,
-): TMs;
 /**
  * Connect to store with StoreEventTypes.All using a mapState function.
  * To incraese perforamncne and to prevent recalucaltaions you can use a compareFunction.
@@ -87,9 +81,19 @@ export function useStore<TS = {}, TMs = TS>(
   mapState: (storeState: TS) => TMs,
   compareFunction?: (prevState: TMs, nextState: TMs) => boolean,
 ): TMs;
+/** Connect to store with custom StoreEventType */
+export function useStore<TS = {}, TMs = TS>(
+  store: Store<TS>,
+  eventType: StoreEventType | StoreEventType[],
+  mapState?: (storeState: TS) => TMs,
+  compareFunction?: (prevState: TMs, nextState: TMs) => boolean,
+): TMs;
 /** Connect to store with old-fashioned API
  */
-export function useStore<TS = {}, TMs = TS>(store: Store<TS>, options: IOptions<TS, TMs>): TMs;
+export function useStore<TS = {}, TMs = TS>(store: Store<TS>, options: Omit<IOptions<TS, TMs>, 'includeKeys'>): TMs;
+
+/** Connect full store with StoreEventType.All, without performance */
+export function useStore<TS = {}>(store: Store<TS>): TS;
 
 export function useStore<TS = {}, TMs = TS>(store: Store<TS>, ...restParams: Array<any>): TMs {
   const params = React.useMemo(() => {

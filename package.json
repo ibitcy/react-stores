@@ -23,7 +23,7 @@
     "build": "rm -rf lib && rollup --config ./rollup.config.js && npm run check-size --scripts-prepend-node-path",
     "check-size": "size-limit",
     "pretest": "npm run build",
-    "test": "npx jest --watch",
+    "test": "npx jest",
     "demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
     "release:demo": "webpack --config ./demo/webpack.prod.config.js",
     "prepare": "npm run build && npm run check-size && npm run test"
@@ -39,7 +39,7 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "tests/.*[.](tsx?)",
+    "testRegex": "tests/.*.test[.](tsx?)",
     "moduleFileExtensions": [
       "ts",
       "tsx",
