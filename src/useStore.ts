@@ -3,15 +3,15 @@ import * as React from 'react';
 import { Store } from './Store';
 import { StoreEventType, TStoreEvent } from './StoreEvent';
 
-export interface IOptions<TS, TMs> {
+export interface IOptions<T, V> {
   eventType?: StoreEventType | StoreEventType[];
-  mapState?: (storeState: TS) => TMs;
-  compareFunction?: (prevState: TMs, nextState: TMs) => boolean;
-  includeKeys?: Array<keyof TS>;
+  mapState?: (storeState: T) => V;
+  compareFunction?: (prevState: V, nextState: V) => boolean;
+  includeKeys?: Array<keyof T>;
 }
 
-function getOption<TS, TMs>(rest: Array<any>): Required<IOptions<TS, TMs>> {
-  const mapState = (store: TS) => store as TMs & TS;
+function getOption<T, V>(rest: Array<any>): Required<IOptions<T, V>> {
+  const mapState = (store: T) => store as V & T;
   const compareFunction = null;
   const eventType = StoreEventType.All;
   const includeKeys = [];
@@ -61,52 +61,52 @@ function getOption<TS, TMs>(rest: Array<any>): Required<IOptions<TS, TMs>> {
  * Connect to store with includeKeys.
  * Event fires when one of depend keys was changed
  * */
-export function useStore<TS = {}>(store: Store<TS>, includeKeys: Array<keyof TS>): TS;
+export function useStore<T = {}>(store: Store<T>, includeKeys: Array<keyof T>): T;
 /**
  * Connect to store with custom StoreEventType and with includeKeys.
  * Event fires when one of depend keys was changed
  * */
-export function useStore<TS = {}>(
-  store: Store<TS>,
-  includeKeys?: Array<keyof TS>,
+export function useStore<T = {}>(
+  store: Store<T>,
+  includeKeys?: Array<keyof T>,
   eventType?: StoreEventType | StoreEventType[],
-): TS;
+): T;
 /**
  * Connect to store with StoreEventTypes.All using a mapState function.
  * To incraese perforamncne and to prevent recalucaltaions you can use a compareFunction.
  * Don't use a deep equality in compareFunction when you map an objects or an arrays. It may decrease performance.
  */
-export function useStore<TS = {}, TMs = TS>(
-  store: Store<TS>,
-  mapState: (storeState: TS) => TMs,
-  compareFunction?: (prevState: TMs, nextState: TMs) => boolean,
-): TMs;
+export function useStore<T = {}, V = T>(
+  store: Store<T>,
+  mapState: (storeState: T) => V,
+  compareFunction?: (prevState: V, nextState: V) => boolean,
+): V;
 /** Connect to store with custom StoreEventType */
-export function useStore<TS = {}, TMs = TS>(
-  store: Store<TS>,
+export function useStore<T = {}, V = T>(
+  store: Store<T>,
   eventType: StoreEventType | StoreEventType[],
-  mapState?: (storeState: TS) => TMs,
-  compareFunction?: (prevState: TMs, nextState: TMs) => boolean,
-): TMs;
+  mapState?: (storeState: T) => V,
+  compareFunction?: (prevState: V, nextState: V) => boolean,
+): V;
 /** Connect to store with old-fashioned API
  */
-export function useStore<TS = {}, TMs = TS>(store: Store<TS>, options: Omit<IOptions<TS, TMs>, 'includeKeys'>): TMs;
+export function useStore<T = {}, V = T>(store: Store<T>, options: Omit<IOptions<T, V>, 'includeKeys'>): V;
 
 /** Connect full store with StoreEventType.All, without performance */
-export function useStore<TS = {}>(store: Store<TS>): TS;
+export function useStore<T = {}>(store: Store<T>): T;
 
-export function useStore<TS = {}, TMs = TS>(store: Store<TS>, ...restParams: Array<any>): TMs {
+export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<any>): V {
   const params = React.useMemo(() => {
-    return getOption<TS, TMs>(restParams);
+    return getOption<T, V>(restParams);
   }, []);
 
   const initialRef = React.useMemo(() => params.mapState(store.state), []);
 
   const recount = React.useState(0);
-  const state = React.useRef<TMs>(initialRef);
+  const state = React.useRef<V>(initialRef);
 
   React.useEffect(() => {
-    let storeEvent: TStoreEvent<TS>;
+    let storeEvent: TStoreEvent<T>;
 
     if (params.includeKeys.length > 0) {
       storeEvent = store.on(params.eventType, params.includeKeys, storeState => {

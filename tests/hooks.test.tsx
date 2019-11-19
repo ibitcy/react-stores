@@ -2,7 +2,7 @@ import { act, cleanup } from '@testing-library/react';
 import expect from 'expect';
 import expectJsx from 'expect-jsx';
 
-import { areSimilar, StoreEventType, useStore } from '../lib';
+import { areSimilar, StoreEventType, useStore, Store, useIsolatedStore } from '../lib';
 import { Actions, hookTester, initialState, storeImmutable, StoreState } from './utils';
 
 expect.extend(expectJsx);
@@ -395,5 +395,47 @@ describe('useStore hook with includeKeys', () => {
     });
 
     expect(foo).toBe('bar');
+  });
+});
+
+describe('useIsolatedStore hook', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
+  it('create store correct', () => {
+    let storeInstance: Store<StoreState>;
+    hookTester(() => (storeInstance = useIsolatedStore<StoreState>(JSON.parse(initialState))));
+
+    expect(storeInstance.state.counter).toEqual(JSON.parse(initialState).counter);
+  });
+
+  it('mutate store', () => {
+    let storeInstance: Store<StoreState>;
+
+    hookTester(() => (storeInstance = useIsolatedStore<StoreState>(JSON.parse(initialState))));
+
+    const nextValue = 5;
+    act(() => {
+      storeInstance.setState({
+        counter: nextValue,
+      });
+    });
+    expect(storeInstance.state.counter).toEqual(nextValue);
+  });
+
+  it('rerenders', () => {
+    let storeInstance: Store<StoreState>;
+    const rerender = jest.fn();
+
+    hookTester(() => (storeInstance = useIsolatedStore<StoreState>(JSON.parse(initialState))), rerender);
+
+    const nextValue = 5;
+    act(() => {
+      storeInstance.setState({
+        counter: nextValue,
+      });
+    });
+    expect(rerender.mock.calls.length).toEqual(2);
   });
 });
