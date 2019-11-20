@@ -64,6 +64,7 @@
       .row {
         display: flex;
         justify-content: space-between;
+        flex-wrap: wrap;
       }
 
       .row.left-aligned {
@@ -119,6 +120,19 @@
         outline: none;
         box-sizing: border-box;
         margin-top: 15px;
+      }
+
+      button.primary {
+        background-color: rgba(255, 187, 0, 0.32);
+        color: rgb(195, 146, 9);
+      }
+
+      button.primary:hover {
+        background-color: rgba(255, 187, 0, 0.30);
+      }
+
+      button.primary:active {
+        background-color: rgba(255, 187, 0, 0.40);
       }
 
       input {
@@ -187,7 +201,7 @@
         padding: 30px;
         margin-top: 30px;
         box-sizing: border-box;
-        width: 100%;
+        flex: 1 1 33.3%;
       }
 
       .inner {

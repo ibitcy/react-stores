@@ -37,7 +37,7 @@ interface StoreState {
 const initialStoreState: StoreState = {
   complexItems: [],
   number: 0,
-  string: '',
+  string: 'string value',
   object: {
     id: 0,
     title: '',
@@ -122,8 +122,12 @@ async function fillStore(passCount: number) {
     complexItems,
   });
   await sleep(10);
+  const array: Array<string> = [];
+  for (let i = 0; i < passCount; i++) {
+    array.push(String.fromCharCode(Math.floor(Math.random() * (90 - 49)) + 48));
+  }
   store.setState({
-    string: `${Math.random()}`,
+    string: array.join(''),
   });
   await sleep(10);
   store.setState({
@@ -197,6 +201,7 @@ export const Optimisation: React.FC<{}> = () => {
         <div className='component'>
           <ExperimentWithNoOptimisation />
         </div>
+        <div className='col-separator' />
         <div className='component'>
           <ExperimentWithCustomCompareFunction />
         </div>
@@ -205,6 +210,7 @@ export const Optimisation: React.FC<{}> = () => {
         <div className='component'>
           <ExperimentWithSimilarCompareFunction />
         </div>
+        <div className='col-separator' />
         <div className='component'>
           <ExperimentWithIncludeKeys />
         </div>
@@ -230,8 +236,12 @@ const ExperimentWithNoOptimisation = React.memo(() => {
       <h4>No optimisation, useState(store)</h4>
 
       <div>
-        <p>Store data string: {string}</p>
-        <p>Store data number: {number}</p>
+        <p>
+          Store data string: <strong>{string}</strong>
+        </p>
+        <p>
+          Store data number: <strong>{number}</strong>
+        </p>
         <p>
           Store updates count: <strong>{refCount.current}</strong>
         </p>
@@ -263,8 +273,12 @@ const ExperimentWithCustomCompareFunction = React.memo(() => {
       <h4>Optimisation mapState with custom compareFunction</h4>
 
       <div>
-        <p>Store data string: {string}</p>
-        <p>Store data number: {number}</p>
+        <p>
+          Store data string: <strong>{string}</strong>
+        </p>
+        <p>
+          Store data number: <strong>{number}</strong>
+        </p>
         <p>
           Store updates count: <strong>{refCount.current}</strong>
         </p>
@@ -292,8 +306,12 @@ const ExperimentWithSimilarCompareFunction = React.memo(() => {
       <h4>Optimisation mapState with areSimilar function</h4>
 
       <div>
-        <p>Store data string: {string}</p>
-        <p>Store data number: {number}</p>
+        <p>
+          Store data string: <strong>{string}</strong>
+        </p>
+        <p>
+          Store data number: <strong>{number}</strong>
+        </p>
         <p>
           Store updates count: <strong>{refCount.current}</strong>
         </p>
@@ -323,8 +341,12 @@ const ExperimentWithIncludeKeys = React.memo(() => {
       <h4>Optimisation with includeKeys</h4>
 
       <div>
-        <p>Store data string: {string}</p>
-        <p>Store data number: {number}</p>
+        <p>
+          Store data string: <strong>{string}</strong>
+        </p>
+        <p>
+          Store data number: <strong>{number}</strong>
+        </p>
         <p>
           Store updates count: <strong>{refCount.current}</strong>
         </p>

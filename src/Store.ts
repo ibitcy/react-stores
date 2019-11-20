@@ -1,7 +1,14 @@
 import { StorePersistentDriver } from './StorePersistentDriver';
 import { StorePersistentLocalStorageDriver } from './StorePersistentLocalStorageDriver';
 import { StoreEventManager } from './StoreEventManager';
-import { StoreEventType, StoreEvent, TOnFire, TOnFirePartial, StoreEventSpecificKeys, TStoreEvent } from './StoreEvent';
+import {
+  StoreEventType,
+  StoreEvent,
+  TOnFire,
+  TOnFireWithKeys,
+  StoreEventSpecificKeys,
+  TStoreEvent,
+} from './StoreEvent';
 
 export interface StoreOptions {
   /**
@@ -188,13 +195,13 @@ export class Store<StoreState> {
   public on(
     eventType: StoreEventType | StoreEventType[],
     includeKeys: Array<keyof StoreState>,
-    callback: TOnFirePartial<StoreState>,
+    callback: TOnFireWithKeys<StoreState>,
   ): StoreEventSpecificKeys<StoreState>;
   public on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;
   public on(
     eventType: StoreEventType | StoreEventType[],
     secondArg: TOnFire<StoreState> | Array<keyof StoreState>,
-    thirdArg?: TOnFirePartial<StoreState>,
+    thirdArg?: TOnFireWithKeys<StoreState>,
   ): TStoreEvent<StoreState> {
     const eventTypes: StoreEventType[] =
       eventType && eventType.constructor === Array

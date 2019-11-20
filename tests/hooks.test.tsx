@@ -188,7 +188,7 @@ describe('useStore hook overloads', () => {
   });
 });
 
-describe('useStore with compareFunction', () => {
+describe('useStore with compare', () => {
   beforeEach(() => {
     act(() => {
       storeImmutable.resetState();
@@ -230,7 +230,7 @@ describe('useStore with compareFunction', () => {
       () =>
         useStore(
           storeImmutable,
-          (state: StoreState) => ({ foo: state.foo }),
+          state => ({ foo: state.foo }),
           (a, b) => a.foo === b.foo,
         ),
       rerender,
@@ -268,7 +268,7 @@ describe('useStore with compareFunction', () => {
     expect(rerender.mock.calls.length).toBe(1);
   });
 
-  it('areSimilar as compareFunction with mapping object', () => {
+  it('areSimilar as compare with mapping object', () => {
     const rerender = jest.fn();
 
     hookTester(
@@ -285,7 +285,7 @@ describe('useStore with compareFunction', () => {
     expect(rerender.mock.calls.length).toBe(0);
   });
 
-  it('areSimilar as compareFunction with mapping deep object', () => {
+  it('areSimilar as compare with mapping deep object', () => {
     const rerender = jest.fn();
 
     hookTester(
@@ -436,6 +436,11 @@ describe('useIsolatedStore hook', () => {
         counter: nextValue,
       });
     });
-    expect(rerender.mock.calls.length).toEqual(2);
+    expect(rerender.mock.calls.length).toEqual(1);
+  });
+
+  it('create persist store correct', done => {
+    // Create to stores with equal states
+    done();
   });
 });

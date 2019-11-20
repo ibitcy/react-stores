@@ -1,6 +1,6 @@
 import { areSimilar } from './compare';
 import { omit } from './omit';
-import { StoreEvent, StoreEventSpecificKeys, StoreEventType, TOnFire, TOnFirePartial, TStoreEvent } from './StoreEvent';
+import { StoreEvent, StoreEventSpecificKeys, StoreEventType, TOnFire, TOnFireWithKeys, TStoreEvent } from './StoreEvent';
 
 export class StoreEventManager<StoreState> {
   private events: Array<TStoreEvent<StoreState>> = [];
@@ -63,12 +63,12 @@ export class StoreEventManager<StoreState> {
   public add(eventTypes: StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;
   public add(
     eventTypes: StoreEventType[],
-    callback: TOnFirePartial<StoreState>,
+    callback: TOnFireWithKeys<StoreState>,
     includeKeys: Array<keyof StoreState>,
   ): StoreEventSpecificKeys<StoreState>;
   public add(
     eventTypes: StoreEventType[],
-    callback: TOnFire<StoreState> | TOnFirePartial<StoreState>,
+    callback: TOnFire<StoreState> | TOnFireWithKeys<StoreState>,
     includeKeys?: Array<keyof StoreState>,
   ): TStoreEvent<StoreState> {
     let event: TStoreEvent<StoreState>;
@@ -77,7 +77,7 @@ export class StoreEventManager<StoreState> {
       event = new StoreEventSpecificKeys<StoreState>(
         this.generateEventId(),
         eventTypes,
-        callback as TOnFirePartial<StoreState>,
+        callback as TOnFireWithKeys<StoreState>,
         id => {
           this.remove(id);
         },

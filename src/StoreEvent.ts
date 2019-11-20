@@ -5,12 +5,12 @@ export enum StoreEventType {
   DumpUpdate,
 }
 
-export type TOnFire<T> = (storeState: T, prevState: T, type?: StoreEventType) => void;
-export type TOnFirePartial<T> = (
+export type TOnFire<T> = (storeState: T, prevState: T, type: StoreEventType) => void;
+export type TOnFireWithKeys<T> = (
   storeState: T,
   prevState: T,
   includeKeys: Array<keyof T>,
-  type?: StoreEventType,
+  type: StoreEventType,
 ) => void;
 
 export type TStoreEvent<T> = StoreEvent<T> | StoreEventSpecificKeys<T>;
@@ -40,7 +40,7 @@ export class StoreEventSpecificKeys<StoreState> {
   constructor(
     readonly id: string,
     readonly types: StoreEventType[],
-    readonly onFire: TOnFirePartial<StoreState>,
+    readonly onFire: TOnFireWithKeys<StoreState>,
     readonly onRemove: (id: string) => void,
     readonly includeKeys: Array<keyof StoreState> = [],
   ) {}

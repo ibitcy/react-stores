@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
+
+import * as packageJson from '../../package.json';
+import { useStore } from '../../src';
 import { Complex } from './complex';
 import { Counter } from './Counter';
-import { CounterEvents } from './CounterEvents';
 import { CounterDecorator } from './CounterDecorator';
+import { CounterEvents } from './CounterEvents';
+import { History } from './history';
+import { IsolatedStores } from './IsolatedStores';
+import { Optimisation } from './Optimisation';
+import { Performance } from './Performance';
 import { Persistent } from './persistent';
 import { EPage, historyStore, pageStore, persistentStore, stores } from './stores';
-import { History } from './history';
-import { useStore } from '../../src';
-import { Performance } from './Performance';
-import * as packageJson from '../../package.json';
-import { Optimisation } from './Optimisation';
 
 const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
   const pageStoreState = useStore(pageStore);
@@ -59,6 +61,7 @@ export const Container: React.FC = () => {
         <NavItem pageId={EPage.Snapshots} />
         <NavItem pageId={EPage.Performance} />
         <NavItem pageId={EPage.Optimisation} />
+        <NavItem pageId={EPage.Isolated} />
       </nav>
 
       <div className='inner'>
@@ -110,6 +113,14 @@ export const Container: React.FC = () => {
             <h1>Re-renders optimisation</h1>
 
             <Optimisation />
+          </React.Fragment>
+        )}
+
+        {pageStoreState.page === EPage.Isolated && (
+          <React.Fragment>
+            <h1>Isolated store</h1>
+
+            <IsolatedStores />
           </React.Fragment>
         )}
 

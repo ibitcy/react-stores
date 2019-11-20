@@ -11,6 +11,7 @@ export enum EPage {
   Snapshots = 'Snapshots',
   Performance = 'Performance',
   Optimisation = 'Optimisation',
+  Isolated = 'Isolated',
 }
 
 const initialStoreState: StoreState = {
