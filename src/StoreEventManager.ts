@@ -34,12 +34,16 @@ export class StoreEventManager<StoreState> {
 
         this.timeout = setTimeout(() => {
           for (const key in this.events) {
-            this.doFire(type, storeState, prevState, this.events[key]);
+            if (this.events.hasOwnProperty(key)) {
+              this.doFire(type, storeState, prevState, this.events[key]);
+            }
           }
         }, this.fireTimeout);
       } else {
         for (const key in this.events) {
-          this.doFire(type, storeState, prevState, this.events[key]);
+          if (this.events.hasOwnProperty(key)) {
+            this.doFire(type, storeState, prevState, this.events[key]);
+          }
         }
       }
     }
@@ -48,7 +52,7 @@ export class StoreEventManager<StoreState> {
   public remove(id: string) {
     if (this.fireTimeout && this.fireTimeout !== 0) {
       for (const key in this.events) {
-        if (this.events[key].timeout) {
+        if (this.events.hasOwnProperty(key) && this.events[key].timeout) {
           clearTimeout(this.timeout);
         }
       }

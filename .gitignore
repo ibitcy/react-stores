@@ -6,3 +6,4 @@ dist
 .history
 .idea
 .vscode
+yarn-error.log

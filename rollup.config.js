@@ -1,4 +1,4 @@
-import {terser} from 'rollup-plugin-terser';
+import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
 export default [
@@ -14,7 +14,7 @@ export default [
         format: 'es',
       },
     ],
-    external: ['react', 'freezer-js'],
+    external: ['react'],
     plugins: [
       typescript({
         tsconfigOverride: {

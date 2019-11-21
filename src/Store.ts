@@ -99,10 +99,12 @@ export class Store<StoreState> {
       const propNames = Object.getOwnPropertyNames(obj);
 
       for (const key in propNames) {
-        const prop = obj[propNames[key]];
+        if (propNames.hasOwnProperty(key)) {
+          const prop = obj[propNames[key]];
 
-        if (typeof prop === 'object' && prop !== null) {
-          this.deepFreeze(prop);
+          if (typeof prop === 'object' && prop !== null) {
+            this.deepFreeze(prop);
+          }
         }
       }
 
@@ -126,7 +128,9 @@ export class Store<StoreState> {
     let flatKeys: string = '';
 
     for (let key in state) {
-      flatKeys += key;
+      if (state.hasOwnProperty(key)) {
+        flatKeys += key;
+      }
     }
 
     return this.hashCode(flatKeys);
@@ -186,15 +190,7 @@ export class Store<StoreState> {
 
   public update(currentState: StoreState, prevState: StoreState) {
     for (const key in this.components) {
-      if (this.components[key].isStoreMounted) {
-        this.components[key].storeComponentStoreWillUpdate();
-        this.components[key].forceUpdate();
-        this.components[key].storeComponentStoreDidUpdate();
-      }
-    }
-
-    for (const key in this.components) {
-      if (this.components[key].isStoreMounted) {
+      if (this.components[key].isStoreMounted && this.components.hasOwnProperty(key)) {
         this.components[key].storeComponentStoreWillUpdate();
         this.components[key].forceUpdate();
         this.components[key].storeComponentStoreDidUpdate();
