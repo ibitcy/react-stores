@@ -21,21 +21,15 @@ export function useIsolatedStore<T = {}>(
 ): Store<T> {
   const recount = React.useState(0);
   const storeRef = React.useRef(
-    (() => {
-      const initial = { ...initialState };
-      if (storeOptions?.persistence) {
-        initial[`__persistense_${storeOptions.uniqKey}`] = null;
-      }
-      return new Store<T>(
-        initial,
-        {
-          persistence: false,
-          immutable: true,
-          ...storeOptions,
-        },
-        persistenceDriver,
-      );
-    })(),
+    new Store<T>(
+      initialState,
+      {
+        persistence: false,
+        immutable: true,
+        ...storeOptions,
+      },
+      persistenceDriver,
+    ),
   );
 
   React.useEffect(() => {

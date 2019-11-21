@@ -158,4 +158,14 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
       }
     }
   }
+
+  public clear() {
+    if (this.storage && this.persistence) {
+      try {
+        this.storage.removeItem(this.storeName);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
 }

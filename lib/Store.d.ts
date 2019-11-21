@@ -12,6 +12,7 @@ export interface StoreOptions {
     immutable?: boolean;
     persistence?: boolean;
     setStateTimeout?: number;
+    uniqKey?: string;
 }
 export declare class Store<StoreState> {
     readonly persistenceDriver?: StorePersistentDriver<StoreState>;
@@ -22,11 +23,13 @@ export declare class Store<StoreState> {
     private frozenState;
     private opts;
     get state(): StoreState;
+    private checkInitialStateType;
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState>);
     deepFreeze(obj: any): any;
     private hashCode;
     private generateStoreId;
     resetPersistence(): void;
+    clearPersistence(): void;
     resetDumpHistory(): void;
     saveDump(): number;
     removeDump(timestamp: number): void;

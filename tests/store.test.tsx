@@ -3,6 +3,7 @@ import expectJsx from 'expect-jsx';
 
 import { StoreEventType } from '../lib';
 import { Actions, initialState, storeImmutable, storeMutable, callTimes } from './utils';
+import { Store } from '../src';
 
 expect.extend(expectJsx);
 
@@ -85,6 +86,30 @@ describe('store', () => {
     const etalon: string = initialState;
 
     expect(result).toEqual(etalon);
+    done();
+  });
+
+  it('throw error with incorrect types for initial state', done => {
+    // const bigint = 2n ** 53n;
+    const forbiddenTypes = [
+      0,
+      // bigint,
+      true,
+      'string',
+      [],
+      () => {},
+      new Function(),
+      new Map(),
+      undefined,
+      Symbol('string'),
+      new Promise(() => {}),
+    ];
+    forbiddenTypes.forEach(type => {
+      expect(() => {
+        const state = new Store(type);
+      }).toThrow();
+    });
+
     done();
   });
 });

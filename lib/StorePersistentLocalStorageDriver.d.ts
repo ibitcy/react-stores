@@ -12,4 +12,5 @@ export declare class StorePersistentLocalStorageDriver<StoreState> extends Store
     readDump(timestamp: number): StorePersistentPacket<StoreState>;
     getDumpHistory(): number[];
     resetHistory(): void;
+    clear(): void;
 }

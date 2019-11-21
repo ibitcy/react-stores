@@ -22,6 +22,7 @@ export interface StoreOptions {
   immutable?: boolean;
   persistence?: boolean;
   setStateTimeout?: number;
+  uniqKey?: string;
 }
 
 export class Store<StoreState> {
@@ -37,10 +38,20 @@ export class Store<StoreState> {
     immutable: false,
     persistence: false,
     setStateTimeout: 0,
+    uniqKey: null,
   };
 
   get state(): StoreState {
     return this.frozenState;
+  }
+
+  private checkInitialStateType(initialState: StoreState): void {
+    if (['number', 'boolean', 'string', 'undefined', 'symbol', 'bigint'].includes(typeof initialState)) {
+      throw new Error('InitialState must be an object, passed: ' + typeof initialState);
+    }
+    if ([Array, Function, Map, Promise].some(item => initialState instanceof item)) {
+      throw new Error('InitialState must be an object, passed: ' + initialState.constructor.name);
+    }
   }
 
   constructor(
@@ -48,15 +59,17 @@ export class Store<StoreState> {
     options?: StoreOptions,
     readonly persistenceDriver?: StorePersistentDriver<StoreState>,
   ) {
+    this.checkInitialStateType(initialState);
     let currentState: StoreState | null = null;
-
-    this.id = this.generateStoreId(initialState);
 
     if (options) {
       this.opts.immutable = options.immutable === true;
       this.opts.persistence = options.persistence === true;
       this.opts.setStateTimeout = options.setStateTimeout;
+      this.opts.uniqKey = options.uniqKey;
     }
+
+    this.id = this.opts.uniqKey || this.generateStoreId(initialState);
 
     if (!this.persistenceDriver) {
       this.persistenceDriver = new StorePersistentLocalStorageDriver(this.id);
@@ -121,6 +134,10 @@ export class Store<StoreState> {
 
   public resetPersistence() {
     this.persistenceDriver.reset();
+  }
+
+  public clearPersistence() {
+    this.persistenceDriver.clear();
   }
 
   public resetDumpHistory() {

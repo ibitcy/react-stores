@@ -24,6 +24,8 @@ For local demo clone this repo and run the script below inside the dir, then go 
 npm i && npm run demo
 ```
 
+## [Sandbox]()
+
 ## Tests
 
 ```bash
@@ -245,13 +247,15 @@ Any object corresponding to StoreState interface.
 
 #### StoreOptions
 
-| Property          | Type      | Default | Optional | Description                                                                                                                                        |
-| ----------------- | --------- | ------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `immutable`       | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, but increased performance, [for more see](#performance) |
-| `persistence`     | `boolean` | `false` | Yes      | Enables persistent mode using LocalStorage persistence of custom StorePersistentDriver                                                             |
-| `setStateTimeout` | `number`  | `0`     | Yes      | Store state updates with timeout                                                                                                                   |
+| Property          | Type      | Default | Optional | Description                                                                                                                                                                               |
+| ----------------- | --------- | ------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `immutable`       | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, but increased performance, [for more see](https://ibitcy.github.io/react-stores/?#Performance) |
+| `persistence`     | `boolean` | `false` | Yes      | Enables persistent mode using LocalStorage persistence of custom StorePersistentDriver                                                                                                    |
+| `setStateTimeout` | `number`  | `0`     | Yes      | Store state updates with timeout                                                                                                                                                          |
 
 #### Store methods
+
+[Check demo here](https://ibitcy.github.io/react-stores/?#Snapshots).
 
 | Method name        | Arguments                                         | Returns                                 | Description                                                                                |
 | ------------------ | ------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------ |
@@ -264,7 +268,6 @@ Any object corresponding to StoreState interface.
 | `saveDump`         | No                                                | `number`                                | Save state dump and get its ID which is represented in number of current time milliseconds |
 | `removeDump`       | `timestamp: number`                               | `void`                                  | Remove state dump by ID                                                                    |
 | `restoreDump`      | `timestamp: number`                               | `void`                                  | Replace current state to one from history by ID                                            |
-| `getDumpHistory`   | No                                                | `number[]`                              | Get dump history IDs                                                                       |
 | `getDumpHistory`   | No                                                | `number[]`                              | Get dump history IDs                                                                       |
 
 ##### \* Store methods: `on()` arguments
@@ -398,17 +401,17 @@ type TCompare<MappedState> = (storeMappedState: MappedState, prevStoreMappedStat
 
 # Persistence
 
-A store instance can be persistent from session to session in case you've provided `StorePersistentDriver` to it. React-stores includes built-in `StorePersistentLocalSrorageDriver`.
+A store instance can be persistent from session to session in case you've provided `StorePersistentDriver` to it. React-stores includes built-in `StorePersistentLocalStorageDriver`. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
 
 ```typescript
-const myStore = new Store<IMyStoreState>(initialState, new StorePersistentLocalSrorageDriver('myStore'));
+const myStore = new Store<IMyStoreState>(initialState, new StorePersistentLocalStorageDriver('myStore'));
 ```
 
 Also, you can implement your own persistence driver by implementing `StorePersistentDriver` abstract class.
 
 # Optimisation
 
-If you need to solve performance problems in the Components connected to stores, react-stores offers tools to help you fix performance issues.
+If you need to solve performance problems in the Components connected to stores, react-stores offers tools to help you fix performance issues. [Check demo here](https://ibitcy.github.io/react-stores/?#Optimisation).
 
 ### Use includeKeys in StoreEvent
 
@@ -436,6 +439,7 @@ comonentDidMount() {
   // and watch only for a important keys for this component
   this.storeEvent = myStore.on(
     StoreEventType.All,
+    // Watch only for mapOfObjects key from store
     ['mapOfObjects'],
     (storeState) => {
       // The callback is fired only when mapOfObjects key was changed
@@ -494,6 +498,7 @@ import { myStore } from './myStore';
 
 export const CounterComponent = ({ value }) => {
   // Okey, now component will re-render only when counter actualy changed
+  // mapState function returns primitive type
   const counter = useStore(myStore, state => state.counter);
 
   return <div>{counter}</div>;
@@ -549,6 +554,7 @@ It happens because mapState(nextState) do not equals with previous mapState call
 ```typescript jsx
 import React from 'react';
 import { useStore } from 'react-stores';
+// You can use `areSimilar` exported from react-stores
 // import { areSimilar } from 'react-stores';
 import { myStore } from './myStore';
 
@@ -559,7 +565,6 @@ export const CounterComponent = ({ value }) => {
     state => ({ counter: state.counter, anotherValue: state.anotherValue }),
     // Use your custom compare function for prevent re-renders
     // if the store was changed but mapped values did not changed.
-    // Or you can use `areSimilar` exported from react-stores
     (a, b) => a.counter === b.counter && someCompareFunction(a.anotherValue, b.anotherValue),
   );
 
