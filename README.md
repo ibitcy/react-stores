@@ -229,11 +229,11 @@ export const Component: FC = () => {
 
 #### Store constructor
 
-| Argument            | Type                                | Optional | Description                                                  |
-| ------------------- | ----------------------------------- | -------- | ------------------------------------------------------------ |
-| `initialState`      | [`StoreState`](#storestate)         | No       | Initial state values object                                  |
-| `options`           | [`StoreOptions`](#storeoptions)     | Yes      | Setup store as you need with immutable, persistence and etс. |
-| `persistenceDriver` | `StorePersistentDriver<StoreState>` | Yes      | `StorePersistentDriver<StoreState>` class instance           |
+| Argument            | Type                                                                                                                   | Optional | Description                                                                                                                           |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `initialState`      | [`StoreState`](#storestate)                                                                                            | No       | Initial state values object                                                                                                           |
+| `options`           | [`StoreOptions`](#storeoptions)                                                                                        | Yes      | Setup store as you need with immutable, persistence and etс.                                                                          |
+| `persistenceDriver` | [`StorePersistentDriver<StoreState>`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) | Yes      | [`StorePersistentDriver<StoreState>`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) class instance |
 
 [Example](#create-a-store)
 
@@ -247,11 +247,12 @@ Any object corresponding to StoreState interface.
 
 #### StoreOptions
 
-| Property          | Type      | Default | Optional | Description                                                                                                                                                                               |
-| ----------------- | --------- | ------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `immutable`       | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, but increased performance, [for more see](https://ibitcy.github.io/react-stores/?#Performance) |
-| `persistence`     | `boolean` | `false` | Yes      | Enables persistent mode using LocalStorage persistence of custom StorePersistentDriver                                                                                                    |
-| `setStateTimeout` | `number`  | `0`     | Yes      | Store state updates with timeout                                                                                                                                                          |
+| Property          | Type      | Default | Optional | Description                                                                                                                                                                                                                                       |
+| ----------------- | --------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `immutable`       | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, but increased performance, [for more see](https://ibitcy.github.io/react-stores/?#Performance)                                                         |
+| `persistence`     | `boolean` | `false` | Yes      | Enables persistent mode using LocalStorage persistence of custom StorePersistentDriver. If you want use two persistence stores with identical interface you must set uniqName props. In other case both of stores will be use one key in storage. |
+| `uniqName`        | `string`  | null    | Yes      | uses for name in storage if persistence flag is true. If uniqName not defined name for persistent will be created from initialState keys.                                                                                                         |
+| `setStateTimeout` | `number`  | `0`     | Yes      | Store state updates with timeout                                                                                                                                                                                                                  |
 
 #### Store methods
 
@@ -399,15 +400,25 @@ When an store was change, useState() with `mapState` will call a `compare` of th
 type TCompare<MappedState> = (storeMappedState: MappedState, prevStoreMappedState: MappedState) => boolean;
 ```
 
+### useIsolatedStore
+
+If you want use isolated persistence stores dynamically stores with identical interface you must set uniqName prop in options. In other case both of stores will be use one key in storage. [Check demo here](https://ibitcy.github.io/react-stores/?#Isolated).
+
+| Argument            | Type                                                                                                                   | Optional | Description                                                                                                                           |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `initialState`      | [`StoreState`](#storestate)                                                                                            | No       | Initial state values object                                                                                                           |
+| `options`           | [`StoreOptions`](#storeoptions)                                                                                        | Yes      | Setup store as you need with immutable, persistence and etс.                                                                          |
+| `persistenceDriver` | [`StorePersistentDriver<StoreState>`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) | Yes      | [`StorePersistentDriver<StoreState>`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) class instance |
+
 # Persistence
 
-A store instance can be persistent from session to session in case you've provided `StorePersistentDriver` to it. React-stores includes built-in `StorePersistentLocalStorageDriver`. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
+A store instance can be persistent from session to session in case you've provided [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) to it. React-stores includes built-in `StorePersistentLocalStorageDriver`, it saves store state into localeStorage using uniqName or generated hash-name based on initialState interfaceg. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
 
 ```typescript
 const myStore = new Store<IMyStoreState>(initialState, new StorePersistentLocalStorageDriver('myStore'));
 ```
 
-Also, you can implement your own persistence driver by implementing `StorePersistentDriver` abstract class.
+Also, you can implement your own persistence driver by implementing [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) abstract class.
 
 # Optimisation
 
