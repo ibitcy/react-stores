@@ -207,10 +207,11 @@ const initialState = {
   counter: 0,
 };
 
-export const Component: FC = () => {
+export const Component: FC<{ name: sting }> = ({ name }) => {
   const myStore = useIsolatedStore<IMyStoreState>(initialState, {
     persistence: true,
     immutable: true,
+    uniqName: name,
   });
 
   const handleIncrement = React.useCallback(() => {
@@ -323,12 +324,12 @@ _We do not recomend use this way to connected with your stores, because it have 
 
 Use useStore only with `store` argument makes many performance issues, we recommend use [includeKeys](#use-includekeys-in-usestore) or [mapState](#use-mapstate-in-usestore) for optimisations and custom [compare](#use-compare-in-usestore) for perfect optimisation.
 
-| Argument    | Type                                                                                   | Optional | Description                                                                                                                                                        |
-| ----------- | -------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `store`     | [`Store<StoreState>`](#store)                                                          | No       | followed store\*                                                                                                                                                   |
-| `eventType` | [`StoreEventType`](#storeeventtype-enum)`|` [`StoreEventType[]`](#storeeventtype-enum) | Yes      | re-render only on specific events                                                                                                                                  |
-| `mapState`  | [`callback`](#mapState)                                                                | Yes      | The selector function should be pure since it is potentially executed multiple times and at arbitrary points in time.                                              |
-| `compare`   | [`callback`](#compare)                                                                 | Yes      | The optional comparison function also enables using something like Lodash's \_.isEqual() or Immutable.js's comparison capabilities. More about [compare](#compare) |
+| Argument    | Type                                                                                     | Optional | Description                                                                                                                                                        |
+| ----------- | ---------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `store`     | [`Store<StoreState>`](#store)                                                            | No       | followed store\*                                                                                                                                                   |
+| `eventType` | [`StoreEventType`](#storeeventtype-enum) `\|` [`StoreEventType[]`](#storeeventtype-enum) | Yes      | re-render only on specific events                                                                                                                                  |
+| `mapState`  | [`callback`](#mapState)                                                                  | Yes      | The selector function should be pure since it is potentially executed multiple times and at arbitrary points in time.                                              |
+| `compare`   | [`callback`](#compare)                                                                   | Yes      | The optional comparison function also enables using something like Lodash's \_.isEqual() or Immutable.js's comparison capabilities. More about [compare](#compare) |
 
 ##### \*To controll your re-renders use eventType, mapState and compare arguments. See more in [optimisation](#optimisation)
 
@@ -349,11 +350,11 @@ export const CounterComponent = ({ value }) => {
 
 with `includeKeys`. [Example](#use-includekeys-in-usestore)
 
-| Argument      | Type                                                                                   | Optional | Description                       |
-| ------------- | -------------------------------------------------------------------------------------- | -------- | --------------------------------- |
-| `store`       | [`Store<StoreState>`](#store)                                                          | No       | followed store                    |
-| `includeKeys` | `Array<keyof StoreState>`                                                              | No       | followed keys from store          |
-| `eventType`   | [`StoreEventType`](#storeeventtype-enum)`|` [`StoreEventType[]`](#storeeventtype-enum) | Yes      | re-render only on specific events |
+| Argument      | Type                                                                                     | Optional | Description                       |
+| ------------- | ---------------------------------------------------------------------------------------- | -------- | --------------------------------- |
+| `store`       | [`Store<StoreState>`](#store)                                                            | No       | followed store                    |
+| `includeKeys` | `Array<keyof StoreState>`                                                                | No       | followed keys from store          |
+| `eventType`   | [`StoreEventType`](#storeeventtype-enum) `\|` [`StoreEventType[]`](#storeeventtype-enum) | Yes      | re-render only on specific events |
 
 or with [`mapState`](#mapState) and [`compare`](#compare) only. [Example](#use-mapstate-in-usestore)
 
@@ -374,11 +375,11 @@ or use with second argument called options (legacy)
 
 This is legacy, please use an another useState overload.
 
-| Argument    | Type                                                                                   | Optional | Description                                                                                                                                                        |
-| ----------- | -------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `eventType` | [`StoreEventType`](#storeeventtype-enum)`|` [`StoreEventType[]`](#storeeventtype-enum) | Yes      | re-render only on specific events                                                                                                                                  |
-| `mapState`  | [`callback`](#mapState)                                                                | Yes      | The selector function should be pure since it is potentially executed multiple times and at arbitrary points in time.                                              |
-| `compare`   | [`callback`](#compare)                                                                 | Yes      | The optional comparison function also enables using something like Lodash's \_.isEqual() or Immutable.js's comparison capabilities. More about [compare](#compare) |
+| Argument    | Type                                                                                     | Optional | Description                                                                                                                                                        |
+| ----------- | ---------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `eventType` | [`StoreEventType`](#storeeventtype-enum) `\|` [`StoreEventType[]`](#storeeventtype-enum) | Yes      | re-render only on specific events                                                                                                                                  |
+| `mapState`  | [`callback`](#mapState)                                                                  | Yes      | The selector function should be pure since it is potentially executed multiple times and at arbitrary points in time.                                              |
+| `compare`   | [`callback`](#compare)                                                                   | Yes      | The optional comparison function also enables using something like Lodash's \_.isEqual() or Immutable.js's comparison capabilities. More about [compare](#compare) |
 
 #### mapState
 
