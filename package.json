@@ -67,7 +67,6 @@
     "html-loader": "^0.5.5",
     "jest": "^24.9.0",
     "react": "^16.11.0",
-    "react-addons-perf": "^15.4.2",
     "react-dom": "^16.11.0",
     "react-test-renderer": "^16.11.0",
     "react-tools": "^0.13.3",
