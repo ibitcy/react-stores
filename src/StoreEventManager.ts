@@ -1,6 +1,12 @@
 import { areSimilar } from './compare';
-import { omit } from './omit';
-import { StoreEvent, StoreEventSpecificKeys, StoreEventType, TOnFire, TOnFireWithKeys, TStoreEvent } from './StoreEvent';
+import {
+  StoreEvent,
+  StoreEventSpecificKeys,
+  StoreEventType,
+  TOnFire,
+  TOnFireWithKeys,
+  TStoreEvent,
+} from './StoreEvent';
 
 export class StoreEventManager<StoreState> {
   private events: Array<TStoreEvent<StoreState>> = [];
