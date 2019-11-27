@@ -427,12 +427,12 @@ If you need to solve performance problems in the Components connected to stores,
 
 ### Use includeKeys in StoreEvent
 
-You can prevent an unnesesary upadate calls with `includeKeys` when you listen a store.
-In this case event calls a [areSimilar function](https://github.com/ibitcy/react-stores/blob/master/src/compare.ts) to compare previous state and next state using only keys witch you pass into `includeKeys`.
+You can prevent an unnecessary update calls with `includeKeys` when you listen a store.
+In this case event calls a [areSimilar function](https://github.com/ibitcy/react-stores/blob/master/src/compare.ts) to compare previous state and next state using only keys wich you pass into `includeKeys`.
 
 ```typescript
 comonentDidMount() {
-  // You call setState every time when storeState changes even if storeState.mapOfObjects are not
+  // You call setState each time when storeState changes even if storeState.mapOfObjects does not exist
   // It's not a big deal when you grab a primitives from store, like a strings or a numbers
   this.storeEvent = myStore.on(
     StoreEventType.All,
@@ -465,24 +465,24 @@ comonentDidMount() {
 
 ### Use includeKeys in useStore
 
-You can prevent an unnesesary upadate calls with `includeKeys` passed to useStore.
+You can prevent an unnecessary update calls with `includeKeys` passed to useStore.
 In this case event calls a [areSimilar function](https://github.com/ibitcy/react-stores/blob/master/src/compare.ts) to compare previous state and next state uses only keys witch you pass into `includeKeys`.
 
 ```typescript
-// You call setState every time when storeState changes even if storeState.mapOfObjects are not
+// You call setState each time when storeState changes even if storeState.mapOfObjects does not exist
 // It's not a big deal when you grab a primitives from store, like a strings or a numbers
 const { mapOfObjects } = useStore(myStore, StoreEventType.Update /* Optional */);
 ```
 
 ```typescript
-// You can prevent update call for unnesessary keys in store
+// You can prevent update call for unnecessary keys in store
 // and watch only for a important keys for this component
 const { mapOfObjects } = useStore(myStore, ['mapOfObjects'], StoreEventType.Update /* Optional */);
 ```
 
 ### Use mapState in useStore
 
-Let's look at this example. In this case CounterComponent was re-render everytime after any of keys in myStore was changed. It happens because after changing we get a new copy of store state, and hook call forse update.
+Let's look at this example. In this case CounterComponent was re-rendering everytime after any of keys in myStore was changed. It happens because after changing we get a new copy of store state, and hook call force update.
 
 ```typescript jsx
 import React from 'react';
@@ -490,13 +490,12 @@ import { useStore } from 'react-stores';
 import { myStore } from './myStore';
 
 export const CounterComponent = ({ value }) => {
-  // Re-render component every time when myStore was changed
+  // Component re-renders when myStore changes
   const counter = useStore(myStore);
 
   /*
-   * WOW! All this code was execuded when myStore  was changed
+   * WOW! This code executes when myStore changes
    */
-
   return <div>{counter}</div>;
 };
 ```
@@ -517,7 +516,7 @@ export const CounterComponent = ({ value }) => {
 };
 ```
 
-It works because useHook uses strict `===` reference equality checks by default to compare next mapped state and previous mapped state. For primitives it works perfectlly, but let's look at this
+It works because useHook uses strict `===` reference equality checks by default to compare next mapped state and previous mapped state. For primitives it works perfectly, but let's look at this
 
 ```typescript jsx
 import React from 'react';
