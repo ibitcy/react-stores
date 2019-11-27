@@ -240,7 +240,7 @@ export const Component: FC<{ name: sting }> = ({ name }) => {
 
 #### StoreState
 
-It can be any interface describes your store's state.
+This can be any interface describes your store's state.
 
 #### initialState
 
@@ -274,18 +274,18 @@ Any object corresponding to StoreState interface.
 
 ##### \* Store methods: `on()` arguments
 
-##### on overloads
+##### `on()` overloads
 
 ```typescript
-// use for full store
-eventType: StoreEventType | StoreEventType[]
+// Use this to get the whole store state
+eventType: StoreEventType | StoreEventType[],
 callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void
 ```
 
-use this overload if you need some [optimisation](#use-includekeys-in-storeevent)
+Use this overload if you need some [optimization](#use-includekeys-in-storeevent).
 
 ```typescript
-// use for specific keys
+// Use this to get only specific keys
 eventType: StoreEventType | StoreEventType[],
 includeKeys: Array<keysof StoreState>
 callback: (storeState: StoreState, prevState: StoreState, includeKeys: Array<keysof StoreState>, type: StoreEventType) => void
@@ -322,7 +322,8 @@ _We do not recomend use this way to connected with your stores, because it have 
 
 ### useStore
 
-Use useStore only with `store` argument makes many performance issues, we recommend use [includeKeys](#use-includekeys-in-usestore) or [mapState](#use-mapstate-in-usestore) for optimisations and custom [compare](#use-compare-in-usestore) for perfect optimisation.
+Use useStore only with `store` argument makes many performance issues. 
+Instead, we recommend using [includeKeys](#use-includekeys-in-usestore) or [mapState](#use-mapstate-in-usestore) for optimizations and custom [compare](#use-compare-in-usestore) for perfect optimization.
 
 | Argument    | Type                                                                                     | Optional | Description                                                                                                                                                        |
 | ----------- | ---------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -331,7 +332,7 @@ Use useStore only with `store` argument makes many performance issues, we recomm
 | `mapState`  | [`callback`](#mapState)                                                                  | Yes      | The selector function should be pure since it is potentially executed multiple times and at arbitrary points in time.                                              |
 | `compare`   | [`callback`](#compare)                                                                   | Yes      | The optional comparison function also enables using something like Lodash's \_.isEqual() or Immutable.js's comparison capabilities. More about [compare](#compare) |
 
-##### \*To controll your re-renders use eventType, mapState and compare arguments. See more in [optimisation](#optimisation)
+##### \* To have more control over re-renders use eventType, mapState and compare their arguments. See more in [optimization](#optimization).
 
 ```typescript jsx
 import React from 'react';
@@ -342,13 +343,12 @@ export const CounterComponent = ({ value }) => {
   const store = useStore(myStore);
 
   // Do not abuse this in a real app with complicated stores.
-  // The component will not automatically update if the myStore state changes
-  // To controll your re-renders use eventType, mapState and compare arguments
+  // The component will not automatically update if the myStore state changes.
   return <div>{store.anyOfProps}</div>;
 };
 ```
 
-with `includeKeys`. [Example](#use-includekeys-in-usestore)
+With `includeKeys`. [example](#use-includekeys-in-usestore).
 
 | Argument      | Type                                                                                     | Optional | Description                       |
 | ------------- | ---------------------------------------------------------------------------------------- | -------- | --------------------------------- |
@@ -356,15 +356,15 @@ with `includeKeys`. [Example](#use-includekeys-in-usestore)
 | `includeKeys` | `Array<keyof StoreState>`                                                                | No       | followed keys from store          |
 | `eventType`   | [`StoreEventType`](#storeeventtype-enum) `\|` [`StoreEventType[]`](#storeeventtype-enum) | Yes      | re-render only on specific events |
 
-or with [`mapState`](#mapState) and [`compare`](#compare) only. [Example](#use-mapstate-in-usestore)
+Or with [`mapState`](#mapState) and [`compare`](#compare) only. [Example](#use-mapstate-in-usestore).
 
 | Argument   | Type                    | Optional | Description                                                                                                                                                        |
 | ---------- | ----------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `store`    | `Store<StoreState>`     | No       | followed store                                                                                                                                                     |
 | `mapState` | [`callback`](#mapState) | No       | The selector function should be pure since it is potentially executed multiple times and at arbitrary points in time.                                              |
-| `compare`  | [`callback`](#compare)  | Yes      | The optional comparison function also enables using something like Lodash's \_.isEqual() or Immutable.js's comparison capabilities. More about [compare](#compare) |
+| `compare`  | [`callback`](#compare)  | Yes      | The optional comparison function also enables using something like Lodash' `_.isEqual()` or Immutable.js's comparison capabilities. More about [compare](#compare) |
 
-or use with second argument called options (legacy)
+Or use with second argument called options (legacy).
 
 | Argument  | Type                          | Optional | Description                                  |
 | --------- | ----------------------------- | -------- | -------------------------------------------- |
@@ -373,7 +373,7 @@ or use with second argument called options (legacy)
 
 #### useStore options
 
-This is legacy, please use an another useState overload.
+This is legacy, please use another useState overload.
 
 | Argument    | Type                                                                                     | Optional | Description                                                                                                                                                        |
 | ----------- | ---------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -383,7 +383,7 @@ This is legacy, please use an another useState overload.
 
 #### mapState
 
-It should take a first argument called state, optionally a second argument called prevState, and also it take optionally a `type` as third argument and return a plain object containing the data that the connected component needs or primitives (e.g. string, boolean, number)). The selector function should be pure since it is potentially executed multiple times and at arbitrary points in time.
+This should take the first argument called state, optionally the second argument called prevState, and also takes optionally `type` as the third argument and returns a plain object containing data that connected component(s) listens to. Selector function should be pure since it is potentially executed multiple times and at arbitrary points in time.
 
 ```typescript
 type TMapState<StoreState, MappedState> = (
@@ -395,7 +395,7 @@ type TMapState<StoreState, MappedState> = (
 
 #### compare
 
-When an store was change, useState() with `mapState` will call a `compare` of the previous `mapState` result value and the current result value. If they are different, the component will be forced to re-render. If they are the same, the component will not re-render. It should returns `true` if compared states are equal. By default, it uses strict `===` reference equality checks for next and previous mapped state. It works only if you map a primitives. Check this [compare](#use-compare-in-usestore) explanation.
+When store changes, useState() with `mapState` calling a `compare` of the previous `mapState` result value and the current result value. If they are different, the component will be forced to re-render. If they are the same, the component will not re-render. It should return `true` if compared states are equal. By default, it uses strict `===` reference equality checks for next and previous mapped state. It works only if you map primitives. Check this [compare](#use-compare-in-usestore) explanation.
 
 ```typescript
 type TCompare<MappedState> = (storeMappedState: MappedState, prevStoreMappedState: MappedState) => boolean;
@@ -403,7 +403,7 @@ type TCompare<MappedState> = (storeMappedState: MappedState, prevStoreMappedStat
 
 ### useIsolatedStore
 
-If you want use isolated persistence stores dynamically stores with identical interface you must set uniqName prop in options. In other case both of stores will be use one key in storage. [Check demo here](https://ibitcy.github.io/react-stores/?#Isolated).
+If you want to use isolated persistent stores dynamically with identical interface you must set `uniqName` property inside passed options. In other case both of stores will be use one key in storage. [Check demo here](https://ibitcy.github.io/react-stores/?#Isolated).
 
 | Argument            | Type                                                                                                                   | Optional | Description                                                                                                                           |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -413,27 +413,29 @@ If you want use isolated persistence stores dynamically stores with identical in
 
 # Persistence
 
-A store instance can be persistent from session to session in case you've provided [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) to it. React-stores includes built-in `StorePersistentLocalStorageDriver`, it saves store state into localeStorage using uniqName or generated hash-name based on initialState interfaceg. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
+A store instance can be persistent from session to session in case you've provided [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) to it. React-stores includes built-in `StorePersistentLocalStorageDriver`, it saves store state into the LocalStore* using `uniqName` or generated hash-name based on initialState interface. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
+
+\* For React Native you have to provide your own `StorePersistentDriver` see below.
 
 ```typescript
 const myStore = new Store<IMyStoreState>(initialState, new StorePersistentLocalStorageDriver('myStore'));
 ```
 
-Also, you can implement your own persistence driver by implementing [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) abstract class.
+You can implement your own persistence driver by implementing [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) abstract class.
 
-# Optimisation
+# Optimization
 
-If you need to solve performance problems in the Components connected to stores, react-stores offers tools to help you fix performance issues. [Check demo here](https://ibitcy.github.io/react-stores/?#Optimisation).
+If you need to solve performance problems in the Components connected to stores, react-stores offers you tools to help you fix performance issues. [Check demo here](https://ibitcy.github.io/react-stores/?#optimization).
 
 ### Use includeKeys in StoreEvent
 
-You can prevent an unnecessary update calls with `includeKeys` when you listen a store.
-In this case event calls a [areSimilar function](https://github.com/ibitcy/react-stores/blob/master/src/compare.ts) to compare previous state and next state using only keys wich you pass into `includeKeys`.
+You can prevent unnecessary update calls with `includeKeys`.
+In this case, events calls [areSimilar function](https://github.com/ibitcy/react-stores/blob/master/src/compare.ts) to compare previous state and next state using only the keys you provided to the `includeKeys` array.
 
 ```typescript
 comonentDidMount() {
   // You call setState each time when storeState changes even if storeState.mapOfObjects does not exist
-  // It's not a big deal when you grab a primitives from store, like a strings or a numbers
+  // It's not a big deal while you get only primitives from a store state, like strings or numbers
   this.storeEvent = myStore.on(
     StoreEventType.All,
     (storeState) => {
@@ -447,11 +449,11 @@ comonentDidMount() {
 
 ```typescript
 comonentDidMount() {
-  // You can prevent update call for unnesessary keys in store
-  // and watch only for a important keys for this component
+  //You can prevent update call for unnecessary keys in 
+  // and watch only for an important key for this component
   this.storeEvent = myStore.on(
     StoreEventType.All,
-    // Watch only for mapOfObjects key from store
+    // Watch only for mapOfObjects key from the store
     ['mapOfObjects'],
     (storeState) => {
       // The callback is fired only when mapOfObjects key was changed
@@ -465,8 +467,8 @@ comonentDidMount() {
 
 ### Use includeKeys in useStore
 
-You can prevent an unnecessary update calls with `includeKeys` passed to useStore.
-In this case event calls a [areSimilar function](https://github.com/ibitcy/react-stores/blob/master/src/compare.ts) to compare previous state and next state uses only keys witch you pass into `includeKeys`.
+You can prevent unnecessary update calls with `includeKeys` passed to the `useStore`.
+In this case, events calls the [areSimilar function](https://github.com/ibitcy/react-stores/blob/master/src/compare.ts) to compare previous state and next state uses only keys witch you pass into `includeKeys`.
 
 ```typescript
 // You call setState each time when storeState changes even if storeState.mapOfObjects does not exist
@@ -475,14 +477,14 @@ const { mapOfObjects } = useStore(myStore, StoreEventType.Update /* Optional */)
 ```
 
 ```typescript
-// You can prevent update call for unnecessary keys in store
-// and watch only for a important keys for this component
+// You can prevent update call for unnecessary keys in the store 
+// and watch only for important keys for this component
 const { mapOfObjects } = useStore(myStore, ['mapOfObjects'], StoreEventType.Update /* Optional */);
 ```
 
 ### Use mapState in useStore
 
-Let's look at this example. In this case CounterComponent was re-rendering everytime after any of keys in myStore was changed. It happens because after changing we get a new copy of store state, and hook call force update.
+Let's look at this example. In this case, CounterComponent will re-render every time after any of the keys in myStore were changed. It happens because after changing we get a new copy of the store state and forcing the update.
 
 ```typescript jsx
 import React from 'react';
@@ -490,17 +492,17 @@ import { useStore } from 'react-stores';
 import { myStore } from './myStore';
 
 export const CounterComponent = ({ value }) => {
-  // Component re-renders when myStore changes
+  // Component re-renders when myStore state changes
   const counter = useStore(myStore);
 
   /*
-   * WOW! This code executes when myStore changes
+   * This code executes when myStore state changes
    */
   return <div>{counter}</div>;
 };
 ```
 
-You can use `mapState` function to pick primitives from state and map it into your component
+You can use `mapState` function to pick primitives from state and pass them into your component.
 
 ```typescript jsx
 import React from 'react';
@@ -508,15 +510,15 @@ import { useStore } from 'react-stores';
 import { myStore } from './myStore';
 
 export const CounterComponent = ({ value }) => {
-  // Okey, now component will re-render only when counter actualy changed
-  // mapState function returns primitive type
+  // Okay, now component will re-render only when the counter property actually changed
+  // mapState function returns primitive
   const counter = useStore(myStore, state => state.counter);
 
   return <div>{counter}</div>;
 };
 ```
 
-It works because useHook uses strict `===` reference equality checks by default to compare next mapped state and previous mapped state. For primitives it works perfectly, but let's look at this
+It works because useHook uses strict `===` reference equality that checks next mapped state and previous mapped state. For primitives, it works perfectly, but let's look at this:
 
 ```typescript jsx
 import React from 'react';
@@ -524,23 +526,22 @@ import { useStore } from 'react-stores';
 import { myStore } from './myStore';
 
 export const CounterComponent = ({ value }) => {
-  // Hm, now component re-renders everytime
-  // It also is relevant when you map two or more keys
+  // Now component re-renders every time we change store state
+  // It is also relevant when you map two or more keys
   const { counter } = useStore(myStore, state => ({ counter: state.counter }));
 
   /*
-   * WOW! All this code was execuded when myStore  was changed
+   * All this code will be executed when myStore were changed
    */
 
   return <div>{counter}</div>;
 };
 ```
 
-It happens because mapState(nextState) do not equals with previous mapState call, they are different objects. You can fix it with [`compare`](#use-compare-in-usestore) function.
+It happens because mapState(nextState) does not equal the previous mapState, they are different objects. You can fix it with [`compare`](#use-compare-in-usestore) function.
 
 ### Use compare in useStore
-
-When you uses only mapState to map a few keys your component will re-render even if keys did not change. Take a look:
+When you use `mapState` with only few keys, your component will re-render even if keys did not changed. Take a look:
 
 ```typescript jsx
 import React from 'react';
@@ -548,25 +549,25 @@ import { useStore } from 'react-stores';
 import { myStore } from './myStore';
 
 export const CounterComponent = ({ value }) => {
-  // Hm, now component re-renders everytime
-  // It also is relevant when you map two or more keys
+  // Now component re-renders every time
+  // It is also relevant when you map two or more keys
   const { counter } = useStore(myStore, state => ({ counter: state.counter }));
 
   /*
-   * WOW! All this code was execuded when myStore  was changed
+   * All this code will be executed when myStore were changed
    */
 
   return <div>{counter}</div>;
 };
 ```
 
-It happens because mapState(nextState) do not equals with previous mapState call, they are different objects. Let's use `compare` function to fix it.
+It happens because mapState(nextState) not equal previous mapState, they are different objects. Let's use `compare` function to fix it.
 
 ```typescript jsx
 import React from 'react';
 import { useStore } from 'react-stores';
-// You can use `areSimilar` exported from react-stores
-// import { areSimilar } from 'react-stores';
+// You can use `areSimilar` function exported from react-stores
+import { areSimilar } from 'react-stores';
 import { myStore } from './myStore';
 
 export const CounterComponent = ({ value }) => {
@@ -574,8 +575,8 @@ export const CounterComponent = ({ value }) => {
   const { counter, anotherValue } = useStore(
     myStore,
     state => ({ counter: state.counter, anotherValue: state.anotherValue }),
-    // Use your custom compare function for prevent re-renders
-    // if the store was changed but mapped values did not changed.
+    // Use your custom compare function to prevent re-renders
+    // if the store was changed but mapped values are the same.
     (a, b) => a.counter === b.counter && someCompareFunction(a.anotherValue, b.anotherValue),
   );
 
