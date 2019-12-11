@@ -105,7 +105,7 @@ export class StoreEventManager<StoreState> {
   }
 
   private doFire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event: TStoreEvent<StoreState>) {
-    if (event.types.indexOf(type) >= 0 || event.types.indexOf(StoreEventType.All) >= 0) {
+    if (event.types.includes(type)|| event.types.includes(StoreEventType.All)) {
       if (event instanceof StoreEventSpecificKeys) {
         const excludedKeys = Object.keys(storeState).filter(
           key => !event.includeKeys.includes(key as keyof StoreState),
