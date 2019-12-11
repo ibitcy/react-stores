@@ -23,8 +23,8 @@ function getOption<T, V>(rest: Array<any>): Required<IOptionsExtended<T, V>> {
   const includeKeys = [];
   if (
     rest[0] &&
-    (Object.keys(StoreEventType).indexOf(rest[0].toString()) >= 0 ||
-      (Array.isArray(rest[0]) && Object.keys(StoreEventType).indexOf(rest[0][0].toString()) >= 0))
+    (Object.keys(StoreEventType).includes(rest[0].toString()) ||
+      (Array.isArray(rest[0]) && Object.keys(StoreEventType).includes(rest[0][0].toString())))
   ) {
     return {
       eventType: rest[0],
