@@ -47,14 +47,27 @@ export const IsolatedComponent: FC<{ name: string; onRemove: (name: string) => v
       style={{ margin: 10, padding: 20, flexBasis: 'calc(33.3% - 20px)', position: 'relative' }}>
       <button
         onClick={handleRemove}
-        style={{ position: 'absolute', right: 0, margin: 0, top: 0, minWidth: 0, borderRadius: '0 3px 0 0' }}>
-        x
+        style={{
+          position: 'absolute',
+          right: 0,
+          margin: 0,
+          top: 0,
+          minWidth: 0,
+          borderRadius: '0 2px 0 3px',
+          width: 26,
+          padding: 0,
+          paddingBottom: 2,
+          height: 26,
+          fontSize: '16px',
+          boxSizing: 'border-box',
+        }}>
+        ×
       </button>
       <p style={{ marginTop: 0 }}>
-        <strong>Isolated state hash - {name}</strong>
+        State hash: <strong>{name}</strong>
       </p>
       <p>
-        Isolated state: <strong>{myStore.state.counter}</strong>
+        Value: <strong>{myStore.state.counter}</strong>
       </p>
       <div className='row'>
         <button onClick={handleIncrement}>Increment</button>

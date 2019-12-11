@@ -8,7 +8,7 @@ import { CounterDecorator } from './CounterDecorator';
 import { CounterEvents } from './CounterEvents';
 import { History } from './history';
 import { IsolatedStores } from './IsolatedStores';
-import { Optimisation } from './Optimisation';
+import { Optimization } from './Optimization';
 import { Performance } from './Performance';
 import { Persistent } from './persistent';
 import { EPage, historyStore, pageStore, persistentStore, stores } from './stores';
@@ -60,7 +60,7 @@ export const Container: React.FC = () => {
         <NavItem pageId={EPage.Persistent} />
         <NavItem pageId={EPage.Snapshots} />
         <NavItem pageId={EPage.Performance} />
-        <NavItem pageId={EPage.Optimisation} />
+        <NavItem pageId={EPage.Optimization} />
         <NavItem pageId={EPage.Isolated} />
       </nav>
 
@@ -108,11 +108,11 @@ export const Container: React.FC = () => {
           </React.Fragment>
         )}
 
-        {pageStoreState.page === EPage.Optimisation && (
+        {pageStoreState.page === EPage.Optimization && (
           <React.Fragment>
-            <h1>Re-renders optimisation</h1>
+            <h1>Re-renders optimization</h1>
 
-            <Optimisation />
+            <Optimization />
           </React.Fragment>
         )}
 

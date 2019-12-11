@@ -10,7 +10,7 @@ export enum EPage {
   Persistent = 'Persistent',
   Snapshots = 'Snapshots',
   Performance = 'Performance',
-  Optimisation = 'Optimisation',
+  Optimization = 'Optimization',
   Isolated = 'Isolated',
 }
 

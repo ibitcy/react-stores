@@ -140,7 +140,7 @@ async function fillStore(passCount: number) {
   await sleep(10);
 }
 
-export const Optimisation: React.FC<{}> = () => {
+export const Optimization: React.FC<{}> = () => {
   const [passCount, setPassNumber] = React.useState(PASS_COUNT);
   const [progress, setProgress] = React.useState(false);
   const progressCountRef = React.useRef<HTMLSpanElement>();
@@ -155,7 +155,7 @@ export const Optimisation: React.FC<{}> = () => {
       setProgress(true);
       for (let i = 0; i < passCount; i++) {
         if (progressCountRef.current) {
-          progressCountRef.current.innerText = String(i);
+          progressCountRef.current.innerText = i.toString();
         }
         await fillStore(passCount);
       }
@@ -187,19 +187,21 @@ export const Optimisation: React.FC<{}> = () => {
             }}
           />
           <button type='submit'>Start test</button>
-        </span>
-        <span className='row left-aligned'>
           {progress && (
-            <h4>
-              Progressing... Iteration:
-              <span ref={progressCountRef} />
-            </h4>
+            <div className='info'>
+              <span>
+                <strong>Processing...</strong>&nbsp;
+                <span className='label' ref={progressCountRef}>
+                  0
+                </span>
+              </span>
+            </div>
           )}
         </span>
       </form>
       <div className='row'>
         <div className='component'>
-          <ExperimentWithNoOptimisation />
+          <ExperimentWithNoOptimization />
         </div>
         <div className='col-separator' />
         <div className='component'>
@@ -219,9 +221,9 @@ export const Optimisation: React.FC<{}> = () => {
   );
 };
 
-Optimisation.displayName = 'Optimisation';
+Optimization.displayName = 'Optimization';
 
-const ExperimentWithNoOptimisation = React.memo(() => {
+const ExperimentWithNoOptimization = React.memo(() => {
   const rerenderTimeStart = Date.now();
   const rerenderTime = React.useRef(0);
   const refCount = React.useRef(0);
@@ -233,27 +235,32 @@ const ExperimentWithNoOptimisation = React.memo(() => {
 
   return (
     <>
-      <h4>No optimisation, useState(store)</h4>
+      <h2>
+        Not optimised
+        <span>
+          Using plain <em>useState(store)</em>
+        </span>
+      </h2>
 
       <div>
         <p>
-          Store data string: <strong>{string}</strong>
+          String: <strong>{string}</strong>
         </p>
         <p>
-          Store data number: <strong>{number}</strong>
+          Number: <strong>{number}</strong>
         </p>
         <p>
-          Store updates count: <strong>{refCount.current}</strong>
+          Updates count: <strong>{refCount.current}</strong>
         </p>
         <p>
-          Store rerender time: <strong>{rerenderTime.current}ms</strong>
+          Re-render time: <strong>{rerenderTime.current}ms</strong>
         </p>
       </div>
     </>
   );
 });
 
-ExperimentWithNoOptimisation.displayName = 'ExperimentWithNoOptimisation';
+ExperimentWithNoOptimization.displayName = 'ExperimentWithNoOptimization';
 
 const ExperimentWithCustomCompareFunction = React.memo(() => {
   const rerenderTimeStart = Date.now();
@@ -270,20 +277,25 @@ const ExperimentWithCustomCompareFunction = React.memo(() => {
 
   return (
     <>
-      <h4>Optimisation mapState with custom compareFunction</h4>
+      <h2>
+        Optimised
+        <span>
+          Using <em>mapState</em> with custom <em>compareFunction</em>
+        </span>
+      </h2>
 
       <div>
         <p>
-          Store data string: <strong>{string}</strong>
+          String: <strong>{string}</strong>
         </p>
         <p>
-          Store data number: <strong>{number}</strong>
+          Number: <strong>{number}</strong>
         </p>
         <p>
-          Store updates count: <strong>{refCount.current}</strong>
+          Updates count: <strong>{refCount.current}</strong>
         </p>
         <p>
-          Store rerender time: <strong>{rerenderTime.current}ms</strong>
+          Re-render time: <strong>{rerenderTime.current}ms</strong>
         </p>
       </div>
     </>
@@ -303,20 +315,25 @@ const ExperimentWithSimilarCompareFunction = React.memo(() => {
 
   return (
     <>
-      <h4>Optimisation mapState with areSimilar function</h4>
+      <h2>
+        Optimised{' '}
+        <span>
+          Using <em>mapState</em> with <em>areSimilar()</em>
+        </span>
+      </h2>
 
       <div>
         <p>
-          Store data string: <strong>{string}</strong>
+          String: <strong>{string}</strong>
         </p>
         <p>
-          Store data number: <strong>{number}</strong>
+          Number: <strong>{number}</strong>
         </p>
         <p>
-          Store updates count: <strong>{refCount.current}</strong>
+          Updates count: <strong>{refCount.current}</strong>
         </p>
         <p>
-          Store rerender time: <strong>{rerenderTime.current}ms</strong>
+          Re-render time: <strong>{rerenderTime.current}ms</strong>
         </p>
       </div>
     </>
@@ -338,20 +355,24 @@ const ExperimentWithIncludeKeys = React.memo(() => {
 
   return (
     <>
-      <h4>Optimisation with includeKeys</h4>
-
+      <h2>
+        Optimised
+        <span>
+          Using <em>includeKeys</em>
+        </span>
+      </h2>
       <div>
         <p>
-          Store data string: <strong>{string}</strong>
+          String: <strong>{string}</strong>
         </p>
         <p>
-          Store data number: <strong>{number}</strong>
+          Number: <strong>{number}</strong>
         </p>
         <p>
-          Store updates count: <strong>{refCount.current}</strong>
+          Updates count: <strong>{refCount.current}</strong>
         </p>
         <p>
-          Store rerender time: <strong>{rerenderTime.current}ms</strong>
+          Re-render time: <strong>{rerenderTime.current}ms</strong>
         </p>
       </div>
     </>
