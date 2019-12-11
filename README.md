@@ -197,7 +197,7 @@ console.log(myStore.state.counter); // 9999
 
 ```typescript tsx
 import React, { FC } from 'react';
-import { useStore } from 'react-stores';
+import { useIsolatedStore } from 'react-stores';
 
 interface IMyStoreState {
   counter: number;
