@@ -5,4 +5,5 @@ dist
 .rpt2_cache
 .history
 .idea
+.vscode
 yarn-error.log

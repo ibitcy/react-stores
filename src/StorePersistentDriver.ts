@@ -16,7 +16,7 @@ export abstract class StorePersistentDriver<StoreState> {
 
   public abstract type: string;
 
-  public abstract write(pack: StorePersistentPacket<StoreState>);
+  public abstract write(pack: StorePersistentPacket<StoreState>): void;
 
   public abstract read(): StorePersistentPacket<StoreState>;
 
@@ -24,11 +24,13 @@ export abstract class StorePersistentDriver<StoreState> {
 
   public abstract readDump(id: number): StorePersistentPacket<StoreState>;
 
-  public abstract resetHistory();
+  public abstract resetHistory(): void;
+
+  public abstract clear(): void;
 
   public abstract getDumpHistory(): number[];
 
-  public abstract removeDump(timestamp: number);
+  public abstract removeDump(timestamp: number): void;
 
   public pack(data: StoreState): StorePersistentPacket<StoreState> {
     return {

@@ -1,6 +1,6 @@
 {
   "name": "react-stores",
-  "version": "3.0.4",
+  "version": "4.0.0",
   "sideEffects": false,
   "keywords": [
     "react",
@@ -24,6 +24,7 @@
     "check-size": "size-limit",
     "pretest": "npm run build",
     "test": "npx jest",
+    "test:watch": "npx jest --watch",
     "demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
     "release:demo": "webpack --config ./demo/webpack.prod.config.js",
     "prepare": "npm run build && npm run check-size && npm run test"
@@ -31,7 +32,7 @@
   "size-limit": [
     {
       "path": "lib/index.js",
-      "limit": "3kb",
+      "limit": "4kb",
       "webpack": false
     }
   ],
@@ -39,7 +40,7 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "tests/.*[.](tsx?)",
+    "testRegex": "tests/.*.test[.](tsx?)",
     "moduleFileExtensions": [
       "ts",
       "tsx",
