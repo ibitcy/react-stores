@@ -238,7 +238,7 @@ const ExperimentWithNoOptimization = React.memo(() => {
       <h2>
         Not optimised
         <span>
-          Using plain <em>useState(store)</em>
+          Using plain <em>useStore(store)</em>
         </span>
       </h2>
 
