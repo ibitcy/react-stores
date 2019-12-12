@@ -24,8 +24,6 @@ For local demo clone this repo and run the script below inside the dir, then go 
 npm i && npm run demo
 ```
 
-## [Sandbox]()
-
 ## Tests
 
 ```bash
