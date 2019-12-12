@@ -20,14 +20,14 @@
   "module": "lib/index.es.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf lib && rollup --config ./rollup.config.js && npm run check-size --scripts-prepend-node-path",
+    "build": "rm -rf lib && rollup --config ./rollup.config.js && yarn check-size",
     "check-size": "size-limit",
-    "pretest": "npm run build",
-    "test": "npx jest",
+    "pretest": "yarn build",
+    "test": "yarn jest",
     "test:watch": "npx jest --watch",
     "demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
     "release:demo": "webpack --config ./demo/webpack.prod.config.js",
-    "prepare": "npm run build && npm run check-size && npm run test"
+    "prepare": "yarn build && yarn check-size && yarn test"
   },
   "size-limit": [
     {
