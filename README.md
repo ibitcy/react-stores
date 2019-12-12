@@ -322,7 +322,7 @@ _We do not recomend use this way to connected with your stores, because it have 
 
 ### useStore
 
-Use useStore only with `store` argument makes many performance issues. 
+Use useStore only with `store` argument makes many performance issues.
 Instead, we recommend using [includeKeys](#use-includekeys-in-usestore) or [mapState](#use-mapstate-in-usestore) for optimizations and custom [compare](#use-compare-in-usestore) for perfect optimization.
 
 | Argument    | Type                                                                                     | Optional | Description                                                                                                                                                        |
@@ -413,7 +413,7 @@ If you want to use isolated persistent stores dynamically with identical interfa
 
 # Persistence
 
-A store instance can be persistent from session to session in case you've provided [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) to it. React-stores includes built-in `StorePersistentLocalStorageDriver`, it saves store state into the LocalStore* using `uniqName` or generated hash-name based on initialState interface. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
+A store instance can be persistent from session to session in case you've provided [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) to it. React-stores includes built-in `StorePersistentLocalStorageDriver`, it saves store state into the LocalStore\* using `uniqName` or generated hash-name based on initialState interface. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
 
 \* For React Native you have to provide your own `StorePersistentDriver` see below.
 
@@ -449,7 +449,7 @@ comonentDidMount() {
 
 ```typescript
 comonentDidMount() {
-  //You can prevent update call for unnecessary keys in 
+  //You can prevent update call for unnecessary keys in
   // and watch only for an important key for this component
   this.storeEvent = myStore.on(
     StoreEventType.All,
@@ -477,14 +477,15 @@ const { mapOfObjects } = useStore(myStore, StoreEventType.Update /* Optional */)
 ```
 
 ```typescript
-// You can prevent update call for unnecessary keys in the store 
+// You can prevent update call for unnecessary keys in the store
 // and watch only for important keys for this component
 const { mapOfObjects } = useStore(myStore, ['mapOfObjects'], StoreEventType.Update /* Optional */);
 ```
 
 ### Use mapState in useStore
 
-Let's look at this example. In this case, CounterComponent will re-render every time after any of the keys in myStore were changed. It happens because after changing we get a new copy of the store state and forcing the update.
+Let's look at this example. In this case, CounterComponent will re-render every time after any of the keys in myStore were changed.
+This happens because after changing we get a new copy of the store state and forcing the update.
 
 ```typescript jsx
 import React from 'react';
@@ -541,6 +542,7 @@ export const CounterComponent = ({ value }) => {
 It happens because mapState(nextState) does not equal the previous mapState, they are different objects. You can fix it with [`compare`](#use-compare-in-usestore) function.
 
 ### Use compare in useStore
+
 When you use `mapState` with only few keys, your component will re-render even if keys did not changed. Take a look:
 
 ```typescript jsx
