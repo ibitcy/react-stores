@@ -19,7 +19,7 @@ function getRandomName(count: number): string {
 
 export const IsolatedComponent: FC<{ name: string; onRemove: (name: string) => void }> = ({ name, onRemove }) => {
   const myStore = useIsolatedStore<IMyStoreState>(initialState, {
-    uniqKey: name,
+    name,
     persistence: true,
     immutable: true,
   });
@@ -85,7 +85,7 @@ export const IsolatedStores = () => {
     {
       persistence: true,
       immutable: true,
-      uniqKey: 'isolatedContainer',
+      name: 'isolatedContainer',
     },
   );
 

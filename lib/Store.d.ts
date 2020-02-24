@@ -12,20 +12,20 @@ export interface StoreOptions {
     immutable?: boolean;
     persistence?: boolean;
     setStateTimeout?: number;
-    uniqKey?: string;
+    name?: string;
 }
 export declare class Store<StoreState> {
     readonly persistenceDriver?: StorePersistentDriver<StoreState>;
-    components: any[];
-    readonly id: string;
+    readonly name: string;
     private eventManager;
     private readonly initialState;
     private frozenState;
-    private opts;
+    private _hook;
+    private readonly opts;
     get state(): StoreState;
     private checkInitialStateType;
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState>);
-    deepFreeze(obj: any): any;
+    private deepFreeze;
     private hashCode;
     private generateStoreId;
     resetPersistence(): void;
@@ -37,8 +37,8 @@ export declare class Store<StoreState> {
     getDumpHistory(): number[];
     setState(newState: Partial<StoreState>): void;
     resetState(): void;
-    update(currentState: StoreState, prevState: StoreState): void;
     getInitialState(): StoreState;
+    getOptions(): StoreOptions;
     on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFireWithKeys<StoreState>): StoreEventSpecificKeys<StoreState>;
     on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;
 }

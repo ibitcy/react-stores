@@ -5,7 +5,7 @@ import { StoreEventType } from './StoreEvent';
 
 interface StoreOptionsPersist extends StoreOptions {
   persistence: true;
-  uniqKey: string;
+  name: string;
 }
 
 interface StoreOptionsNoPersist extends StoreOptions {

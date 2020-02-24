@@ -22,23 +22,22 @@ export interface StoreOptions {
   immutable?: boolean;
   persistence?: boolean;
   setStateTimeout?: number;
-  uniqKey?: string;
+  name?: string;
 }
 
 export class Store<StoreState> {
-  public components = [];
-  public readonly id: string;
+  public readonly name: string;
   private eventManager: StoreEventManager<StoreState> | null = null;
   private readonly initialState: StoreState = null;
   private frozenState: StoreState = null;
-
-  private opts: StoreOptions = {
+  private _hook: any = null;
+  private readonly opts: StoreOptions = {
+    name: '',
     live: false,
     freezeInstances: false,
     immutable: false,
     persistence: false,
     setStateTimeout: 0,
-    uniqKey: null,
   };
 
   get state(): StoreState {
@@ -59,20 +58,19 @@ export class Store<StoreState> {
     options?: StoreOptions,
     readonly persistenceDriver?: StorePersistentDriver<StoreState>,
   ) {
+    this._hook = window['__REACT_STORES_INSPECTOR__'];
     this.checkInitialStateType(initialState);
     let currentState: StoreState | null = null;
+    this.name = options?.name ?? this.generateStoreId(initialState);
 
     if (options) {
       this.opts.immutable = options.immutable === true;
       this.opts.persistence = options.persistence === true;
       this.opts.setStateTimeout = options.setStateTimeout;
-      this.opts.uniqKey = options.uniqKey;
     }
 
-    this.id = this.opts.uniqKey || this.generateStoreId(initialState);
-
     if (!this.persistenceDriver) {
-      this.persistenceDriver = new StorePersistentLocalStorageDriver(this.id);
+      this.persistenceDriver = new StorePersistentLocalStorageDriver(this.name + this.generateStoreId(initialState));
     }
 
     if (this.opts.persistence) {
@@ -92,9 +90,10 @@ export class Store<StoreState> {
     this.eventManager = new StoreEventManager(this.opts.setStateTimeout);
     this.initialState = this.deepFreeze(initialState);
     this.frozenState = this.deepFreeze(currentState);
+    this._hook?.attachStore(this);
   }
 
-  deepFreeze(obj: any): any {
+  private deepFreeze(obj: any): any {
     if (this.opts.immutable) {
       const propNames = Object.getOwnPropertyNames(obj);
 
@@ -181,27 +180,20 @@ export class Store<StoreState> {
 
     this.frozenState = updatedState;
     this.persistenceDriver.write(this.persistenceDriver.pack(updatedState));
-    this.update(updatedState, prevState);
+    this.eventManager.fire(StoreEventType.Update, updatedState, prevState);
+    this._hook?.updateState(this.name, newState);
   }
 
   public resetState() {
     this.setState(this.deepFreeze(this.initialState));
   }
 
-  public update(currentState: StoreState, prevState: StoreState) {
-    for (const key in this.components) {
-      if (this.components[key].isStoreMounted && this.components.hasOwnProperty(key)) {
-        this.components[key].storeComponentStoreWillUpdate();
-        this.components[key].forceUpdate();
-        this.components[key].storeComponentStoreDidUpdate();
-      }
-    }
-
-    this.eventManager.fire(StoreEventType.Update, currentState, prevState);
-  }
-
   public getInitialState(): StoreState {
     return this.initialState;
+  }
+
+  public getOptions(): StoreOptions {
+    return this.opts;
   }
 
   // on overloads

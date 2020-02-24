@@ -209,7 +209,7 @@ export const Component: FC<{ name: sting }> = ({ name }) => {
   const myStore = useIsolatedStore<IMyStoreState>(initialState, {
     persistence: true,
     immutable: true,
-    uniqKey: name,
+    name,
   });
 
   const handleIncrement = React.useCallback(() => {
@@ -246,12 +246,12 @@ Any object corresponding to StoreState interface.
 
 #### StoreOptions
 
-| Property          | Type      | Default | Optional | Description                                                                                                                                                                                                                                       |
-| ----------------- | --------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `immutable`       | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, but increased performance, [for more see](https://ibitcy.github.io/react-stores/?#Performance)                                                         |
-| `persistence`     | `boolean` | `false` | Yes      | Enables persistent mode using LocalStorage persistence of custom StorePersistentDriver. If you want use two persistence stores with identical interface you must set uniqKey props. In other case both of stores will be use one key in storage. |
-| `uniqKey`        | `string`  | null    | Yes      | Uses for name in storage if persistence flag is true. If uniqKey not defined name for persistent will be created from initialState interface.                                                                                                    |
-| `setStateTimeout` | `number`  | `0`     | Yes      | Store state updates with timeout                                                                                                                                                                                                                  |
+| Property          | Type      | Default | Optional | Description                                                                                                                                                                                                                                     |
+| ----------------- | --------- | ------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `immutable`       | `boolean` | `false` | Yes      | Object.freeze(...) for store state instances, when disabled you have fully mutable states, but increased performance, [for more see](https://ibitcy.github.io/react-stores/?#Performance)                                                       |
+| `persistence`     | `boolean` | `false` | Yes      | Enables persistent mode using LocalStorage persistence of custom StorePersistentDriver. If you want use two persistence stores with identical interface you must set `name` props. In other case both of stores will be use one key in storage. |
+| `name`            | `string`  | null    | Yes      | Uses for name in storage if persistence flag is true. If name not defined name for persistent will be created from initialState interface.                                                                                                      |
+| `setStateTimeout` | `number`  | `0`     | Yes      | Store state updates with timeout                                                                                                                                                                                                                |
 
 #### Store methods
 
@@ -401,7 +401,7 @@ type TCompare<MappedState> = (storeMappedState: MappedState, prevStoreMappedStat
 
 ### useIsolatedStore
 
-If you want to use isolated persistent stores dynamically with identical interface you must set `uniqKey` property inside passed options. In other case both of stores will be use one key in storage. [Check demo here](https://ibitcy.github.io/react-stores/?#Isolated).
+If you want to use isolated persistent stores dynamically with identical interface you must set `name` property inside passed options. In other case both of stores will be use one key in storage. [Check demo here](https://ibitcy.github.io/react-stores/?#Isolated).
 
 | Argument            | Type                                                                                                                   | Optional | Description                                                                                                                           |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -411,7 +411,7 @@ If you want to use isolated persistent stores dynamically with identical interfa
 
 # Persistence
 
-A store instance can be persistent from session to session in case you've provided [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) to it. React-stores includes built-in `StorePersistentLocalStorageDriver`, it saves store state into the LocalStore\* using `uniqKey` or generated hash-name based on initialState interface. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
+A store instance can be persistent from session to session in case you've provided [`StorePersistentDriver`](https://github.com/ibitcy/react-stores/blob/master/src/StorePersistentDriver.ts) to it. React-stores includes built-in `StorePersistentLocalStorageDriver`, it saves store state into the LocalStore\* using `name` or generated hash-name based on initialState interface. [Check demo here](https://ibitcy.github.io/react-stores/?#Persistent).
 
 \* For React Native you have to provide your own `StorePersistentDriver` see below.
 
