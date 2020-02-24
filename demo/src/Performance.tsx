@@ -149,8 +149,7 @@ export const Performance: React.FC = () => {
   const [updateCount, setUpdateCount] = useState(0);
   const [updatedObjectsCount, setUpdatedObjectsCount] = useState(0);
 
-  const fillUpStore = useCallback((mutable: boolean, passCount: number) => {
-    const store = mutable ? performanceStoreMutable : performanceStoreImmutable;
+  const fillUpStore = useCallback((store: Store<StoreState>, passCount: number) => {
     const passCountItems = Math.ceil(passCount / 10);
     const passCountNested = Math.ceil(passCount / 10);
     let updateCount = 0;
@@ -205,8 +204,8 @@ export const Performance: React.FC = () => {
       setInProgress(true);
 
       setTimeout(() => {
-        fillUpStore(true, passCount);
-        fillUpStore(false, passCount);
+        fillUpStore(performanceStoreMutable, passCount);
+        fillUpStore(performanceStoreImmutable, passCount);
         setInProgress(false);
         setResults(true);
       }, 100);

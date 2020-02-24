@@ -10,6 +10,8 @@ export enum EPage {
   Persistent = 'Persistent',
   Snapshots = 'Snapshots',
   Performance = 'Performance',
+  Optimization = 'Optimization',
+  Isolated = 'Isolated',
 }
 
 const initialStoreState: StoreState = {

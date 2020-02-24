@@ -38,6 +38,29 @@
 
       h2 {
         margin-top: 0;
+        font-size: 20px;
+        background: #f6f6f6;
+        padding: 20px 30px;
+        width: 100%;
+        margin: -30px 0 0 -30px;
+        border-radius: 2px 2px 0 0;
+      }
+
+      h2 span {
+        display: block;
+        font-size: 1rem;
+        margin-top: 1em;
+        font-weight: 400;
+        line-height: 1.5;
+      }
+
+      h2 span em {
+        color: rgba(26, 0, 119, 0.671);
+        background-color: #4700ec18;
+        padding: 0.15em 0.5ex;
+        border-radius: 0.2em;
+        font-style: normal;
+        font-family: Menlo, Monaco, monospace;
       }
 
       header {
@@ -71,6 +94,7 @@
       .row {
         display: flex;
         justify-content: space-between;
+        flex-wrap: wrap;
       }
 
       .row.left-aligned {
@@ -128,6 +152,19 @@
         margin-top: 15px;
       }
 
+      button.primary {
+        background-color: rgba(255, 187, 0, 0.32);
+        color: rgb(195, 146, 9);
+      }
+
+      button.primary:hover {
+        background-color: rgba(255, 187, 0, 0.3);
+      }
+
+      button.primary:active {
+        background-color: rgba(255, 187, 0, 0.4);
+      }
+
       input {
         border: 1px solid #ccc;
         color: #000;
@@ -148,18 +185,27 @@
         border-color: rgb(0, 116, 217);
       }
 
-      .warning {
+      .warning,
+      .info {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        background-color: rgba(239, 74, 64, 0.1);
-        color: rgb(239, 74, 64);
         padding: 10px 15px;
         box-sizing: border-box;
         border-radius: 3px;
         font-size: 12px;
         margin-right: 15px;
         margin-top: 15px;
+      }
+
+      .warning {
+        background-color: rgba(239, 74, 64, 0.1);
+        color: rgb(239, 74, 64);
+      }
+
+      .info {
+        background-color: rgba(0, 116, 217, 0.1);
+        color: rgb(0, 116, 217);
       }
 
       .form-label {
@@ -194,7 +240,7 @@
         padding: 30px;
         margin-top: 30px;
         box-sizing: border-box;
-        width: 100%;
+        flex: 1 1 33.3%;
       }
 
       .inner {
@@ -272,6 +318,11 @@
 
         h1 {
           font-size: 22px;
+        }
+
+        h2 {
+          padding: 20px;
+          margin: -20px 0 0 -20px;
         }
 
         body {

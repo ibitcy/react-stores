@@ -1,14 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
+
+import * as packageJson from '../../package.json';
+import { useStore } from '../../src';
 import { Complex } from './complex';
 import { Counter } from './Counter';
-import { CounterEvents } from './CounterEvents';
 import { CounterDecorator } from './CounterDecorator';
+import { CounterEvents } from './CounterEvents';
+import { History } from './history';
+import { IsolatedStores } from './IsolatedStores';
+import { Optimization } from './Optimization';
+import { Performance } from './Performance';
 import { Persistent } from './persistent';
 import { EPage, historyStore, pageStore, persistentStore, stores } from './stores';
-import { History } from './history';
-import { useStore } from '../../src';
-import { Performance } from './Performance';
-import * as packageJson from '../../package.json';
 
 const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
   const pageStoreState = useStore(pageStore);
@@ -28,16 +31,16 @@ const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
 
 export const Container: React.FC = () => {
   const pageStoreState = useStore(pageStore);
+
   const [items, setItems] = useState([]);
-  const setPage = useCallback(() => {
-    const hashPage = EPage[location.hash.replace('#', '')];
-
-    pageStore.setState({
-      page: hashPage ? hashPage : EPage.Components,
-    });
-  }, []);
-
   useEffect(() => {
+    const setPage = () => {
+      const hashPage = EPage[location.hash.replace('#', '')];
+      pageStore.setState({
+        page: hashPage ? hashPage : EPage.Components,
+      });
+    };
+
     window.onhashchange = () => {
       setPage();
     };
@@ -57,6 +60,8 @@ export const Container: React.FC = () => {
         <NavItem pageId={EPage.Persistent} />
         <NavItem pageId={EPage.Snapshots} />
         <NavItem pageId={EPage.Performance} />
+        <NavItem pageId={EPage.Optimization} />
+        <NavItem pageId={EPage.Isolated} />
       </nav>
 
       <div className='inner'>
@@ -100,6 +105,22 @@ export const Container: React.FC = () => {
             <h1>Performance test</h1>
 
             <Performance />
+          </React.Fragment>
+        )}
+
+        {pageStoreState.page === EPage.Optimization && (
+          <React.Fragment>
+            <h1>Re-renders optimization</h1>
+
+            <Optimization />
+          </React.Fragment>
+        )}
+
+        {pageStoreState.page === EPage.Isolated && (
+          <React.Fragment>
+            <h1>Isolated store</h1>
+
+            <IsolatedStores />
           </React.Fragment>
         )}
 

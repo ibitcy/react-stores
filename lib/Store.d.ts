@@ -1,5 +1,5 @@
 import { StorePersistentDriver } from './StorePersistentDriver';
-import { StoreEventType, StoreEvent } from './StoreEvent';
+import { StoreEventType, StoreEvent, TOnFire, TOnFireWithKeys, StoreEventSpecificKeys } from './StoreEvent';
 export interface StoreOptions {
     /**
      * @deprecated since 3.x: use immutable flag instead
@@ -12,6 +12,7 @@ export interface StoreOptions {
     immutable?: boolean;
     persistence?: boolean;
     setStateTimeout?: number;
+    uniqKey?: string;
 }
 export declare class Store<StoreState> {
     readonly persistenceDriver?: StorePersistentDriver<StoreState>;
@@ -22,11 +23,13 @@ export declare class Store<StoreState> {
     private frozenState;
     private opts;
     get state(): StoreState;
+    private checkInitialStateType;
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState>);
     deepFreeze(obj: any): any;
     private hashCode;
     private generateStoreId;
     resetPersistence(): void;
+    clearPersistence(): void;
     resetDumpHistory(): void;
     saveDump(): number;
     removeDump(timestamp: number): void;
@@ -36,5 +39,6 @@ export declare class Store<StoreState> {
     resetState(): void;
     update(currentState: StoreState, prevState: StoreState): void;
     getInitialState(): StoreState;
-    on(eventType: StoreEventType | StoreEventType[], callback: (storeState: StoreState, prevState: StoreState, type: StoreEventType) => void): StoreEvent<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFireWithKeys<StoreState>): StoreEventSpecificKeys<StoreState>;
+    on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;
 }

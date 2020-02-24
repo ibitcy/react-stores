@@ -1,21 +1,21 @@
 Arguments: 
-  /Users/user/.nvm/versions/node/v12.13.0/bin/node /usr/local/Cellar/yarn/1.19.1/libexec/bin/yarn.js publish
+  /Users/ruslanshashkov/.nvm/versions/node/v12.13.1/bin/node /usr/local/Cellar/yarn/1.19.2/libexec/bin/yarn.js publish
 
 PATH: 
-  /Users/user/.nvm/versions/node/v12.13.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/user/.antigen/bundles/robbyrussell/oh-my-zsh/lib:/Users/user/.antigen/bundles/robbyrussell/oh-my-zsh/plugins/git:/Users/user/.antigen/bundles/robbyrussell/oh-my-zsh/plugins/npm:/Users/user/.antigen/bundles/zsh-users/zsh-autosuggestions:/Users/user/.antigen/bundles/zsh-users/zsh-syntax-highlighting
+  /Users/ruslanshashkov/.nvm/versions/node/v12.13.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands
 
 Yarn version: 
-  1.19.1
+  1.19.2
 
 Node version: 
-  12.13.0
+  12.13.1
 
 Platform: 
   darwin x64
 
 Trace: 
   Error: canceled
-      at Interface.<anonymous> (/usr/local/Cellar/yarn/1.19.1/libexec/lib/cli.js:136824:13)
+      at Interface.<anonymous> (/usr/local/Cellar/yarn/1.19.2/libexec/lib/cli.js:136846:13)
       at Interface.emit (events.js:210:5)
       at Interface._ttyWrite (readline.js:887:16)
       at ReadStream.onkeypress (readline.js:191:10)
@@ -24,12 +24,12 @@ Trace:
       at emitKeys.next (<anonymous>)
       at ReadStream.onData (readline.js:1153:36)
       at ReadStream.emit (events.js:210:5)
-      at addChunk (_stream_readable.js:308:12)
+      at addChunk (_stream_readable.js:309:12)
 
 npm manifest: 
   {
     "name": "react-stores",
-    "version": "3.0.3",
+    "version": "4.0.0",
     "sideEffects": false,
     "keywords": [
       "react",
@@ -53,6 +53,7 @@ npm manifest:
       "check-size": "size-limit",
       "pretest": "npm run build",
       "test": "npx jest",
+      "test:watch": "npx jest --watch",
       "demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
       "release:demo": "webpack --config ./demo/webpack.prod.config.js",
       "prepare": "npm run build && npm run check-size && npm run test"
@@ -60,7 +61,7 @@ npm manifest:
     "size-limit": [
       {
         "path": "lib/index.js",
-        "limit": "3kb",
+        "limit": "4kb",
         "webpack": false
       }
     ],
@@ -68,7 +69,7 @@ npm manifest:
       "transform": {
         "^.+\\.tsx?$": "ts-jest"
       },
-      "testRegex": "tests/.*[.](tsx?)",
+      "testRegex": "tests/.*.test[.](tsx?)",
       "moduleFileExtensions": [
         "ts",
         "tsx",
