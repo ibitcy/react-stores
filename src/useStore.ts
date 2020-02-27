@@ -102,7 +102,7 @@ export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<an
     return getOption<T, V>(restParams);
   }, []);
 
-  const initialRef = React.useMemo(() => params.mapState(store.state), []);
+  const initialRef = React.useMemo(() => params.mapState(store.state), [store]);
 
   const recount = React.useState(0);
   const state = React.useRef<V>(initialRef);
@@ -128,7 +128,7 @@ export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<an
     return () => {
       storeEvent.remove();
     };
-  }, []);
+  }, [store]);
 
   return state.current;
 }

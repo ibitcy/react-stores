@@ -64,6 +64,7 @@ export class Store<StoreState> {
     this.name = options?.name ?? this.generateStoreId(initialState);
 
     if (options) {
+      this.opts.name = this.name;
       this.opts.immutable = options.immutable === true;
       this.opts.persistence = options.persistence === true;
       this.opts.setStateTimeout = options.setStateTimeout;
