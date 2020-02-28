@@ -1,5 +1,7 @@
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
+import replace from 'rollup-plugin-replace';
+const packageInfo = require('./package.json');
 
 export default [
   {
@@ -23,6 +25,9 @@ export default [
           },
           include: ['./src/*.ts'],
         },
+      }),
+      replace({
+        __VERSION__: JSON.stringify(packageInfo.version),
       }),
       terser(),
     ],

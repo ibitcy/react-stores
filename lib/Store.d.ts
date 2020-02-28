@@ -16,6 +16,7 @@ export interface StoreOptions {
 }
 export declare class Store<StoreState> {
     readonly persistenceDriver?: StorePersistentDriver<StoreState>;
+    readonly version: string;
     readonly name: string;
     private eventManager;
     private readonly initialState;
@@ -38,7 +39,6 @@ export declare class Store<StoreState> {
     setState(newState: Partial<StoreState>): void;
     resetState(): void;
     getInitialState(): StoreState;
-    getOptions(): StoreOptions;
     on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFireWithKeys<StoreState>): StoreEventSpecificKeys<StoreState>;
     on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;
 }

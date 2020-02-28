@@ -1,3 +1,5 @@
+declare const __VERSION__: string;
+
 import { StorePersistentDriver } from './StorePersistentDriver';
 import { StorePersistentLocalStorageDriver } from './StorePersistentLocalStorageDriver';
 import { StoreEventManager } from './StoreEventManager';
@@ -26,6 +28,7 @@ export interface StoreOptions {
 }
 
 export class Store<StoreState> {
+  public readonly version: string = __VERSION__;
   public readonly name: string;
   private eventManager: StoreEventManager<StoreState> | null = null;
   private readonly initialState: StoreState = null;
@@ -91,7 +94,7 @@ export class Store<StoreState> {
     this.eventManager = new StoreEventManager(this.opts.setStateTimeout);
     this.initialState = this.deepFreeze(initialState);
     this.frozenState = this.deepFreeze(currentState);
-    this._hook?.attachStore(this);
+    this._hook?.attachStore(this, this.name, this.opts, false);
   }
 
   private deepFreeze(obj: any): any {
@@ -191,10 +194,6 @@ export class Store<StoreState> {
 
   public getInitialState(): StoreState {
     return this.initialState;
-  }
-
-  public getOptions(): StoreOptions {
-    return this.opts;
   }
 
   // on overloads
