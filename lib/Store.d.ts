@@ -36,7 +36,9 @@ export declare class Store<StoreState> {
     removeDump(timestamp: number): void;
     restoreDump(timestamp: number): void;
     getDumpHistory(): number[];
-    setState(newState: Partial<StoreState>): void;
+    setState({ $actionName, ...newState }: Partial<StoreState> & {
+        $actionName?: string;
+    }): void;
     resetState(): void;
     getInitialState(): StoreState;
     on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFireWithKeys<StoreState>): StoreEventSpecificKeys<StoreState>;

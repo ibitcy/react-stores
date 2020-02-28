@@ -169,7 +169,7 @@ export class Store<StoreState> {
 
     if (pack) {
       const prevState = this.deepFreeze(this.frozenState);
-      this.setState(pack.data);
+      this.setState({ ...pack.data, $actionName: '@restoreDump' });
       this.eventManager.fire(StoreEventType.DumpUpdate, this.frozenState, prevState);
     }
   }
@@ -178,18 +178,18 @@ export class Store<StoreState> {
     return this.persistenceDriver.getDumpHistory();
   }
 
-  public setState(newState: Partial<StoreState>) {
+  public setState({ $actionName, ...newState }: Partial<StoreState> & { $actionName?: string }) {
     const prevState = this.deepFreeze(this.frozenState);
     const updatedState = this.deepFreeze({ ...prevState, ...newState });
 
     this.frozenState = updatedState;
     this.persistenceDriver.write(this.persistenceDriver.pack(updatedState));
     this.eventManager.fire(StoreEventType.Update, updatedState, prevState);
-    this._hook?.updateState(this.name, newState);
+    this._hook?.updateState(this.name, newState, $actionName);
   }
 
   public resetState() {
-    this.setState(this.deepFreeze(this.initialState));
+    this.setState({ ...this.deepFreeze(this.initialState), $actionName: '@resetState' });
   }
 
   public getInitialState(): StoreState {
