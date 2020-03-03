@@ -17,17 +17,18 @@
   },
   "description": "React stores",
   "main": "lib/index.js",
-  "module": "lib/index.es.js",
+  "module": "index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "rm -rf lib && rollup --config ./rollup.config.js && yarn check-size",
+    "build:dev": "NODE_ENV=development rollup --config ./rollup.config.js",
     "check-size": "size-limit",
-    "pretest": "yarn build",
+    "pretest": "yarn build && yarn build:dev",
     "test": "yarn jest",
     "test:watch": "npx jest --watch",
     "demo": "webpack-dev-server --progress --config ./demo/webpack.config.js --inline",
     "release:demo": "webpack --config ./demo/webpack.prod.config.js",
-    "prepare": "yarn build && yarn test"
+    "prepare": "yarn build && yarn build:dev && yarn test"
   },
   "size-limit": [
     {

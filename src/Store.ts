@@ -1,4 +1,5 @@
 declare const __VERSION__: string;
+declare const __IS_DEV__: boolean;
 
 import { StorePersistentDriver } from './StorePersistentDriver';
 import { StorePersistentLocalStorageDriver } from './StorePersistentLocalStorageDriver';
@@ -30,7 +31,7 @@ export interface StoreOptions {
 export class Store<StoreState> {
   public readonly version: string = __VERSION__;
   public readonly name: string;
-  private eventManager: StoreEventManager<StoreState> | null = null;
+  public readonly eventManager: StoreEventManager<StoreState> | null = null;
   private readonly initialState: StoreState = null;
   private frozenState: StoreState = null;
   private _hook: any = null;
@@ -47,22 +48,22 @@ export class Store<StoreState> {
     return this.frozenState;
   }
 
-  private checkInitialStateType(initialState: StoreState): void {
-    if (['number', 'boolean', 'string', 'undefined', 'symbol', 'bigint'].includes(typeof initialState)) {
-      throw new Error('InitialState must be an object, passed: ' + typeof initialState);
-    }
-    if ([Array, Function, Map, Promise].some(item => initialState instanceof item)) {
-      throw new Error('InitialState must be an object, passed: ' + initialState.constructor.name);
-    }
-  }
-
   constructor(
     initialState: StoreState,
     options?: StoreOptions,
     readonly persistenceDriver?: StorePersistentDriver<StoreState>,
   ) {
     this._hook = window['__REACT_STORES_INSPECTOR__'];
-    this.checkInitialStateType(initialState);
+
+    if (__IS_DEV__) {
+      if (['number', 'boolean', 'string', 'undefined', 'symbol', 'bigint'].includes(typeof initialState)) {
+        throw new Error('InitialState must be an object, passed: ' + typeof initialState);
+      }
+      if ([Array, Function, Map, Promise, Set].some(item => initialState instanceof item)) {
+        throw new Error('InitialState must be an object, passed: ' + initialState.constructor.name);
+      }
+    }
+
     let currentState: StoreState | null = null;
     this.name = options?.name ?? this.generateStoreId(initialState);
 
@@ -91,7 +92,7 @@ export class Store<StoreState> {
 
     this.persistenceDriver.persistence = this.opts.persistence;
     this.persistenceDriver.initialState = initialState;
-    this.eventManager = new StoreEventManager(this.opts.setStateTimeout);
+    this.eventManager = new StoreEventManager(this.opts.setStateTimeout, this.name);
     this.initialState = this.deepFreeze(initialState);
     this.frozenState = this.deepFreeze(currentState);
     this._hook?.attachStore(this, this.name, this.opts, false);
@@ -190,6 +191,10 @@ export class Store<StoreState> {
 
   public resetState() {
     this.setState({ ...this.deepFreeze(this.initialState), $actionName: '@resetState' });
+  }
+
+  public removeStore() {
+    this._hook?.removeStore(this.name);
   }
 
   public getInitialState(): StoreState {

@@ -12,8 +12,15 @@ export class StoreEventManager<StoreState> {
   private events: Array<TStoreEvent<StoreState>> = [];
   private eventCounter: number = 0;
   private timeout: any = null;
+  private _hook: any = null;
 
-  constructor(readonly fireTimeout: number) {}
+  constructor(readonly fireTimeout: number, readonly name: string) {
+    this._hook = window['__REACT_STORES_INSPECTOR__'];
+  }
+
+  public getEventsCount() {
+    return this.events.length;
+  }
 
   private generateEventId(): string {
     return `${++this.eventCounter}${Date.now()}${Math.random()}`;
@@ -67,6 +74,7 @@ export class StoreEventManager<StoreState> {
     this.events = this.events.filter((event: StoreEvent<StoreState>) => {
       return event.id !== id;
     });
+    this._hook?.removeEvent(this.name, id);
   }
 
   // add overloads
@@ -100,12 +108,13 @@ export class StoreEventManager<StoreState> {
     }
 
     this.events.push(event);
+    this._hook?.addEvent(this.name, event.id);
 
     return event;
   }
 
   private doFire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event: TStoreEvent<StoreState>) {
-    if (event.types.includes(type)|| event.types.includes(StoreEventType.All)) {
+    if (event.types.includes(type) || event.types.includes(StoreEventType.All)) {
       if (event instanceof StoreEventSpecificKeys) {
         const excludedKeys = Object.keys(storeState).filter(
           key => !event.includeKeys.includes(key as keyof StoreState),

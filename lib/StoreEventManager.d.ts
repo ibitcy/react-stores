@@ -1,10 +1,13 @@
 import { StoreEvent, StoreEventSpecificKeys, StoreEventType, TOnFire, TOnFireWithKeys, TStoreEvent } from './StoreEvent';
 export declare class StoreEventManager<StoreState> {
     readonly fireTimeout: number;
+    readonly name: string;
     private events;
     private eventCounter;
     private timeout;
-    constructor(fireTimeout: number);
+    private _hook;
+    constructor(fireTimeout: number, name: string);
+    getEventsCount(): number;
     private generateEventId;
     fire(type: StoreEventType, storeState: StoreState, prevState: StoreState, event?: TStoreEvent<StoreState>): void;
     remove(id: string): void;

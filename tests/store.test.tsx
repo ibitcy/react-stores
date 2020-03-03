@@ -2,8 +2,8 @@ import expect from 'expect';
 import expectJsx from 'expect-jsx';
 
 import { StoreEventType } from '../lib';
+import { Store } from '../lib/index.dev.js';
 import { Actions, initialState, storeImmutable, storeMutable, callTimes } from './utils';
-import { Store } from '../src';
 
 expect.extend(expectJsx);
 

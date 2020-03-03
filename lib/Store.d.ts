@@ -1,4 +1,5 @@
 import { StorePersistentDriver } from './StorePersistentDriver';
+import { StoreEventManager } from './StoreEventManager';
 import { StoreEventType, StoreEvent, TOnFire, TOnFireWithKeys, StoreEventSpecificKeys } from './StoreEvent';
 export interface StoreOptions {
     /**
@@ -18,13 +19,12 @@ export declare class Store<StoreState> {
     readonly persistenceDriver?: StorePersistentDriver<StoreState>;
     readonly version: string;
     readonly name: string;
-    private eventManager;
+    readonly eventManager: StoreEventManager<StoreState> | null;
     private readonly initialState;
     private frozenState;
     private _hook;
     private readonly opts;
     get state(): StoreState;
-    private checkInitialStateType;
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState>);
     private deepFreeze;
     private hashCode;
@@ -40,6 +40,7 @@ export declare class Store<StoreState> {
         $actionName?: string;
     }): void;
     resetState(): void;
+    removeStore(): void;
     getInitialState(): StoreState;
     on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFireWithKeys<StoreState>): StoreEventSpecificKeys<StoreState>;
     on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;

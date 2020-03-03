@@ -21,14 +21,18 @@ export function useIsolatedStore<T = {}>(
 ): Store<T> {
   const recount = React.useState(0);
   const storeRef = React.useRef(
-    new Store<T>(
-      initialState,
-      {
-        persistence: false,
-        immutable: true,
-        ...storeOptions,
-      },
-      persistenceDriver,
+    React.useMemo(
+      () =>
+        new Store<T>(
+          initialState,
+          {
+            persistence: false,
+            immutable: true,
+            ...storeOptions,
+          },
+          persistenceDriver,
+        ),
+      [],
     ),
   );
 
@@ -42,6 +46,7 @@ export function useIsolatedStore<T = {}>(
       if (!storeOptions?.persistence) {
         storeRef.current.resetState();
       }
+      storeRef.current.removeStore();
     };
   }, []);
 
