@@ -101,9 +101,8 @@ export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<an
   const params = React.useMemo(() => {
     return getOption<T, V>(restParams);
   }, []);
-
-  const initialRef = React.useMemo(() => params.mapState(store.state), []);
-
+  const storeRef = React.useRef<Store<T>>(store);
+  const initialRef = React.useMemo(() => params.mapState(storeRef.current.state), []);
   const recount = React.useState(0);
   const state = React.useRef<V>(initialRef);
 
@@ -111,12 +110,12 @@ export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<an
     let storeEvent: TStoreEvent<T>;
 
     if (params.includeKeys.length > 0) {
-      storeEvent = store.on(params.eventType, params.includeKeys, storeState => {
+      storeEvent = storeRef.current.on(params.eventType, params.includeKeys, storeState => {
         state.current = params.mapState(storeState);
         recount[1](Date.now());
       });
     } else {
-      storeEvent = store.on(params.eventType, (storeState, prevState, type) => {
+      storeEvent = storeRef.current.on(params.eventType, (storeState, prevState, type) => {
         const nextState = params.mapState(storeState, prevState, type);
         if (!params.compare || !params.compare(nextState, state.current)) {
           state.current = nextState;

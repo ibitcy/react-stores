@@ -1,4 +1,4 @@
-import { Store, StorePersistentLocalStorageDriver } from '../../src';
+import { Store, StorePersistentLocalStorageDriver, StoreEventType } from '../../src';
 
 export interface StoreState {
   counter: number;
@@ -21,13 +21,17 @@ const initialStoreState: StoreState = {
 
 export const stores = new Store<StoreState>(initialStoreState, {
   live: true,
+  name: 'JustStore',
 });
+
+stores.on(StoreEventType.All, console.log);
 
 export const persistentStore = new Store<StoreState>(
   initialStoreState,
   {
     live: true,
     persistence: true,
+    name: 'Persistent',
   },
   new StorePersistentLocalStorageDriver('demo'),
 );
@@ -37,6 +41,7 @@ export const historyStore = new Store<StoreState>(
   {
     live: true,
     persistence: true,
+    name: 'History',
   },
   new StorePersistentLocalStorageDriver('demoHistory'),
 );
@@ -46,6 +51,7 @@ export const pageStore = new Store<{ page: EPage }>(
     page: EPage.Components,
   },
   {
+    name: 'Page',
     persistence: false,
   },
 );

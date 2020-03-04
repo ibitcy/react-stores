@@ -2,8 +2,8 @@ import expect from 'expect';
 import expectJsx from 'expect-jsx';
 
 import { StoreEventType } from '../lib';
+import { Store } from '../lib/index.dev.js';
 import { Actions, initialState, storeImmutable, storeMutable, callTimes } from './utils';
-import { Store } from '../src';
 
 expect.extend(expectJsx);
 
@@ -12,12 +12,12 @@ describe('store', () => {
     storeImmutable.resetState();
   });
 
-  it('check store id', done => {
+  it('check store name', done => {
     for (let i = 0; i < 4; i++) {
       Actions.increaseCounter();
     }
 
-    expect(storeImmutable.id).toEqual('-1a3306b2');
+    expect(storeImmutable.name).toEqual('-1a3306b2');
     done();
   });
 

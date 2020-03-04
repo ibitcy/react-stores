@@ -48,6 +48,7 @@ const initialStoreState: StoreState = {
 const store = new Store<StoreState>(initialStoreState, {
   persistence: false,
   immutable: true,
+  name: 'OptimizationTest',
 });
 
 const generateStrings = (passCount: number) => {
@@ -116,10 +117,12 @@ async function fillStore(passCount: number) {
   const complexItems = generateComplexItems(passCountItems, passCountNested);
   store.setState({
     number: Math.random(),
+    $actionName: 'setRandomNumberForStore',
   });
   await sleep(10);
   store.setState({
     complexItems,
+    $actionName: 'setComplexItems',
   });
   await sleep(10);
   const array: Array<string> = [];
@@ -128,6 +131,7 @@ async function fillStore(passCount: number) {
   }
   store.setState({
     string: array.join(''),
+    $actionName: 'setRandomString',
   });
   await sleep(10);
   store.setState({
@@ -136,6 +140,7 @@ async function fillStore(passCount: number) {
       title: '',
       complexItems,
     },
+    $actionName: 'setObjectWithItems',
   });
   await sleep(10);
 }
