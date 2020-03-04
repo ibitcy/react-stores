@@ -13,18 +13,36 @@ import { Performance } from './Performance';
 import { Persistent } from './persistent';
 import { EPage, historyStore, pageStore, persistentStore, stores } from './stores';
 
-const NavItem: React.FC<{ pageId: EPage }> = ({ pageId }) => {
+interface IInnerNav {
+  pageId: EPage;
+}
+interface ILinkNav {
+  href: string;
+  title: string;
+}
+type TProps = IInnerNav | ILinkNav;
+
+const NavItem: React.FC<TProps> = props => {
   const pageStoreState = useStore(pageStore);
-  const className = pageId === pageStoreState.page ? 'active' : '';
+  if ((props as any).pageId) {
+    const { pageId } = props as IInnerNav;
+    const className = pageId === pageStoreState.page ? 'active' : '';
 
-  const handleClick = (e, id) => {
-    e.preventDefault();
-    location.hash = `#${pageId}`;
-  };
+    const handleClick = (e, id) => {
+      e.preventDefault();
+      location.hash = `#${pageId}`;
+    };
 
+    return (
+      <a className={className} href='#' onClick={e => handleClick(e, pageId)}>
+        {pageId}
+      </a>
+    );
+  }
+  const { href, title } = props as ILinkNav;
   return (
-    <a className={className} href='#' onClick={e => handleClick(e, pageId)}>
-      {pageId}
+    <a href={href} target='_blank' rel='nofollow noreferrer noopener'>
+      {title}
     </a>
   );
 };
@@ -38,6 +56,7 @@ export const Container: React.FC = () => {
       const hashPage = EPage[location.hash.replace('#', '')];
       pageStore.setState({
         page: hashPage ? hashPage : EPage.Components,
+        $actionName: 'changePage',
       });
     };
 
@@ -62,6 +81,10 @@ export const Container: React.FC = () => {
         <NavItem pageId={EPage.Performance} />
         <NavItem pageId={EPage.Optimization} />
         <NavItem pageId={EPage.Isolated} />
+        <NavItem
+          href='https://github.com/ibitcy/react-stores-devtools-extension#react-stores-devtools-extension'
+          title='Devtool debugger'
+        />
       </nav>
 
       <div className='inner'>

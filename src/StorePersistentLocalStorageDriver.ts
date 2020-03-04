@@ -1,7 +1,10 @@
+declare const __IS_DEV__: boolean;
+
 import { StorePersistentDriver, StorePersistentPacket, StorePersistentDump } from './StorePersistentDriver';
 
 export class StorePersistentLocalStorageDriver<StoreState> extends StorePersistentDriver<StoreState> {
   readonly storage = null;
+
   public type: string = 'localStorage';
 
   constructor(readonly name: string, readonly lifetime: number = Infinity) {
@@ -168,4 +171,8 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
       }
     }
   }
+}
+
+if (__IS_DEV__) {
+  StorePersistentLocalStorageDriver['__constructorName'] = 'StorePersistentLocalStorageDriver';
 }

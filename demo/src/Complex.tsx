@@ -41,6 +41,7 @@ export class Complex extends React.Component<Props, State> {
           onClick={() => {
             stores.setState({
               counter: stores.state.counter + 1,
+              $actionName: 'increment',
             });
           }}>
           Store +1
@@ -50,6 +51,7 @@ export class Complex extends React.Component<Props, State> {
           onClick={() => {
             stores.setState({
               foo: stores.state.foo === 'foo' ? 'bar' : 'foo',
+              $actionName: 'toggleFooBar',
             });
           }}>
           Store foobar toggle

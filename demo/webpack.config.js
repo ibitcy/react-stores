@@ -1,5 +1,7 @@
 const path = require('path');
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const packageInfo = require('../package.json');
 
 module.exports = {
   mode: 'development',
@@ -64,5 +66,9 @@ module.exports = {
         copyUnmodified: false,
       },
     ),
+    new webpack.DefinePlugin({
+      __VERSION__: JSON.stringify(packageInfo.version),
+      __IS_DEV__: JSON.stringify(true),
+    }),
   ],
 };

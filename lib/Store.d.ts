@@ -1,4 +1,5 @@
 import { StorePersistentDriver } from './StorePersistentDriver';
+import { StoreEventManager } from './StoreEventManager';
 import { StoreEventType, StoreEvent, TOnFire, TOnFireWithKeys, StoreEventSpecificKeys } from './StoreEvent';
 export interface StoreOptions {
     /**
@@ -12,20 +13,20 @@ export interface StoreOptions {
     immutable?: boolean;
     persistence?: boolean;
     setStateTimeout?: number;
-    uniqKey?: string;
+    name?: string;
 }
 export declare class Store<StoreState> {
     readonly persistenceDriver?: StorePersistentDriver<StoreState>;
-    components: any[];
-    readonly id: string;
-    private eventManager;
+    readonly version: string;
+    readonly name: string;
+    readonly eventManager: StoreEventManager<StoreState> | null;
     private readonly initialState;
     private frozenState;
-    private opts;
+    private _hook;
+    private readonly opts;
     get state(): StoreState;
-    private checkInitialStateType;
     constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState>);
-    deepFreeze(obj: any): any;
+    private deepFreeze;
     private hashCode;
     private generateStoreId;
     resetPersistence(): void;
@@ -35,9 +36,11 @@ export declare class Store<StoreState> {
     removeDump(timestamp: number): void;
     restoreDump(timestamp: number): void;
     getDumpHistory(): number[];
-    setState(newState: Partial<StoreState>): void;
+    setState({ $actionName, ...newState }: Partial<StoreState> & {
+        $actionName?: string;
+    }): void;
     resetState(): void;
-    update(currentState: StoreState, prevState: StoreState): void;
+    removeStore(): void;
     getInitialState(): StoreState;
     on(eventType: StoreEventType | StoreEventType[], includeKeys: Array<keyof StoreState>, callback: TOnFireWithKeys<StoreState>): StoreEventSpecificKeys<StoreState>;
     on(eventType: StoreEventType | StoreEventType[], callback: TOnFire<StoreState>): StoreEvent<StoreState>;

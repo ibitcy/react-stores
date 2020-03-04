@@ -2,7 +2,7 @@ import { Store, StoreOptions } from './Store';
 import { StorePersistentDriver } from './StorePersistentDriver';
 interface StoreOptionsPersist extends StoreOptions {
     persistence: true;
-    uniqKey: string;
+    name: string;
 }
 interface StoreOptionsNoPersist extends StoreOptions {
     persistence: false;
