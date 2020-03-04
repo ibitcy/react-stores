@@ -130,11 +130,13 @@ const generateComplexItems = (passCount: number, nestedPassNumber: number) => {
 const performanceStoreImmutable = new Store<StoreState>(initialStoreState, {
   persistence: false,
   immutable: true,
+  name: 'ImmutableStore',
 });
 
 const performanceStoreMutable = new Store<StoreState>(initialStoreState, {
   persistence: false,
   immutable: false,
+  name: 'MutableStore',
 });
 
 const PASS_COUNT = 100;
@@ -162,6 +164,7 @@ export const Performance: React.FC = () => {
     store.resetState();
     store.setState({
       startDate: new Date(),
+      $actionName: 'start',
     });
 
     for (let i = 0; i < passCount; i++) {
@@ -189,6 +192,7 @@ export const Performance: React.FC = () => {
     store.setState({
       endDate: new Date(),
       passCount,
+      $actionName: 'end',
     });
 
     setUpdateCount(updateCount);

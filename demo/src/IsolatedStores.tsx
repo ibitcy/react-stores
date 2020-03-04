@@ -27,12 +27,14 @@ export const IsolatedComponent: FC<{ name: string; onRemove: (name: string) => v
   const handleIncrement = React.useCallback(() => {
     myStore.setState({
       counter: myStore.state.counter + 1,
+      $actionName: 'increment',
     });
   }, [myStore.state.counter]);
 
   const handleDecrement = React.useCallback(() => {
     myStore.setState({
       counter: myStore.state.counter - 1,
+      $actionName: 'decrement',
     });
   }, [myStore.state.counter]);
 
@@ -90,12 +92,15 @@ export const IsolatedStores = () => {
   );
 
   const handleIncrement = React.useCallback(() => {
-    myStore.setState({ list: [...myStore.state.list, getRandomName(5)] });
+    myStore.setState({ list: [...myStore.state.list, getRandomName(5)], $actionName: 'newIsolatedStore' });
   }, [myStore.state.list.length]);
 
   const handleRemove = React.useCallback(
     (deleted: string) => {
-      myStore.setState({ list: [...myStore.state.list].filter(name => name !== deleted) });
+      myStore.setState({
+        list: [...myStore.state.list].filter(name => name !== deleted),
+        $actionName: 'removeIsolatedStore',
+      });
     },
     [myStore.state.list.length],
   );
