@@ -82,7 +82,7 @@ export const Container: React.FC = () => {
         <NavItem pageId={EPage.Optimization} />
         <NavItem pageId={EPage.Isolated} />
         <NavItem
-          href='https://github.com/konstantin24121/react-stores-devtools-extension#react-stores-devtools-extension'
+          href='https://github.com/ibitcy/react-stores-devtools-extension#react-stores-devtools-extension'
           title='Devtool debugger'
         />
       </nav>

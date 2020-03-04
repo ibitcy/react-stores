@@ -6,7 +6,7 @@
 [![npm bundlephobia minzip](https://badgen.net/bundlephobia/minzip/react-stores@latest?icon=awesome)
 ![npm version](https://badgen.net/npm/v/react-stores?icon=npm&color=blue)](https://www.npmjs.com/package/react-stores)
 ![with types](https://badgen.net/badge/1/typescript/007acc?icon=typescript)
-[![devtool extension](https://badgen.net/badge/1/devtool%20extension/cyan?icon=chrome&label)](https://github.com/konstantin24121/react-stores-devtools-extension)
+[![devtool extension](https://badgen.net/badge/1/devtool%20extension/cyan?icon=chrome&label)](https://github.com/ibitcy/react-stores-devtools-extension)
 
 Shared states for React.
 
@@ -592,4 +592,4 @@ export const CounterComponent = ({ value }) => {
 
 # Debugging
 
-Install [extension for chrome](https://github.com/konstantin24121/react-stores-devtools-extension#react-stores-devtools-extension) devtools for better debugging.
+Install [extension for chrome](https://github.com/ibitcy/react-stores-devtools-extension#react-stores-devtools-extension) devtools for better debugging.
