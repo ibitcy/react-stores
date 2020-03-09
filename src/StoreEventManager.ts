@@ -15,7 +15,7 @@ export class StoreEventManager<StoreState> {
   private _hook: any = null;
 
   constructor(readonly fireTimeout: number, readonly name: string) {
-    this._hook = window['__REACT_STORES_INSPECTOR__'];
+    this._hook = typeof window !== 'undefined' && window['__REACT_STORES_INSPECTOR__'];
   }
 
   public getEventsCount() {
@@ -74,7 +74,10 @@ export class StoreEventManager<StoreState> {
     this.events = this.events.filter((event: StoreEvent<StoreState>) => {
       return event.id !== id;
     });
-    this._hook?.removeEvent(this.name, id);
+
+    if (this._hook) {
+      this._hook.removeEvent(this.name, id);
+    }
   }
 
   // add overloads
@@ -108,7 +111,9 @@ export class StoreEventManager<StoreState> {
     }
 
     this.events.push(event);
-    this._hook?.addEvent(this.name, event.id);
+    if (this._hook) {
+      this._hook.addEvent(this.name, event.id);
+    }
 
     return event;
   }

@@ -53,7 +53,7 @@ export class Store<StoreState> {
     options?: StoreOptions,
     readonly persistenceDriver?: StorePersistentDriver<StoreState>,
   ) {
-    this._hook = window['__REACT_STORES_INSPECTOR__'];
+    this._hook = typeof window !== 'undefined' && window['__REACT_STORES_INSPECTOR__'];
 
     if (__IS_DEV__) {
       if (['number', 'boolean', 'string', 'undefined', 'symbol', 'bigint'].includes(typeof initialState)) {
@@ -95,7 +95,9 @@ export class Store<StoreState> {
     this.eventManager = new StoreEventManager(this.opts.setStateTimeout, this.name);
     this.initialState = this.deepFreeze(initialState);
     this.frozenState = this.deepFreeze(currentState);
-    this._hook?.attachStore(this, this.name, this.opts, false);
+    if (this._hook) {
+      this._hook.attachStore(this, this.name, this.opts, false);
+    }
   }
 
   private deepFreeze(obj: any): any {
@@ -186,7 +188,9 @@ export class Store<StoreState> {
     this.frozenState = updatedState;
     this.persistenceDriver.write(this.persistenceDriver.pack(updatedState));
     this.eventManager.fire(StoreEventType.Update, updatedState, prevState);
-    this._hook?.updateState(this.name, newState, $actionName);
+    if (this._hook) {
+      this._hook.updateState(this.name, newState, $actionName);
+    }
   }
 
   public resetState() {
@@ -194,7 +198,9 @@ export class Store<StoreState> {
   }
 
   public removeStore() {
-    this._hook?.removeStore(this.name);
+    if (this._hook) {
+      this._hook.removeStore(this.name);
+    }
   }
 
   public getInitialState(): StoreState {
