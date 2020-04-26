@@ -31,7 +31,7 @@ export interface StoreOptions {
 }
 
 export class Store<StoreState> {
-  public readonly version: string = __VERSION__;
+  public readonly version: string = typeof __VERSION__ !== 'undefined' ? __VERSION__ : 'scr';
   public readonly name: string;
   public eventManager: StoreEventManager<StoreState> | null = null;
   private initialState: StoreState = null;
@@ -58,7 +58,7 @@ export class Store<StoreState> {
   ) {
     this._hook = typeof window !== 'undefined' && window['__REACT_STORES_INSPECTOR__'];
 
-    if (__IS_DEV__) {
+    if (typeof __IS_DEV__ !== 'undefined' && __IS_DEV__) {
       if (['number', 'boolean', 'string', 'undefined', 'symbol', 'bigint'].includes(typeof initialState)) {
         throw new Error('InitialState must be an object, passed: ' + typeof initialState);
       }
@@ -87,7 +87,7 @@ export class Store<StoreState> {
         (this.persistenceDriver as StorePersistentDriverAsync<StoreState>)
           .readAsync()
           .then((result: StorePersistentPacket<StoreState>) => {
-            if (result.data) {
+            if (result && result.data) {
               this.setState(result.data);
             }
           });

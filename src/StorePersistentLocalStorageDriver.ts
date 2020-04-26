@@ -173,6 +173,6 @@ export class StorePersistentLocalStorageDriver<StoreState> extends StorePersiste
   }
 }
 
-if (__IS_DEV__) {
+if (typeof __IS_DEV__ !== 'undefined' && __IS_DEV__) {
   StorePersistentLocalStorageDriver['__constructorName'] = 'StorePersistentLocalStorageDriver';
 }
