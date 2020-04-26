@@ -2,6 +2,7 @@ declare const __VERSION__: string;
 declare const __IS_DEV__: boolean;
 
 import { StorePersistentDriver } from './StorePersistentDriver';
+import { StorePersistentDriverAsync, StorePersistentPacket } from './StorePersistentDriverAsync';
 import { StorePersistentLocalStorageDriver } from './StorePersistentLocalStorageDriver';
 import { StoreEventManager } from './StoreEventManager';
 import {
@@ -26,13 +27,14 @@ export interface StoreOptions {
   persistence?: boolean;
   setStateTimeout?: number;
   name?: string;
+  asyncPersistence?: boolean;
 }
 
 export class Store<StoreState> {
   public readonly version: string = __VERSION__;
   public readonly name: string;
-  public readonly eventManager: StoreEventManager<StoreState> | null = null;
-  private readonly initialState: StoreState = null;
+  public eventManager: StoreEventManager<StoreState> | null = null;
+  private initialState: StoreState = null;
   private frozenState: StoreState = null;
   private _hook: any = null;
   private readonly opts: StoreOptions = {
@@ -42,6 +44,7 @@ export class Store<StoreState> {
     immutable: false,
     persistence: false,
     setStateTimeout: 0,
+    asyncPersistence: false,
   };
 
   get state(): StoreState {
@@ -51,7 +54,7 @@ export class Store<StoreState> {
   constructor(
     initialState: StoreState,
     options?: StoreOptions,
-    readonly persistenceDriver?: StorePersistentDriver<StoreState>,
+    readonly persistenceDriver?: StorePersistentDriver<StoreState> | StorePersistentDriverAsync<StoreState>,
   ) {
     this._hook = typeof window !== 'undefined' && window['__REACT_STORES_INSPECTOR__'];
 
@@ -72,6 +75,7 @@ export class Store<StoreState> {
       this.opts.immutable = options.immutable === true;
       this.opts.persistence = options.persistence === true;
       this.opts.setStateTimeout = options.setStateTimeout;
+      this.opts.asyncPersistence = options.asyncPersistence === true;
     }
 
     if (!this.persistenceDriver) {
@@ -79,13 +83,27 @@ export class Store<StoreState> {
     }
 
     if (this.opts.persistence) {
-      const persistentState = this.persistenceDriver.read().data;
+      if (this.opts.asyncPersistence) {
+        (this.persistenceDriver as StorePersistentDriverAsync<StoreState>)
+          .readAsync()
+          .then((result: StorePersistentPacket<StoreState>) => {
+            if (result.data) {
+              this.setState(result.data);
+            }
+          });
+      } else {
+        const persistentState = (this.persistenceDriver as StorePersistentDriver<StoreState>).read().data;
 
-      if (persistentState) {
-        currentState = persistentState;
+        if (persistentState) {
+          currentState = persistentState;
+        }
       }
     }
 
+    this.execStateInitialization(initialState, currentState);
+  }
+
+  private execStateInitialization(initialState: StoreState | null, currentState: StoreState | null) {
     if (currentState === null) {
       currentState = initialState;
     }
@@ -186,10 +204,25 @@ export class Store<StoreState> {
     const updatedState = this.deepFreeze({ ...prevState, ...newState });
 
     this.frozenState = updatedState;
-    this.persistenceDriver.write(this.persistenceDriver.pack(updatedState));
-    this.eventManager.fire(StoreEventType.Update, updatedState, prevState);
-    if (this._hook) {
-      this._hook.updateState(this.name, newState, $actionName);
+    this.execWrite(prevState, updatedState, $actionName);
+  }
+
+  private execWrite(prevState: StoreState, updatedState: StoreState, $actionName?: string) {
+    if (this.opts.asyncPersistence) {
+      (this.persistenceDriver as StorePersistentDriverAsync<StoreState>)
+        .writeAsync(this.persistenceDriver.pack(updatedState))
+        .then(() => {
+          this.eventManager.fire(StoreEventType.Update, updatedState, prevState);
+          if (this._hook) {
+            this._hook.updateState(this.name, updatedState, $actionName);
+          }
+        });
+    } else {
+      this.persistenceDriver.write(this.persistenceDriver.pack(updatedState));
+      this.eventManager.fire(StoreEventType.Update, updatedState, prevState);
+      if (this._hook) {
+        this._hook.updateState(this.name, updatedState, $actionName);
+      }
     }
   }
 
