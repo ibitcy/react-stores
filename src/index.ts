@@ -5,4 +5,5 @@ export * from './useStore';
 export * from './useIsolatedStore';
 export { StoreEvent, StoreEventType } from './StoreEvent';
 export { StorePersistentDriver } from './StorePersistentDriver';
+export { StorePersistentDriverAsync } from './StorePersistentDriverAsync';
 export * from './compare';
