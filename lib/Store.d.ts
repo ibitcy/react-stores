@@ -1,4 +1,5 @@
 import { StorePersistentDriver } from './StorePersistentDriver';
+import { StorePersistentDriverAsync } from './StorePersistentDriverAsync';
 import { StoreEventManager } from './StoreEventManager';
 import { StoreEventType, StoreEvent, TOnFire, TOnFireWithKeys, StoreEventSpecificKeys } from './StoreEvent';
 export interface StoreOptions {
@@ -14,18 +15,20 @@ export interface StoreOptions {
     persistence?: boolean;
     setStateTimeout?: number;
     name?: string;
+    asyncPersistence?: boolean;
 }
 export declare class Store<StoreState> {
-    readonly persistenceDriver?: StorePersistentDriver<StoreState>;
+    readonly persistenceDriver?: StorePersistentDriver<StoreState> | StorePersistentDriverAsync<StoreState>;
     readonly version: string;
     readonly name: string;
-    readonly eventManager: StoreEventManager<StoreState> | null;
-    private readonly initialState;
+    eventManager: StoreEventManager<StoreState> | null;
+    private initialState;
     private frozenState;
     private _hook;
     private readonly opts;
     get state(): StoreState;
-    constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState>);
+    constructor(initialState: StoreState, options?: StoreOptions, persistenceDriver?: StorePersistentDriver<StoreState> | StorePersistentDriverAsync<StoreState>);
+    private execStateInitialization;
     private deepFreeze;
     private hashCode;
     private generateStoreId;
@@ -39,6 +42,7 @@ export declare class Store<StoreState> {
     setState({ $actionName, ...newState }: Partial<StoreState> & {
         $actionName?: string;
     }): void;
+    private execWrite;
     resetState(): void;
     removeStore(): void;
     getInitialState(): StoreState;
