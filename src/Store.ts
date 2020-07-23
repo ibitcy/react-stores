@@ -1,6 +1,8 @@
 declare const __VERSION__: string;
 declare const __IS_DEV__: boolean;
 
+const cloneDeep = require('clone-deep');
+
 import { StorePersistentDriver } from './StorePersistentDriver';
 import { StorePersistentDriverAsync, StorePersistentPacket } from './StorePersistentDriverAsync';
 import { StorePersistentLocalStorageDriver } from './StorePersistentLocalStorageDriver';
@@ -95,7 +97,7 @@ export class Store<StoreState> {
         const persistentState = (this.persistenceDriver as StorePersistentDriver<StoreState>).read().data;
 
         if (persistentState) {
-          currentState = persistentState;
+          currentState = cloneDeep(persistentState);
         }
       }
     }
@@ -105,7 +107,7 @@ export class Store<StoreState> {
 
   private execStateInitialization(initialState: StoreState | null, currentState: StoreState | null) {
     if (currentState === null) {
-      currentState = initialState;
+      currentState = cloneDeep(initialState);
     }
 
     this.persistenceDriver.persistence = this.opts.persistence;

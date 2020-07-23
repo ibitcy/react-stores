@@ -53,7 +53,9 @@
   },
   "author": "IBIT LTD.",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "clone-deep": "^4.0.1"
+  },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^2.2.2",
     "@testing-library/react": "^9.3.3",
