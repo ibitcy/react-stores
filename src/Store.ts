@@ -106,15 +106,14 @@ export class Store<StoreState> {
   }
 
   private execStateInitialization(initialState: StoreState | null, currentState: StoreState | null) {
-    if (currentState === null) {
-      currentState = cloneDeep(initialState);
-    }
+    const clonedInitialState = cloneDeep(initialState);
+    const frozenState = currentState === null ? clonedInitialState : currentState;
 
     this.persistenceDriver.persistence = this.opts.persistence;
-    this.persistenceDriver.initialState = initialState;
     this.eventManager = new StoreEventManager(this.opts.setStateTimeout, this.name);
-    this.initialState = this.deepFreeze(initialState);
-    this.frozenState = this.deepFreeze(currentState);
+    this.initialState = this.deepFreeze(clonedInitialState);
+    this.frozenState = this.deepFreeze(frozenState);
+
     if (this._hook) {
       this._hook.attachStore(this, this.name, this.opts, false);
     }
@@ -229,7 +228,7 @@ export class Store<StoreState> {
   }
 
   public resetState() {
-    this.setState({ ...this.deepFreeze(this.initialState), $actionName: '@resetState' });
+    this.setState({ ...this.getInitialState(), $actionName: '@resetState' });
   }
 
   public removeStore() {
@@ -239,7 +238,7 @@ export class Store<StoreState> {
   }
 
   public getInitialState(): StoreState {
-    return this.initialState;
+    return this.deepFreeze(cloneDeep(this.initialState));
   }
 
   // on overloads
