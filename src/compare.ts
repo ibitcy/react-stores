@@ -1,3 +1,7 @@
+function getClass(obj: any): string {
+  return {}.toString.call(obj).slice(8, -1);
+}
+
 function isPrimitive(object: any) {
   switch (typeof object) {
     case 'undefined':
@@ -29,6 +33,13 @@ export function areSimilar(a: any, b: any, ...exceptionList: Array<string>): boo
   // typeof null is object, but if both were null that would have been already detected.
   if (a === null || b === null) {
     return false;
+  }
+
+  if (typeof a === typeof b) {
+    switch (getClass(a)) {
+      case "Date":
+        return a.getTime() === b.getTime();
+    }
   }
 
   if ((Array.isArray(a) && !Array.isArray(b)) || (!Array.isArray(a) && Array.isArray(b))) {
