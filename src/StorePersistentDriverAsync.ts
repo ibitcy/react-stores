@@ -13,11 +13,11 @@ export interface StorePersistentPacket<StoreState> {
 export abstract class StorePersistentDriverAsync<StoreState> extends StorePersistentDriver<StoreState> {
   public abstract writeAsync(pack: StorePersistentPacket<StoreState>): Promise<any>;
 
-  public abstract readAsync(): Promise<StorePersistentPacket<StoreState>>;
+  public abstract readAsync(): Promise<StorePersistentPacket<StoreState> | undefined>;
 
   public write(pack: StorePersistentPacket<StoreState>): void {}
 
-  public read(): StorePersistentPacket<StoreState> {
+  public read(): StorePersistentPacket<StoreState> | undefined {
     return undefined;
   }
 
