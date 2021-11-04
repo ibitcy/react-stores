@@ -1,6 +1,6 @@
 {
   "name": "react-stores",
-  "version": "5.1.2",
+  "version": "5.2.0",
   "sideEffects": false,
   "keywords": [
     "react",
@@ -62,16 +62,16 @@
     "@testing-library/react": "^9.3.3",
     "@testing-library/react-hooks": "^3.2.1",
     "@types/jest": "^24.0.23",
-    "@types/react": "^16.9.16",
-    "@types/react-dom": "^16.9.3",
+    "@types/react": "^17.0.34",
+    "@types/react-dom": "^17.0.11",
     "acorn": "^7.1.0",
     "copy-webpack-plugin": "^5.1.1",
     "expect": "^24.9.0",
     "expect-jsx": "^5.0.0",
     "html-loader": "^0.5.5",
     "jest": "^24.9.0",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-test-renderer": "^16.12.0",
     "react-tools": "^0.13.3",
     "rollup": "^1.27.11",
@@ -90,6 +90,6 @@
   },
   "repository": "https://github.com/ibitcy/react-stores.git",
   "peerDependencies": {
-    "react": "^16.8.6"
+    "react": "^17.0.2"
   }
 }
