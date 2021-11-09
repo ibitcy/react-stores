@@ -114,14 +114,16 @@ export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<an
     if (params.includeKeys.length > 0) {
       storeEvent = storeRef.current.on(params.eventType, params.includeKeys, storeState => {
         state.current = params.mapState(storeState);
-        recount[1](recountId.current + 1);
+        recountId.current = recountId.current + 1;
+        recount[1](recountId.current);
       });
     } else {
       storeEvent = storeRef.current.on(params.eventType, (storeState, prevState, type) => {
         const nextState = params.mapState(storeState, prevState, type);
         if (!params.compare || !params.compare(nextState, state.current)) {
           state.current = nextState;
-          recount[1](recountId.current + 1);
+          recountId.current = recountId.current + 1;
+          recount[1](recountId.current);
         }
       });
     }
