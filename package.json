@@ -72,7 +72,7 @@
     "jest": "^24.9.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-test-renderer": "^16.12.0",
+    "react-test-renderer": "^17.0.2",
     "react-tools": "^0.13.3",
     "rollup": "^1.27.11",
     "rollup-plugin-terser": "^5.1.3",

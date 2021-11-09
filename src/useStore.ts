@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { Store } from './Store';
 import { StoreEventType, TStoreEvent } from './StoreEvent';
+import {useRef} from "react";
 
 type TMapState<T, V> = (storeState: T, prevState?: T, type?: StoreEventType) => V;
 type TCompareFunction<V> = (prevState: V, nextState: V) => boolean;
@@ -103,6 +104,7 @@ export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<an
   }, []);
   const storeRef = React.useRef<Store<T>>(store);
   const initialRef = React.useMemo(() => params.mapState(storeRef.current.state), []);
+  const recountId = useRef<number>(0);
   const recount = React.useState(0);
   const state = React.useRef<V>(initialRef);
 
@@ -112,14 +114,14 @@ export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<an
     if (params.includeKeys.length > 0) {
       storeEvent = storeRef.current.on(params.eventType, params.includeKeys, storeState => {
         state.current = params.mapState(storeState);
-        recount[1](Date.now());
+        recount[1](recountId.current + 1);
       });
     } else {
       storeEvent = storeRef.current.on(params.eventType, (storeState, prevState, type) => {
         const nextState = params.mapState(storeState, prevState, type);
         if (!params.compare || !params.compare(nextState, state.current)) {
           state.current = nextState;
-          recount[1](Date.now());
+          recount[1](recountId.current + 1);
         }
       });
     }
