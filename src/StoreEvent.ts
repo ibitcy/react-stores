@@ -15,14 +15,16 @@ export type TOnFireWithKeys<T> = (
 
 export type TStoreEvent<T> = StoreEvent<T> | StoreEventSpecificKeys<T>;
 
+export type TEventId = string;
+
 export class StoreEvent<StoreState> {
   public timeout: any = null;
 
   constructor(
-    readonly id: string,
+    readonly id: TEventId,
     readonly types: StoreEventType[],
     readonly onFire: TOnFire<StoreState>,
-    readonly onRemove: (id: string) => void,
+    readonly onRemove: (id: TEventId) => void,
   ) {}
 
   public remove() {
@@ -38,10 +40,10 @@ export class StoreEventSpecificKeys<StoreState> {
   public timeout: any = null;
 
   constructor(
-    readonly id: string,
+    readonly id: TEventId,
     readonly types: StoreEventType[],
     readonly onFire: TOnFireWithKeys<StoreState>,
-    readonly onRemove: (id: string) => void,
+    readonly onRemove: (id: TEventId) => void,
     readonly includeKeys: Array<keyof StoreState> = [],
   ) {}
 

@@ -3,13 +3,14 @@ import {
   StoreEvent,
   StoreEventSpecificKeys,
   StoreEventType,
+  TEventId,
   TOnFire,
   TOnFireWithKeys,
   TStoreEvent,
 } from './StoreEvent';
 
 export class StoreEventManager<StoreState> {
-  private events: Array<TStoreEvent<StoreState>> = [];
+  private events: Set<TStoreEvent<StoreState>> = new Set();
   private eventCounter: number = 0;
   private timeout: any = null;
   private _hook: any = null;
@@ -19,7 +20,7 @@ export class StoreEventManager<StoreState> {
   }
 
   public getEventsCount() {
-    return this.events.length;
+    return this.events.size;
   }
 
   private generateEventId(): string {
@@ -46,33 +47,31 @@ export class StoreEventManager<StoreState> {
         }
 
         this.timeout = setTimeout(() => {
-          for (const key in this.events) {
-            if (this.events.hasOwnProperty(key)) {
-              this.doFire(type, storeState, prevState, this.events[key]);
-            }
-          }
+          this.events.forEach((eventItem: StoreEvent<StoreState>) => {
+            this.doFire(type, storeState, prevState, eventItem);
+          });
         }, this.fireTimeout);
       } else {
-        for (const key in this.events) {
-          if (this.events.hasOwnProperty(key)) {
-            this.doFire(type, storeState, prevState, this.events[key]);
-          }
-        }
+        this.events.forEach((eventItem: StoreEvent<StoreState>) => {
+          this.doFire(type, storeState, prevState, eventItem);
+        });
       }
     }
   }
 
-  public remove(id: string) {
+  public remove(id: TEventId) {
     if (this.fireTimeout && this.fireTimeout !== 0) {
-      for (const key in this.events) {
-        if (this.events.hasOwnProperty(key) && this.events[key].timeout) {
+      this.events.forEach((eventItem: StoreEvent<StoreState>) => {
+        if (eventItem.timeout) {
           clearTimeout(this.timeout);
         }
-      }
+      })
     }
 
-    this.events = this.events.filter((event: StoreEvent<StoreState>) => {
-      return event.id !== id;
+    this.events.forEach((eventItem: StoreEvent<StoreState>) => {
+      if (eventItem.id === id) {
+        this.events.delete(eventItem);
+      }
     });
 
     if (this._hook) {
@@ -110,7 +109,8 @@ export class StoreEventManager<StoreState> {
       });
     }
 
-    this.events.push(event);
+    this.events.add(event);
+
     if (this._hook) {
       this._hook.addEvent(this.name, event.id);
     }

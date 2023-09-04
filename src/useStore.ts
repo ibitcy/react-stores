@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { Store } from './Store';
 import { StoreEventType, TStoreEvent } from './StoreEvent';
-import {useRef} from "react";
 
 type TMapState<T, V> = (storeState: T, prevState?: T, type?: StoreEventType) => V;
 type TCompareFunction<V> = (prevState: V, nextState: V) => boolean;
@@ -104,7 +103,7 @@ export function useStore<T = {}, V = T>(store: Store<T>, ...restParams: Array<an
   }, []);
   const storeRef = React.useRef<Store<T>>(store);
   const initialRef = React.useMemo(() => params.mapState(storeRef.current.state), []);
-  const recountId = useRef<number>(0);
+  const recountId = React.useRef<number>(0);
   const recount = React.useState(0);
   const state = React.useRef<V>(initialRef);
 
